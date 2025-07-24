@@ -4,7 +4,7 @@ import { InvalidOptionsError } from "./errors.js";
 /**
  * Base schema for configuration options (from config file)
  */
-const ConfigOptionsSchema = v.object({
+export const ConfigOptionsSchema = v.object({
   outDir: v.optional(v.string()),
   extension: v.optional(v.string()),
   header: v.optional(v.string()),

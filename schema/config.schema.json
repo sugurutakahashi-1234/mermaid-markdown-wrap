@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+  "title": "Mermaid Markdown Wrap Configuration",
+  "description": "Configuration options for mermaid-markdown-wrap CLI tool",
+  "type": "object",
+  "properties": {
+    "outDir": {
+      "type": "string"
+    },
+    "extension": {
+      "type": "string"
+    },
+    "header": {
+      "type": "string"
+    },
+    "footer": {
+      "type": "string"
+    },
+    "keepSource": {
+      "type": "boolean"
+    }
+  },
+  "required": []
+}

@@ -7,7 +7,6 @@ tsg --tsconfig tsconfig.build.json --LR --md docs/reports/dependencies/deps-grap
 ```mermaid
 flowchart LR
     subgraph src["src"]
-        src/config.d.ts["config.d.ts"]
         subgraph src/domain["/domain"]
             src/domain/errors.ts["errors.ts"]
             src/domain/types.ts["types.ts"]
@@ -25,6 +24,7 @@ flowchart LR
         subgraph src/presentation["/presentation"]
             src/presentation/formatter.ts["formatter.ts"]
             src/presentation/commands.ts["commands.ts"]
+            src/presentation/config.ts["config.ts"]
             src/presentation/index.ts["index.ts"]
         end
     end
@@ -53,6 +53,7 @@ flowchart LR
     src/presentation/commands.ts-->src/infrastructure/file.ts
     src/presentation/commands.ts-->src/infrastructure/glob.ts
     src/presentation/commands.ts-->src/presentation/formatter.ts
+    src/presentation/config.ts-->src/domain/types.ts
     src/presentation/index.ts-->node//modules/commander/typings/index.d.ts
     src/presentation/index.ts-->src/domain/types.ts
     src/presentation/index.ts-->src/infrastructure/version.ts

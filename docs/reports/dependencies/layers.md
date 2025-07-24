@@ -8,7 +8,6 @@ tsg --tsconfig tsconfig.build.json --LR --abstraction src/domain --abstraction s
 flowchart LR
     classDef dir fill:#0000,stroke:#999
     subgraph src["src"]
-        src/config.d.ts["config.d.ts"]
         src/domain["/domain"]:::dir
         src/application["/application"]:::dir
         src/infrastructure["/infrastructure"]:::dir
