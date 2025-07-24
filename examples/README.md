@@ -6,7 +6,9 @@ This directory demonstrates all features and options of the `mermaid-markdown-wr
 
 ```
 examples/
-├── diagram.mmd                         # Single source Mermaid file
+├── diagram.mmd                         # Single source Mermaid file (.mmd)
+├── flowchart.mermaid                   # Flowchart example (.mermaid)
+├── sequence.mermaid                    # Sequence diagram example (.mermaid)
 ├── mermaid-markdown-wrap.config.yaml   # Configuration file example
 ├── config-formats/                     # All supported config file formats
 │   ├── test.mmd                       # Test file for config format examples
@@ -44,12 +46,15 @@ bun run build
 ```bash
 # Simple conversion (deletes source file)
 bunx mermaid-markdown-wrap diagram.mmd
+bunx mermaid-markdown-wrap flowchart.mermaid
 
 # With explicit output directory
 bunx mermaid-markdown-wrap diagram.mmd --out-dir output/basic
+bunx mermaid-markdown-wrap sequence.mermaid --out-dir output/basic
 
 # Keep source file
 bunx mermaid-markdown-wrap diagram.mmd --out-dir output/basic --keep-source
+bunx mermaid-markdown-wrap flowchart.mermaid --out-dir output/basic --keep-source
 ```
 
 ### 2. Glob Pattern Examples
@@ -58,17 +63,31 @@ bunx mermaid-markdown-wrap diagram.mmd --out-dir output/basic --keep-source
 # All .mmd files in current directory
 bunx mermaid-markdown-wrap "*.mmd" --out-dir output/glob-patterns --keep-source
 
+# All .mermaid files in current directory
+bunx mermaid-markdown-wrap "*.mermaid" --out-dir output/glob-patterns --keep-source
+
+# All Mermaid files (both extensions) in current directory
+bunx mermaid-markdown-wrap "*.{mmd,mermaid}" --out-dir output/glob-patterns --keep-source
+
 # All .mmd files recursively
 bunx mermaid-markdown-wrap "**/*.mmd" --out-dir output/glob-patterns --keep-source
 
+# All .mermaid files recursively
+bunx mermaid-markdown-wrap "**/*.mermaid" --out-dir output/glob-patterns --keep-source
+
+# All Mermaid files (both extensions) recursively
+bunx mermaid-markdown-wrap "**/*.{mmd,mermaid}" --out-dir output/glob-patterns --keep-source
+
 # Multiple specific files
-bunx mermaid-markdown-wrap "{diagram,test,example}.mmd" --out-dir output/glob-patterns --keep-source
+bunx mermaid-markdown-wrap "{diagram.mmd,flowchart.mermaid,sequence.mermaid}" --out-dir output/glob-patterns --keep-source
 
 # Using --glob option explicitly
 bunx mermaid-markdown-wrap --glob "*.mmd" --out-dir output/glob-patterns --keep-source
+bunx mermaid-markdown-wrap --glob "*.mermaid" --out-dir output/glob-patterns --keep-source
 
 # Complex glob pattern
 bunx mermaid-markdown-wrap "**/diagrams/*.mmd" --out-dir output/glob-patterns --keep-source
+bunx mermaid-markdown-wrap "**/diagrams/*.{mmd,mermaid}" --out-dir output/glob-patterns --keep-source
 ```
 
 ### 3. Header and Footer Options
@@ -78,6 +97,13 @@ bunx mermaid-markdown-wrap "**/diagrams/*.mmd" --out-dir output/glob-patterns --
 bunx mermaid-markdown-wrap diagram.mmd \
   --header "# Documentation" \
   --footer "_Generated diagram_" \
+  --out-dir output/with-header-footer \
+  --keep-source
+
+# With .mermaid file
+bunx mermaid-markdown-wrap flowchart.mermaid \
+  --header "# Flowchart Documentation" \
+  --footer "_Generated from .mermaid file_" \
   --out-dir output/with-header-footer \
   --keep-source
 
@@ -218,14 +244,20 @@ bunx mermaid-markdown-wrap -V
 
 # Dry run with print config
 bunx mermaid-markdown-wrap "*.mmd" --print-config
+bunx mermaid-markdown-wrap "*.{mmd,mermaid}" --print-config
 
 # Process files in subdirectories
 bunx mermaid-markdown-wrap "src/**/*.mmd" \
   --out-dir docs/diagrams \
   --keep-source
 
+# Process both extensions in subdirectories
+bunx mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" \
+  --out-dir docs/diagrams \
+  --keep-source
+
 # Different output directory structure
-bunx mermaid-markdown-wrap "components/*/diagram.mmd" \
+bunx mermaid-markdown-wrap "components/*/diagram.{mmd,mermaid}" \
   --out-dir "documentation/\$1" \
   --keep-source
 ```
@@ -249,6 +281,7 @@ cd examples
 
 # Basic example
 bunx mermaid-markdown-wrap diagram.mmd --out-dir output/basic --keep-source
+bunx mermaid-markdown-wrap flowchart.mermaid --out-dir output/basic --keep-source
 
 # With configuration
 bunx mermaid-markdown-wrap diagram.mmd --config mermaid-markdown-wrap.config.yaml
@@ -269,7 +302,7 @@ After running the examples, check the `output/` directory to see:
 ## Tips
 
 - Always quote glob patterns to prevent shell expansion
-- Use `--keep-source` to preserve original `.mmd` files
+- Use `--keep-source` to preserve original `.mmd`/`.mermaid` files
 - Combine with `find` or `fd` for more complex file selection
 - Use configuration files for consistent project-wide settings
 - The `--print-config` option helps debug configuration issues
@@ -281,7 +314,7 @@ After running the examples, check the `output/` directory to see:
 ```yaml
 - name: Generate Mermaid Documentation
   run: |
-    bunx mermaid-markdown-wrap "docs/**/*.mmd" \
+    bunx mermaid-markdown-wrap "docs/**/*.{mmd,mermaid}" \
       --out-dir docs \
       --header "<!-- Generated from ${{ github.sha }} -->" \
       --keep-source
@@ -292,7 +325,7 @@ After running the examples, check the `output/` directory to see:
 ```json
 {
   "scripts": {
-    "docs:generate": "mermaid-markdown-wrap 'diagrams/**/*.mmd' --out-dir docs/generated --keep-source"
+    "docs:generate": "mermaid-markdown-wrap 'diagrams/**/*.{mmd,mermaid}' --out-dir docs/generated --keep-source"
   }
 }
 ```
@@ -301,6 +334,6 @@ After running the examples, check the `output/` directory to see:
 
 ```bash
 #!/bin/sh
-bunx mermaid-markdown-wrap "**/*.mmd" --keep-source
+bunx mermaid-markdown-wrap "**/*.{mmd,mermaid}" --keep-source
 git add "**/*.md"
 ```

@@ -8,7 +8,7 @@ import {
 import { buildMarkdownContent } from "./markdown-builder.js";
 
 /**
- * Convert a single .mmd file to markdown format
+ * Convert a single .mmd or .mermaid file to markdown format
  */
 export async function convertFile(
   filePath: string,

@@ -1,6 +1,6 @@
 # mermaid-markdown-wrap
 
-A minimal CLI tool to wrap `.mmd` files (Mermaid diagrams) in Markdown code blocks without modifying the original content.
+A minimal CLI tool to wrap `.mmd` and `.mermaid` files (Mermaid diagrams) in Markdown code blocks without modifying the original content.
 
 ## Installation
 
@@ -16,7 +16,7 @@ mermaid-markdown-wrap <glob> [options]
 
 ### Arguments
 
-- `<glob>` - Glob pattern for `.mmd` files to convert (e.g., `*.mmd`, `diagrams/**/*.mmd`)
+- `<glob>` - Glob pattern for Mermaid files to convert (e.g., `*.mmd`, `*.mermaid`, `**/*.{mmd,mermaid}`)
 
 ### Options
 
@@ -29,7 +29,7 @@ mermaid-markdown-wrap <glob> [options]
 | `--glob <pattern>` | Override glob pattern | None |
 | `-c, --config <file>` | Config file path | Auto-search |
 | `--print-config` | Print merged configuration | None |
-| `--keep-source` | Keep source `.mmd` files | `false` (deletes source) |
+| `--keep-source` | Keep source `.mmd`/`.mermaid` files | `false` (deletes source) |
 | `-h, --help` | Show help | - |
 | `-v, --version` | Show version | - |
 
@@ -40,11 +40,14 @@ mermaid-markdown-wrap <glob> [options]
 Convert a single file:
 ```bash
 mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap flowchart.mermaid
 ```
 
 Convert multiple files:
 ```bash
 mermaid-markdown-wrap "**/*.mmd"
+mermaid-markdown-wrap "**/*.mermaid"
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"  # Both extensions
 ```
 
 ### With options
@@ -56,7 +59,7 @@ mermaid-markdown-wrap diagram.mmd --header "# My Diagram" --footer "_Generated o
 
 Output to different directory:
 ```bash
-mermaid-markdown-wrap "src/**/*.mmd" --out-dir docs
+mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
 ```
 
 Keep source files:
@@ -118,15 +121,15 @@ export default config;
 
 ## How it works
 
-1. Reads `.mmd` files containing Mermaid diagram syntax
+1. Reads `.mmd` or `.mermaid` files containing Mermaid diagram syntax
 2. Wraps the content in a Markdown mermaid code block
 3. Adds optional header/footer text
 4. Saves with the specified extension (default `.md`)
-5. Optionally deletes the source `.mmd` file
+5. Optionally deletes the source `.mmd`/`.mermaid` file
 
 ### Example transformation
 
-Input (`diagram.mmd`):
+Input (`diagram.mmd` or `diagram.mermaid`):
 ```
 graph TD
   A[Start] --> B[Process]

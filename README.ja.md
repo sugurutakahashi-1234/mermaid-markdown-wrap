@@ -1,6 +1,6 @@
 # mermaid-markdown-wrap
 
-`.mmd`ファイル（Mermaidダイアグラム）を元のコンテンツを変更せずにMarkdownコードブロックでラップする最小限のCLIツール。
+`.mmd`および`.mermaid`ファイル（Mermaidダイアグラム）を元のコンテンツを変更せずにMarkdownコードブロックでラップする最小限のCLIツール。
 
 ## Installation
 
@@ -16,7 +16,7 @@ mermaid-markdown-wrap <glob> [options]
 
 ### Arguments
 
-- `<glob>` - 変換する`.mmd`ファイルのグロブパターン（例: `*.mmd`、`diagrams/**/*.mmd`）
+- `<glob>` - 変換するMermaidファイルのグロブパターン（例: `*.mmd`、`*.mermaid`、`**/*.{mmd,mermaid}`）
 
 ### Options
 
@@ -29,7 +29,7 @@ mermaid-markdown-wrap <glob> [options]
 | `--glob <pattern>`    | グロブパターンの上書き       | なし                    |
 | `-c, --config <file>` | 設定ファイルのパス           | 自動検索                |
 | `--print-config`      | マージされた設定を表示       | なし                    |
-| `--keep-source`       | ソースの`.mmd`ファイルを保持 | `false`（ソースを削除） |
+| `--keep-source`       | ソースの`.mmd`/`.mermaid`ファイルを保持 | `false`（ソースを削除） |
 | `-h, --help`          | ヘルプを表示                 | -                       |
 | `-v, --version`       | バージョンを表示             | -                       |
 
@@ -40,11 +40,14 @@ mermaid-markdown-wrap <glob> [options]
 単一ファイルの変換:
 ```bash
 mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap flowchart.mermaid
 ```
 
 複数ファイルの変換:
 ```bash
 mermaid-markdown-wrap "**/*.mmd"
+mermaid-markdown-wrap "**/*.mermaid"
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"  # 両方の拡張子
 ```
 
 ### With options
@@ -56,7 +59,7 @@ mermaid-markdown-wrap diagram.mmd --header "# My Diagram" --footer "_Generated o
 
 別のディレクトリに出力:
 ```bash
-mermaid-markdown-wrap "src/**/*.mmd" --out-dir docs
+mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
 ```
 
 ソースファイルを保持:
@@ -103,15 +106,15 @@ module.exports = {
 
 ## How it works
 
-1. Mermaidダイアグラム構文を含む`.mmd`ファイルを読み込み
+1. Mermaidダイアグラム構文を含む`.mmd`または`.mermaid`ファイルを読み込み
 2. コンテンツをMarkdownのmermaidコードブロックでラップ
 3. オプションのヘッダー/フッターテキストを追加
 4. 指定された拡張子（デフォルト`.md`）で保存
-5. オプションでソースの`.mmd`ファイルを削除
+5. オプションでソースの`.mmd`/`.mermaid`ファイルを削除
 
 ### Example transformation
 
-入力（`diagram.mmd`）:
+入力（`diagram.mmd`または`diagram.mermaid`）:
 ```
 graph TD
   A[Start] --> B[Process]

@@ -15,7 +15,7 @@ footer: |
   
   ## Metadata
   
-  - Source: `diagram.mmd`
+  - Source: Mermaid diagram file (.mmd or .mermaid)
   - Generated with: mermaid-markdown-wrap
   - Config used: Yes
 keepSource: true

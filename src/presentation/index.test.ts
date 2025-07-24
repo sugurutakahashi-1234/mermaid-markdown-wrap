@@ -82,6 +82,31 @@ describe("CLI", () => {
     expect(result).toContain("Test Footer");
   });
 
+  test("converts single .mermaid file", async () => {
+    const inputFile = join(testDir, "flowchart.mermaid");
+    const outputFile = join(testDir, "flowchart.md");
+
+    await writeFile(inputFile, "flowchart LR\n  Start --> End");
+
+    const proc = spawn(["bun", cliPath, inputFile, "--keep-source"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+    expect(output).toContain("Converting 1 file(s)");
+    expect(output).toContain("✓");
+
+    const result = await readFile(outputFile, "utf-8");
+    expect(result).toContain("```mermaid");
+    expect(result).toContain("flowchart LR");
+    expect(result).toContain("Start --> End");
+  });
+
   test("uses glob pattern", async () => {
     await writeFile(join(testDir, "a.mmd"), "graph TD");
     await writeFile(join(testDir, "b.mmd"), "graph LR");
@@ -105,6 +130,58 @@ describe("CLI", () => {
     const bExists = await Bun.file(join(testDir, "b.md")).exists();
     expect(aExists).toBe(true);
     expect(bExists).toBe(true);
+  });
+
+  test("uses glob pattern with .mermaid files", async () => {
+    await writeFile(join(testDir, "flow.mermaid"), "flowchart TD");
+    await writeFile(join(testDir, "seq.mermaid"), "sequenceDiagram");
+
+    const proc = spawn(["bun", cliPath, "*.mermaid", "--keep-source"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+    expect(output).toContain("Converting");
+    expect(output).toContain("file(s)");
+    expect(output).toContain("✓ flow.mermaid");
+    expect(output).toContain("✓ seq.mermaid");
+
+    const flowExists = await Bun.file(join(testDir, "flow.md")).exists();
+    const seqExists = await Bun.file(join(testDir, "seq.md")).exists();
+    expect(flowExists).toBe(true);
+    expect(seqExists).toBe(true);
+  });
+
+  test("uses glob pattern with mixed extensions", async () => {
+    await writeFile(join(testDir, "diagram.mmd"), "graph TD");
+    await writeFile(join(testDir, "flowchart.mermaid"), "flowchart LR");
+
+    const proc = spawn(["bun", cliPath, "*.{mmd,mermaid}", "--keep-source"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+    expect(output).toContain("Converting");
+    expect(output).toContain("file(s)");
+    expect(output).toContain("✓ diagram.mmd");
+    expect(output).toContain("✓ flowchart.mermaid");
+
+    const diagramExists = await Bun.file(join(testDir, "diagram.md")).exists();
+    const flowchartExists = await Bun.file(
+      join(testDir, "flowchart.md"),
+    ).exists();
+    expect(diagramExists).toBe(true);
+    expect(flowchartExists).toBe(true);
   });
 
   test("prints config", async () => {

@@ -11,11 +11,13 @@ const program = new Command();
 
 program
   .name(getPackageName())
-  .description("Convert .mmd files to Markdown with mermaid code blocks")
+  .description(
+    "Convert .mmd/.mermaid files to Markdown with mermaid code blocks",
+  )
   .version(getVersion(), "-v, --version", "display version number")
   .argument(
     "<glob>",
-    "file path or glob pattern (e.g., 'file.mmd', '*.mmd', '**/*.mmd')",
+    "file path or glob pattern (e.g., 'file.mmd', '*.mermaid', '**/*.{mmd,mermaid}')",
   )
   .option(
     "-o, --out-dir <dir>",
@@ -27,7 +29,11 @@ program
   .option("--glob <pattern>", "explicit glob pattern (overrides argument)")
   .option("-c, --config <file>", "config file path")
   .option("--print-config", "print merged configuration and exit")
-  .option("--keep-source", "keep source .mmd files after conversion", false)
+  .option(
+    "--keep-source",
+    "keep source .mmd/.mermaid files after conversion",
+    false,
+  )
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
       // Parse and validate CLI options
@@ -46,15 +52,17 @@ program
     `
 Examples:
   # Basic usage
-  $ ${getPackageName()} diagram.mmd                  # Convert single file
+  $ ${getPackageName()} diagram.mmd                  # Convert single .mmd file
+  $ ${getPackageName()} flowchart.mermaid            # Convert single .mermaid file
   $ ${getPackageName()} "*.mmd"                      # Convert all .mmd files in current directory
-  $ ${getPackageName()} "**/*.mmd"                   # Convert all .mmd files recursively
+  $ ${getPackageName()} "*.mermaid"                  # Convert all .mermaid files
+  $ ${getPackageName()} "**/*.{mmd,mermaid}"         # Convert all Mermaid files recursively
   $ ${getPackageName()} "src/**/*.mmd" -o dist/      # Convert with output directory
-  $ ${getPackageName()} "*.mmd" --header "# Docs"    # Add header to all files
+  $ ${getPackageName()} "*.mermaid" --header "# Docs" # Add header to all files
 
   # Configuration
   $ ${getPackageName()} --print-config               # Show current configuration
-  $ ${getPackageName()} -c myconfig.yaml "*.mmd"     # Use specific config file
+  $ ${getPackageName()} -c myconfig.yaml "*.mermaid" # Use specific config file
   $ ${getPackageName()} validate                     # Validate default config
   $ ${getPackageName()} validate myconfig.json       # Validate specific config
 

@@ -7,7 +7,7 @@ extension: ".md"
 
 # Content configuration
 header: |
-  <!-- AUTO-GENERATED FROM .mmd FILE -->
+  <!-- AUTO-GENERATED FROM MERMAID FILE -->
   > [!NOTE]
   > This file is auto-generated. Do not edit directly.
   
