@@ -11,7 +11,7 @@
   "exports": {
     ".": "./dist/presentation/index.js",
     "./config": {
-      "types": "./dist/presentation/config.d.ts"
+      "types": "./dist/presentation/config-types.d.ts"
     }
   },
   "keywords": [

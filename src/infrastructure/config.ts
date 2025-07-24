@@ -1,7 +1,11 @@
 import { cosmiconfig } from "cosmiconfig";
 import { TypeScriptLoader } from "cosmiconfig-typescript-loader";
-import type { CLIOptions, ConfigOptions, Options } from "../domain/types.js";
-import { DEFAULT_OPTIONS } from "../domain/types.js";
+import type {
+  CLIOptions,
+  ConfigOptions,
+  Options,
+} from "../domain/cli-options.js";
+import { DEFAULT_OPTIONS } from "../domain/cli-options.js";
 
 /**
  * Load configuration from file or search for it

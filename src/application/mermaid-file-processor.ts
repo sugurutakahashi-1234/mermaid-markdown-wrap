@@ -1,7 +1,11 @@
-import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join } from "node:path";
-import { buildMarkdownContent } from "../application/converter.js";
-import type { Options } from "../domain/types.js";
+import type { Options } from "../domain/cli-options.js";
+import {
+  deleteFile,
+  readFileContent,
+  writeFileContent,
+} from "../infrastructure/file-system.js";
+import { buildMarkdownContent } from "./markdown-builder.js";
 
 /**
  * Convert a single .mmd file to markdown format
@@ -11,7 +15,7 @@ export async function convertFile(
   options: Options,
 ): Promise<void> {
   // Read the source file
-  const content = await readFile(filePath, "utf-8");
+  const content = await readFileContent(filePath);
 
   // Build the output content
   const outputContent = buildMarkdownContent(content, options);
@@ -20,11 +24,11 @@ export async function convertFile(
   const outputPath = getOutputPath(filePath, options);
 
   // Write the output file
-  await writeFile(outputPath, outputContent, "utf-8");
+  await writeFileContent(outputPath, outputContent);
 
   // Delete source file if not keeping it
   if (!options.keepSource) {
-    await unlink(filePath);
+    await deleteFile(filePath);
   }
 }
 
@@ -38,11 +42,4 @@ function getOutputPath(inputPath: string, options: Options): string {
   const outputFileName = `${baseName}${options.extension}`;
 
   return join(outputDir, outputFileName);
-}
-
-/**
- * Create directory recursively
- */
-export async function createDirectory(path: string): Promise<void> {
-  await mkdir(path, { recursive: true });
 }

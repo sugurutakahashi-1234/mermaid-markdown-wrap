@@ -21,4 +21,4 @@
  *
  * @public
  */
-export type { ConfigOptions as Config } from "../domain/types.js";
+export type { ConfigOptions as Config } from "../domain/cli-options.js";

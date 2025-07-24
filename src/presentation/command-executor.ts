@@ -1,11 +1,11 @@
-import type { ProcessResult } from "../application/processor.js";
-import { hasErrors } from "../application/processor.js";
+import { convertFile } from "../application/mermaid-file-processor.js";
+import type { ProcessResult } from "../application/process-result-types.js";
+import { hasErrors } from "../application/process-result-types.js";
+import type { CLIOptions, Options } from "../domain/cli-options.js";
 import { NoFilesFoundError } from "../domain/errors.js";
-import type { CLIOptions, Options } from "../domain/types.js";
 import { loadConfig, mergeOptions } from "../infrastructure/config.js";
-import { convertFile, createDirectory } from "../infrastructure/file.js";
-import { findFiles } from "../infrastructure/glob.js";
-import { printResults } from "./formatter.js";
+import { createDirectory, findFiles } from "../infrastructure/file-system.js";
+import { printResults } from "./console-reporter.js";
 
 /**
  * Process all files matching the glob pattern

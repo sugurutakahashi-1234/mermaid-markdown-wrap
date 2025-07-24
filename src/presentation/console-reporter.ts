@@ -1,4 +1,4 @@
-import type { ProcessResult } from "../application/processor.js";
+import type { ProcessResult } from "../application/process-result-types.js";
 
 /**
  * Print processing results

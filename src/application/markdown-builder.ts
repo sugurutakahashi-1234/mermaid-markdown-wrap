@@ -1,4 +1,4 @@
-import type { Options } from "../domain/types.js";
+import type { Options } from "../domain/cli-options.js";
 
 /**
  * Build markdown content with header, mermaid code block, and footer

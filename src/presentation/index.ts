@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
-import { parseCLIOptions } from "../domain/types.js";
-import { getPackageName, getVersion } from "../infrastructure/version.js";
-import { runCommand } from "./commands.js";
+import { parseCLIOptions } from "../domain/cli-options.js";
+import { getPackageName, getVersion } from "../infrastructure/package-info.js";
+import { runCommand } from "./command-executor.js";
 
 const program = new Command();
 
