@@ -1,0 +1,12 @@
+# YAML configuration (.yaml extension)
+outDir: output/config-test
+extension: .md
+header: |
+  # Configuration Test
+  
+  This file was generated using a YAML (.yaml) config file.
+footer: |
+  
+  ---
+  _Generated from YAML config_
+keepSource: true

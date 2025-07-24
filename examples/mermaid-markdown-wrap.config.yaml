@@ -1,0 +1,21 @@
+# Configuration example for mermaid-markdown-wrap
+# Place this file in your project root or specify with --config
+
+outDir: output/from-config
+extension: .md
+header: |
+  # Process Flow Diagram
+  
+  > Auto-generated from Mermaid source
+  > Configuration: mermaid-markdown-wrap.config.yaml
+  
+footer: |
+  
+  ---
+  
+  ## Metadata
+  
+  - Source: `diagram.mmd`
+  - Generated with: mermaid-markdown-wrap
+  - Config used: Yes
+keepSource: true

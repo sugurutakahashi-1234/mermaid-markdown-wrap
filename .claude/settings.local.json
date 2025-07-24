@@ -139,7 +139,8 @@
       "WebFetch(domain:help.openai.com)",
       "WebFetch(domain:support.anthropic.com)",
       "WebFetch(domain:docs.renovatebot.com)",
-      "WebFetch(domain:nodejs.org)"
+      "WebFetch(domain:nodejs.org)",
+      "WebFetch(domain:valibot.dev)"
     ],
     "deny": []
   },

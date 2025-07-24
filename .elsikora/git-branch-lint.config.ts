@@ -27,6 +27,9 @@ const config: IBranchLintConfig = {
     // GitFlow main branches (long-lived)
     "main",
     "develop", // GitFlow development branch
+
+    // Release branches (long-lived)
+    "release-please--branches--main--components--mermaid-markdown-wrap",
   ],
   rules: {
     "branch-pattern": ":type/:name",
