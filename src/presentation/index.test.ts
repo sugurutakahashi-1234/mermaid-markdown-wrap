@@ -1,30 +1,29 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { mkdir, readFile, rmdir, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawn } from "bun";
 
-const testDir = join(import.meta.dir, "../../test-cli-temp");
+let testDir: string;
 const cliPath = join(import.meta.dir, "index.ts");
 
 describe("CLI", () => {
   beforeEach(async () => {
+    // Create unique temp directory for each test
+    testDir = join(
+      tmpdir(),
+      `mermaid-wrap-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    );
     await mkdir(testDir, { recursive: true });
   });
 
   afterEach(async () => {
     // Clean up test directory
     try {
-      const glob = new Bun.Glob("**/*");
-      const files = await Array.fromAsync(
-        glob.scan({ cwd: testDir, onlyFiles: true }),
-      );
-      for (const file of files) {
-        try {
-          await unlink(join(testDir, file));
-        } catch {}
-      }
-      await rmdir(testDir);
-    } catch {}
+      await rm(testDir, { recursive: true, force: true });
+    } catch {
+      // Ignore cleanup errors
+    }
   });
 
   test("converts single file", async () => {
@@ -125,6 +124,58 @@ describe("CLI", () => {
     const config = JSON.parse(output);
     expect(config).toHaveProperty("extension");
     expect(config).toHaveProperty("keepSource");
+  });
+
+  test("loads config from YAML file", async () => {
+    // Create config file
+    const configPath = join(testDir, ".mermaid-markdown-wraprc.yaml");
+    await writeFile(configPath, `header: "YAML header"`);
+
+    // Create test file
+    const mmdPath = join(testDir, "test.mmd");
+    await writeFile(mmdPath, "graph TD\n  A --> B");
+
+    // Run CLI with config
+    const proc = spawn(["bun", cliPath, mmdPath], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    await proc.exited;
+    expect(proc.exitCode).toBe(0);
+
+    // Check output contains header from config
+    const outputPath = join(testDir, "test.md");
+    const content = await readFile(outputPath, "utf-8");
+    expect(content).toContain("YAML header");
+    expect(content).toContain("```mermaid");
+  });
+
+  test("CLI options override config file", async () => {
+    // Create config file
+    const configPath = join(testDir, ".mermaid-markdown-wraprc.yaml");
+    await writeFile(configPath, `header: "Config header"`);
+
+    // Create test file
+    const mmdPath = join(testDir, "test.mmd");
+    await writeFile(mmdPath, "graph TD\n  A --> B");
+
+    // Run CLI with options that override config
+    const proc = spawn(["bun", cliPath, mmdPath, "--header", "CLI header"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    await proc.exited;
+    expect(proc.exitCode).toBe(0);
+
+    // Check output uses CLI options
+    const outputPath = join(testDir, "test.md");
+    const content = await readFile(outputPath, "utf-8");
+    expect(content).toContain("CLI header");
+    expect(content).not.toContain("Config header");
   });
 
   test("handles no files found", async () => {
