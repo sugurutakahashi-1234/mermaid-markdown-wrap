@@ -56,7 +56,9 @@ flowchart LR
     src/presentation/command//executor.ts-->src/presentation/console//reporter.ts
     src/presentation/config//types.ts-->src/domain/cli//options.ts
     src/presentation/index.ts-->node//modules/commander/typings/index.d.ts
+    src/presentation/index.ts-->node//modules/valibot/dist/index.d.cts
     src/presentation/index.ts-->src/domain/cli//options.ts
+    src/presentation/index.ts-->src/infrastructure/config.ts
     src/presentation/index.ts-->src/infrastructure/package//info.ts
     src/presentation/index.ts-->src/presentation/command//executor.ts
 ```

@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
-import { parseCLIOptions } from "../domain/cli-options.js";
+import * as v from "valibot";
+import { ConfigOptionsSchema, parseCLIOptions } from "../domain/cli-options.js";
+import { loadConfig } from "../infrastructure/config.js";
 import { getPackageName, getVersion } from "../infrastructure/package-info.js";
 import { runCommand } from "./command-executor.js";
 
@@ -43,15 +45,75 @@ program
     "after",
     `
 Examples:
+  # Basic usage
   $ ${getPackageName()} diagram.mmd                  # Convert single file
   $ ${getPackageName()} "*.mmd"                      # Convert all .mmd files in current directory
   $ ${getPackageName()} "**/*.mmd"                   # Convert all .mmd files recursively
   $ ${getPackageName()} "src/**/*.mmd" -o dist/      # Convert with output directory
   $ ${getPackageName()} "*.mmd" --header "# Docs"    # Add header to all files
 
+  # Configuration
+  $ ${getPackageName()} --print-config               # Show current configuration
+  $ ${getPackageName()} -c myconfig.yaml "*.mmd"     # Use specific config file
+  $ ${getPackageName()} validate                     # Validate default config
+  $ ${getPackageName()} validate myconfig.json       # Validate specific config
+
+Config file formats: .json, .yaml, .yml, .js, .ts, .cjs, .mjs
+Config file names: .mermaid-markdown-wraprc, mermaid-markdown-wrap.config.*
+
 For more options and detailed documentation:
   https://www.npmjs.com/package/${getPackageName()}
 `,
   );
+
+// Add validate subcommand
+program
+  .command("validate [configFile]")
+  .description("Validate configuration file without performing any conversion")
+  .addHelpText(
+    "after",
+    `
+Examples:
+  $ ${getPackageName()} validate                     # Validate config in current directory
+  $ ${getPackageName()} validate config.json         # Validate specific JSON config
+  $ ${getPackageName()} validate config.yaml         # Validate specific YAML config
+  $ ${getPackageName()} validate config.ts           # Validate TypeScript config
+
+The validate command will:
+  - Load the configuration file (or search for default config)
+  - Check all field types and values
+  - Report any validation errors with details
+  - Exit with code 0 if valid, 1 if invalid
+`,
+  )
+  .action(async (configFile?: string) => {
+    try {
+      // Load configuration
+      const config = await loadConfig(configFile);
+
+      // Validate using Valibot schema
+      const result = v.safeParse(ConfigOptionsSchema, config);
+
+      if (result.success) {
+        console.log("✅ Config looks good!");
+        process.exit(0);
+      } else {
+        // Display validation errors
+        console.error("❌ Invalid config:");
+        for (const issue of result.issues) {
+          const path = issue.path?.map((p) => p.key).join(".") || "root";
+          console.error(`  - ${path}: ${issue.message}`);
+        }
+        process.exit(1);
+      }
+    } catch (error) {
+      // Handle file reading or other errors
+      console.error(
+        "❌ Error loading config:",
+        error instanceof Error ? error.message : String(error),
+      );
+      process.exit(1);
+    }
+  });
 
 program.parse();

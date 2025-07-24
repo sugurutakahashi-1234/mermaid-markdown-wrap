@@ -204,4 +204,81 @@ describe("CLI", () => {
     expect(proc.exitCode).toBe(0);
     expect(output).toContain("0.1.0");
   });
+
+  describe("validate subcommand", () => {
+    test("validates valid config file", async () => {
+      const configPath = join(testDir, "valid-config.yaml");
+      await writeFile(configPath, `header: "Test header"\nkeepSource: true`);
+
+      const proc = spawn(["bun", cliPath, "validate", configPath], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+      expect(output).toContain("✅ Config looks good!");
+    });
+
+    test("reports validation errors for invalid config", async () => {
+      const configPath = join(testDir, "invalid-config.json");
+      await writeFile(
+        configPath,
+        JSON.stringify({
+          extension: 123, // Should be string
+          keepSource: "yes", // Should be boolean
+        }),
+      );
+
+      const proc = spawn(["bun", cliPath, "validate", configPath], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const stderr = await new Response(proc.stderr).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(1);
+      expect(stderr).toContain("❌ Invalid config:");
+      expect(stderr).toContain("extension:");
+      expect(stderr).toContain("keepSource:");
+    });
+
+    test("validates config when no file is specified", async () => {
+      // Create default config file
+      const configPath = join(testDir, ".mermaid-markdown-wraprc.yaml");
+      await writeFile(configPath, `footer: "Default footer"`);
+
+      const proc = spawn(["bun", cliPath, "validate"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+      expect(output).toContain("✅ Config looks good!");
+    });
+
+    test("handles missing config file gracefully", async () => {
+      const proc = spawn(["bun", cliPath, "validate", "nonexistent.yaml"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      // Should pass validation when no config is found (empty config is valid)
+      expect(proc.exitCode).toBe(0);
+      expect(output).toContain("✅ Config looks good!");
+    });
+  });
 });

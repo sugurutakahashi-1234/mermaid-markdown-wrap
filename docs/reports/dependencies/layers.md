@@ -32,5 +32,6 @@ flowchart LR
     src/presentation-->src/domain
     src/presentation-->src/infrastructure
     src/presentation-->node//modules/commander/typings/index.d.ts
+    src/presentation-->node//modules/valibot/dist/index.d.cts
 ```
 
