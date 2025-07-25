@@ -20,7 +20,6 @@ inputs:
     description: "Output directory"
     required: false
 
-
   # Content modification
   # --header
   header:
@@ -68,7 +67,6 @@ runs:
 
         # 2) Options (add if they exist)
         [[ -n "${{ inputs.out-dir }}"     ]] && args+=(--out-dir "${{ inputs.out-dir }}")
-        [[ -n "${{ inputs.extension }}"   ]] && args+=(--extension "${{ inputs.extension }}")
         [[ -n "${{ inputs.header }}"      ]] && args+=(--header "${{ inputs.header }}")
         [[ -n "${{ inputs.footer }}"      ]] && args+=(--footer "${{ inputs.footer }}")
         [[ -n "${{ inputs.config }}"      ]] && args+=(--config "${{ inputs.config }}")

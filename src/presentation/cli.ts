@@ -220,7 +220,7 @@ Examples:
 
 The init command will guide you through creating a configuration file by asking about:
   - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
-  - Output directory and file extension
+  - Output directory
   - Header/footer text
   - Whether to keep source files
   - Whether to include generation command in output

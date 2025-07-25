@@ -14,7 +14,6 @@
  *
  * const config: Config = {
  *   outDir: 'docs',
- *   extension: '.md',
  *   header: '<!-- AUTO-GENERATED -->',
  *   footer: '<!-- END -->',
  *   keepSource: false,
