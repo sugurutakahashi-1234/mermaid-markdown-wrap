@@ -19,18 +19,6 @@ describe("generateCommandInfo", () => {
     expect(result).toBe('mermaid-markdown-wrap "*.mmd" --out-dir dist/');
   });
 
-  it("should include non-default extension", () => {
-    const options: CLIOptions = { extension: ".markdown" };
-    const result = generateCommandInfo("*.mmd", options);
-    expect(result).toBe('mermaid-markdown-wrap "*.mmd" --extension .markdown');
-  });
-
-  it("should not include default extension", () => {
-    const options: CLIOptions = { extension: ".md" };
-    const result = generateCommandInfo("*.mmd", options);
-    expect(result).toBe('mermaid-markdown-wrap "*.mmd"');
-  });
-
   it("should include header with quotes", () => {
     const options: CLIOptions = { header: "# Documentation" };
     const result = generateCommandInfo("*.mmd", options);

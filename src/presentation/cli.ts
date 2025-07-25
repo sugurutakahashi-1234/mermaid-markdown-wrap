@@ -28,7 +28,6 @@ program
     "-o, --out-dir <dir>",
     "output directory (default: same as input file)",
   )
-  .option("--extension <ext>", "output file extension", ".md")
   // Content modification
   .option("--header <text>", "header text to prepend")
   .option("--footer <text>", "footer text to append")

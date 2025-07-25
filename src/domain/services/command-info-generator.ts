@@ -32,10 +32,6 @@ export function generateCommandInfo(
     parts.push("--out-dir", cliOptions.outDir);
   }
 
-  if (cliOptions.extension && cliOptions.extension !== ".md") {
-    parts.push("--extension", cliOptions.extension);
-  }
-
   if (cliOptions.header) {
     parts.push("--header", `"${cliOptions.header}"`);
   }

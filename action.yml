@@ -20,10 +20,6 @@ inputs:
     description: "Output directory"
     required: false
 
-  # --extension
-  extension:
-    description: "Output file extension (default: .md)"
-    required: false
 
   # Content modification
   # --header

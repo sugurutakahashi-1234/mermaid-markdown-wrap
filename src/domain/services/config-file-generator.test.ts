@@ -9,7 +9,6 @@ import {
 describe("config-file-generator", () => {
   const testConfig: ConfigOptions = {
     outDir: "docs",
-    extension: ".md",
     header: "<!-- AUTO-GENERATED -->",
     footer: "<!-- END -->",
     keepSource: false,
@@ -84,7 +83,6 @@ describe("config-file-generator", () => {
     it("should generate YAML config", () => {
       const content = generateConfigFileContent(testConfig, "yaml");
       expect(content).toContain("outDir: docs");
-      expect(content).toContain("extension: .md");
       expect(content).toContain("keepSource: false");
       expect(content).toContain("showCommand: true");
     });

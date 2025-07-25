@@ -195,13 +195,11 @@ describe("CLI", () => {
 
     expect(proc.exitCode).toBe(0);
     expect(output).toContain("✅ Current configuration:");
-    expect(output).toContain('"extension"');
     expect(output).toContain('"keepSource"');
 
     // Extract JSON from output (skip the first line with the message)
     const jsonPart = output.split("\n").slice(1).join("\n");
     const config = JSON.parse(jsonPart);
-    expect(config).toHaveProperty("extension");
     expect(config).toHaveProperty("keepSource");
   });
 
@@ -307,8 +305,8 @@ describe("CLI", () => {
       await writeFile(
         configPath,
         JSON.stringify({
-          extension: 123, // Should be string
           keepSource: "yes", // Should be boolean
+          header: 123, // Should be string
         }),
       );
 
@@ -323,7 +321,7 @@ describe("CLI", () => {
 
       expect(proc.exitCode).toBe(1);
       expect(stderr).toContain("❌ Invalid config:");
-      expect(stderr).toContain("extension:");
+      expect(stderr).toContain("header:");
       expect(stderr).toContain("keepSource:");
     });
 

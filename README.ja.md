@@ -48,7 +48,6 @@ mermaid-markdown-wrap diagram.mmd --keep-source
 | オプション            | 説明                          | デフォルト         |
 | --------------------- | ----------------------------- | ------------------ |
 | `-o, --out-dir <dir>` | 出力ディレクトリ              | 入力ファイルと同じ |
-| `--extension <ext>`   | 出力ファイルの拡張子          | `.md`              |
 | `--header <text>`     | 出力の先頭に追加するテキスト  | -                  |
 | `--footer <text>`     | 出力の末尾に追加するテキスト  | -                  |
 | `--keep-source`       | ソースファイルを保持          | `false`            |
@@ -102,7 +101,6 @@ mermaid-markdown-wrap init
 このコマンドは、以下の項目について順番に質問しながら設定ファイルを作成します:
 - 設定ファイル形式（TypeScript、JavaScript、JSON、YAML など）
 - 出力ディレクトリ
-- ファイル拡張子
 - ヘッダー/フッターテキスト
 - ソースファイルを保持するか
 - 出力にコマンドを表示するか
@@ -125,7 +123,6 @@ mermaid-markdown-wrap init
 ```yaml
 # .mermaid-markdown-wraprc.yaml
 outDir: docs
-extension: .md
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 keepSource: false
@@ -155,7 +152,6 @@ showCommand: true
 > ```yaml
 > # yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
 > outDir: docs
-> extension: .md
 > ```
 
 ### JSON設定（スキーマ付き）
@@ -165,7 +161,6 @@ showCommand: true
 {
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
-  "extension": ".md",
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "keepSource": false,
@@ -183,7 +178,6 @@ showCommand: true
 /** @type {import('mermaid-markdown-wrap/config').Config} */
 module.exports = {
   outDir: 'docs',
-  extension: '.md',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   keepSource: false,
@@ -203,7 +197,6 @@ import type { Config } from 'mermaid-markdown-wrap/config';
 
 const config: Config = {
   outDir: 'docs',
-  extension: '.md',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   keepSource: false,

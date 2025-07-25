@@ -4,7 +4,6 @@ import { formatMermaidAsMarkdown } from "../../../src/domain/services/mermaid-fo
 
 describe("formatMermaidAsMarkdown", () => {
   const baseOptions: Options = {
-    extension: ".md",
     header: "",
     footer: "",
     keepSource: false,

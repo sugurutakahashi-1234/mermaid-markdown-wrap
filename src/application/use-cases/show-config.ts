@@ -14,10 +14,10 @@ export async function showConfigUseCase(
 
   // Merge options (without requiring glob)
   const mergedOptions: ConfigOptions = {
-    extension: config.extension ?? DEFAULT_OPTIONS.extension,
     header: config.header ?? DEFAULT_OPTIONS.header,
     footer: config.footer ?? DEFAULT_OPTIONS.footer,
     keepSource: config.keepSource ?? DEFAULT_OPTIONS.keepSource,
+    showCommand: config.showCommand ?? DEFAULT_OPTIONS.showCommand,
     ...(config.outDir ? { outDir: config.outDir } : {}),
   };
 

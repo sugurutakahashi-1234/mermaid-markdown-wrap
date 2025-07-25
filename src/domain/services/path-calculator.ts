@@ -15,14 +15,14 @@ import type { Options } from "../models/options.js";
  *
  * Business rule: Output files should:
  * - Use the same base name as input
- * - Use the extension from options
+ * - Always use .md extension
  * - Be placed in outDir if specified, otherwise same directory as input
  */
 export function getOutputPath(inputPath: string, options: Options): string {
   const dir = dirname(inputPath);
   const baseName = basename(inputPath, extname(inputPath));
   const outputDir = options.outDir || dir;
-  const outputFileName = `${baseName}${options.extension}`;
+  const outputFileName = `${baseName}.md`;
 
   return join(outputDir, outputFileName);
 }

@@ -5,7 +5,6 @@ import * as v from "valibot";
  */
 export const ConfigOptionsSchema = v.object({
   outDir: v.optional(v.string()),
-  extension: v.optional(v.string()),
   header: v.optional(v.string()),
   footer: v.optional(v.string()),
   keepSource: v.optional(v.boolean()),
@@ -31,7 +30,6 @@ export const CLIOptionsSchema = v.object({
  * Complete options schema with required fields
  */
 const OptionsSchema = v.object({
-  extension: v.string(),
   header: v.string(),
   footer: v.string(),
   keepSource: v.boolean(),
@@ -49,12 +47,8 @@ export type Options = v.InferOutput<typeof OptionsSchema>;
  * Default options
  */
 export const DEFAULT_OPTIONS: Required<
-  Pick<
-    Options,
-    "extension" | "header" | "footer" | "keepSource" | "showCommand"
-  >
+  Pick<Options, "header" | "footer" | "keepSource" | "showCommand">
 > = {
-  extension: ".md",
   header: "",
   footer: "",
   keepSource: false,

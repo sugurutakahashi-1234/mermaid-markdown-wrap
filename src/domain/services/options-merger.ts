@@ -20,10 +20,6 @@ export function mergeOptions(
 ): Options {
   return {
     // Required options with defaults
-    extension:
-      cliOptions.extension ??
-      configOptions.extension ??
-      DEFAULT_OPTIONS.extension,
     header: cliOptions.header ?? configOptions.header ?? DEFAULT_OPTIONS.header,
     footer: cliOptions.footer ?? configOptions.footer ?? DEFAULT_OPTIONS.footer,
     keepSource:

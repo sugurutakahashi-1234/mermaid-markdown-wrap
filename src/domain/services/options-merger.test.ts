@@ -4,19 +4,17 @@ import { mergeOptions } from "../../domain/services/options-merger.js";
 describe("mergeOptions", () => {
   test("CLI options take precedence over config options", () => {
     const result = mergeOptions(
-      { extension: ".cli", keepSource: true },
-      { extension: ".config", keepSource: false, header: "config header" },
+      { keepSource: true },
+      { keepSource: false, header: "config header" },
     );
 
-    expect(result.extension).toBe(".cli");
     expect(result.keepSource).toBe(true);
     expect(result.header).toBe("config header"); // from config since not in CLI
   });
 
   test("config options take precedence over defaults", () => {
-    const result = mergeOptions({}, { extension: ".config", footer: "custom" });
+    const result = mergeOptions({}, { footer: "custom" });
 
-    expect(result.extension).toBe(".config");
     expect(result.footer).toBe("custom");
     expect(result.header).toBe(""); // default
     expect(result.keepSource).toBe(false); // default
@@ -26,7 +24,6 @@ describe("mergeOptions", () => {
   test("uses defaults when no options provided", () => {
     const result = mergeOptions({}, {});
 
-    expect(result.extension).toBe(".md");
     expect(result.header).toBe("");
     expect(result.footer).toBe("");
     expect(result.keepSource).toBe(false);

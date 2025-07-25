@@ -65,18 +65,6 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
     process.exit(0);
   }
 
-  // Get file extension
-  const extension = await text({
-    message: "File extension for output",
-    placeholder: DEFAULT_OPTIONS.extension,
-    initialValue: DEFAULT_OPTIONS.extension,
-  });
-
-  if (isCancel(extension)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
   // Get header text
   const header = await text({
     message: "Header text to prepend",
@@ -129,9 +117,6 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
   // Only add non-default values to keep config minimal
   if (outDir && String(outDir).trim()) {
     config.outDir = String(outDir).trim();
-  }
-  if (extension !== DEFAULT_OPTIONS.extension) {
-    config.extension = String(extension);
   }
   if (header !== DEFAULT_OPTIONS.header) {
     config.header = String(header);

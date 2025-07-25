@@ -48,7 +48,6 @@ mermaid-markdown-wrap diagram.mmd --keep-source
 | Option                | Description                   | Default            |
 | --------------------- | ----------------------------- | ------------------ |
 | `-o, --out-dir <dir>` | Output directory              | Same as input      |
-| `--extension <ext>`   | Output file extension         | `.md`              |
 | `--header <text>`     | Text to prepend to output     | -                  |
 | `--footer <text>`     | Text to append to output      | -                  |
 | `--keep-source`       | Keep source files             | `false`            |
@@ -102,7 +101,6 @@ mermaid-markdown-wrap init
 This command will guide you through creating a configuration file by asking about:
 - Configuration file format (TypeScript, JavaScript, JSON, YAML, etc.)
 - Output directory
-- File extension
 - Header/footer text
 - Whether to keep source files
 - Whether to show command in output
@@ -125,7 +123,6 @@ You can also specify a config file using the `-c` option.
 ```yaml
 # .mermaid-markdown-wraprc.yaml
 outDir: docs
-extension: .md
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 keepSource: false
@@ -155,7 +152,6 @@ showCommand: true
 > ```yaml
 > # yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
 > outDir: docs
-> extension: .md
 > ```
 
 ### JSON Configuration (with Schema)
@@ -165,7 +161,6 @@ showCommand: true
 {
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
-  "extension": ".md",
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "keepSource": false,
@@ -183,7 +178,6 @@ The `$schema` property enables IntelliSense, validation, and hover documentation
 /** @type {import('mermaid-markdown-wrap/config').Config} */
 module.exports = {
   outDir: 'docs',
-  extension: '.md',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   keepSource: false,
@@ -203,7 +197,6 @@ import type { Config } from 'mermaid-markdown-wrap/config';
 
 const config: Config = {
   outDir: 'docs',
-  extension: '.md',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   keepSource: false,

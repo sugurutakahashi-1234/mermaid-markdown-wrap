@@ -8,9 +8,6 @@
     "outDir": {
       "type": "string"
     },
-    "extension": {
-      "type": "string"
-    },
     "header": {
       "type": "string"
     },
