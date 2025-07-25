@@ -1,9 +1,0 @@
-flowchart LR
-    Start([Start Process]) --> Input[/Input Data/]
-    Input --> Process{Process Data?}
-    Process -->|Yes| Transform[Transform]
-    Process -->|No| Error[Error Handler]
-    Transform --> Output[/Output Result/]
-    Error --> Log[Log Error]
-    Log --> End([End])
-    Output --> End
