@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { spawn } from "bun";
 
 let testDir: string;
-const cliPath = join(import.meta.dir, "..", "index.ts");
+const cliPath = join(import.meta.dir, "index.ts");
 
 describe("CLI", () => {
   beforeEach(async () => {
