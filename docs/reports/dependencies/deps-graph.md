@@ -17,6 +17,7 @@ flowchart LR
             subgraph src/domain/services["/services"]
                 src/domain/services/cli//options//parser.ts["cli-options-parser.ts"]
                 src/domain/services/options//merger.ts["options-merger.ts"]
+                src/domain/services/command//info//generator.ts["command-info-generator.ts"]
                 src/domain/services/mermaid//formatter.ts["mermaid-formatter.ts"]
                 src/domain/services/path//calculator.ts["path-calculator.ts"]
             end
@@ -58,15 +59,20 @@ flowchart LR
     src/domain/services/cli//options//parser.ts-->src/domain/models/errors.ts
     src/domain/services/cli//options//parser.ts-->src/domain/models/options.ts
     src/domain/services/options//merger.ts-->src/domain/models/options.ts
+    src/domain/constants/package//info.ts-->package.json
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
+    src/infrastructure/adapters/cosmiconfig.adapter.ts-->src/domain/constants/package//info.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->src/domain/models/options.ts
+    src/domain/services/command//info//generator.ts-->src/domain/constants/package//info.ts
+    src/domain/services/command//info//generator.ts-->src/domain/models/options.ts
     src/domain/services/mermaid//formatter.ts-->src/domain/models/options.ts
     src/domain/services/path//calculator.ts-->src/domain/models/options.ts
     src/infrastructure/adapters/glob//search.adapter.ts-->node//modules/globby/index.d.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/models/errors.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/models/options.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/models/result.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/services/command//info//generator.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/services/mermaid//formatter.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/services/path//calculator.ts
     src/infrastructure/services/file//batch//processor.ts-->src/infrastructure/adapters/file//system.adapter.ts
@@ -82,7 +88,6 @@ flowchart LR
     src/application/use//cases/validate//config.ts-->node//modules/valibot/dist/index.d.cts
     src/application/use//cases/validate//config.ts-->src/domain/models/options.ts
     src/application/use//cases/validate//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
-    src/domain/constants/package//info.ts-->package.json
     src/presentation/cli.ts-->node//modules/commander/typings/index.d.ts
     src/presentation/cli.ts-->src/application/use//cases/convert//files.ts
     src/presentation/cli.ts-->src/application/use//cases/show//config.ts

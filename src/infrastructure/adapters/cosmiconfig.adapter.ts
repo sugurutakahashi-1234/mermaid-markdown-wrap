@@ -7,6 +7,7 @@
 
 import { cosmiconfig } from "cosmiconfig";
 import { TypeScriptLoader } from "cosmiconfig-typescript-loader";
+import { getPackageName } from "../../domain/constants/package-info.js";
 import type { ConfigOptions } from "../../domain/models/options.js";
 
 /**
@@ -21,7 +22,7 @@ import type { ConfigOptions } from "../../domain/models/options.js";
 export async function loadConfigurationFile(
   configPath?: string,
 ): Promise<ConfigOptions> {
-  const explorer = cosmiconfig("mermaid-markdown-wrap", {
+  const explorer = cosmiconfig(getPackageName(), {
     loaders: {
       ".ts": TypeScriptLoader(),
     },

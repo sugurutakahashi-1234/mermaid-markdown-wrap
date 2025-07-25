@@ -30,6 +30,10 @@ export function mergeOptions(
       cliOptions.keepSource ??
       configOptions.keepSource ??
       DEFAULT_OPTIONS.keepSource,
+    showCommand:
+      cliOptions.showCommand ??
+      configOptions.showCommand ??
+      DEFAULT_OPTIONS.showCommand,
 
     // Optional options
     ...((cliOptions.outDir ?? configOptions.outDir)

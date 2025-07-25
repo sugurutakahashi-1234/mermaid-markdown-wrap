@@ -9,6 +9,7 @@ export const ConfigOptionsSchema = v.object({
   header: v.optional(v.string()),
   footer: v.optional(v.string()),
   keepSource: v.optional(v.boolean()),
+  showCommand: v.optional(v.boolean()),
 });
 
 /**
@@ -35,6 +36,7 @@ const OptionsSchema = v.object({
   header: v.string(),
   footer: v.string(),
   keepSource: v.boolean(),
+  showCommand: v.boolean(),
   outDir: v.optional(v.string()),
   glob: v.optional(v.string()),
   config: v.optional(v.string()),
@@ -49,10 +51,14 @@ export type Options = v.InferOutput<typeof OptionsSchema>;
  * Default options
  */
 export const DEFAULT_OPTIONS: Required<
-  Pick<Options, "extension" | "header" | "footer" | "keepSource">
+  Pick<
+    Options,
+    "extension" | "header" | "footer" | "keepSource" | "showCommand"
+  >
 > = {
   extension: ".md",
   header: "",
   footer: "",
   keepSource: false,
+  showCommand: true,
 } as const;

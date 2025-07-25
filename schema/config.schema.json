@@ -19,6 +19,9 @@
     },
     "keepSource": {
       "type": "boolean"
+    },
+    "showCommand": {
+      "type": "boolean"
     }
   },
   "required": []

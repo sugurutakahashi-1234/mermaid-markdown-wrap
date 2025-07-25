@@ -9,6 +9,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -23,6 +24,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -37,6 +39,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -51,6 +54,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -65,6 +69,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -79,6 +84,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
       outDir: "/output/markdown",
     };
 
@@ -94,6 +100,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -108,6 +115,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
       outDir: "output",
     };
 
@@ -123,6 +131,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
       outDir: "/project/docs",
     };
 
@@ -138,6 +147,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -152,6 +162,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);
@@ -167,6 +178,7 @@ describe("getOutputPath", () => {
       keepSource: false,
       header: "",
       footer: "",
+      showCommand: true,
     };
 
     const result = getOutputPath(inputPath, options);

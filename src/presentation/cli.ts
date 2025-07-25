@@ -41,6 +41,7 @@ program
     "keep source .mmd/.mermaid files after conversion",
     false,
   )
+  .option("--no-show-command", "disable showing the command used in the output")
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
       // Execute the file conversion use case (validation happens inside)
@@ -102,11 +103,11 @@ Examples:
   $ ${getPackageName()} config-validate custom.json   # Validate specific file
 
 Config file search order (auto-discovery):
-  1. .mermaid-markdown-wraprc (no extension)
-  2. .mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}
-  3. mermaid-markdown-wrap.config.{js,ts,mjs,cjs}
-  4. .config/mermaid-markdown-wraprc.* (in .config subdirectory)
-  5. "mermaid-markdown-wrap" property in package.json
+  1. .${getPackageName()}rc (no extension)
+  2. .${getPackageName()}rc.{json,yaml,yml,js,ts,mjs,cjs}
+  3. ${getPackageName()}.config.{js,ts,mjs,cjs}
+  4. .config/${getPackageName()}rc.* (in .config subdirectory)
+  5. "${getPackageName()}" property in package.json
 
 Use -c option to specify any custom config file path.
 Note: CLI arguments take precedence over config file settings.

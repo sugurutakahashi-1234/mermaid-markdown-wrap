@@ -20,6 +20,7 @@ describe("mergeOptions", () => {
     expect(result.footer).toBe("custom");
     expect(result.header).toBe(""); // default
     expect(result.keepSource).toBe(false); // default
+    expect(result.showCommand).toBe(true); // default
   });
 
   test("uses defaults when no options provided", () => {
@@ -29,6 +30,7 @@ describe("mergeOptions", () => {
     expect(result.header).toBe("");
     expect(result.footer).toBe("");
     expect(result.keepSource).toBe(false);
+    expect(result.showCommand).toBe(true);
   });
 
   test("handles optional fields correctly", () => {

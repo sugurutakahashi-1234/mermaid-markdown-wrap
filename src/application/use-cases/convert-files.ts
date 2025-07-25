@@ -38,7 +38,7 @@ export async function convertFilesUseCase(
   const pattern = cliOptions.glob || globPattern;
 
   // Delegate the actual conversion to infrastructure service
-  const results = await processFiles(pattern, options);
+  const results = await processFiles(pattern, options, globPattern, cliOptions);
 
   return { results, config };
 }
