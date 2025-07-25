@@ -6,6 +6,7 @@
  */
 
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 
 /**
  * Read file content as UTF-8
@@ -37,3 +38,14 @@ export async function deleteFile(filePath: string): Promise<void> {
 export async function createDirectory(path: string): Promise<void> {
   await mkdir(path, { recursive: true });
 }
+
+/**
+ * File system adapter as an object (for easier imports)
+ */
+export const fileSystemAdapter = {
+  readFile: readTextFile,
+  writeFile: writeTextFile,
+  deleteFile,
+  createDirectory,
+  resolvePath: resolve,
+};

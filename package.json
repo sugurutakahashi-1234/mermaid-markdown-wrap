@@ -40,12 +40,15 @@
   "files": [
     "dist/",
     "schema/",
+    "scripts/postinstall.js",
     "action.yml"
   ],
   "packageManager": "bun@1.2.19",
   "scripts": {
+    "postinstall": "node scripts/postinstall.js || true",
     "prepare": "husky",
     "help": "bun src/index.ts --help",
+    "help:init": "bun src/index.ts init --help",
     "help:config-show": "bun src/index.ts config-show --help",
     "help:config-validate": "bun src/index.ts config-validate --help",
     "typecheck": "tsc --noEmit -p tsconfig.json",
@@ -84,11 +87,13 @@
     "deps:update": "bunx ncu -u --deep && bun install"
   },
   "dependencies": {
+    "@clack/prompts": "^0.8.2",
     "commander": "^14.0.0",
     "cosmiconfig": "^9.0.0",
     "cosmiconfig-typescript-loader": "^6.1.0",
     "globby": "^14.1.0",
-    "valibot": "^1.1.0"
+    "valibot": "^1.1.0",
+    "yaml": "^2.8.0"
   },
   "peerDependencies": {
     "typescript": ">=5"

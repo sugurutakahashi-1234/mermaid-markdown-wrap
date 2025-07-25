@@ -10,6 +10,9 @@ A minimal CLI tool to wrap `.mmd` and `.mermaid` files (Mermaid diagrams) in Mar
 # Install globally
 npm install -g mermaid-markdown-wrap
 
+# Create a configuration file (optional)
+mermaid-markdown-wrap init
+
 # Convert a Mermaid file to Markdown
 mermaid-markdown-wrap diagram.mmd
 ```
@@ -87,6 +90,22 @@ mermaid-markdown-wrap config-validate
 # Validate specific config file
 mermaid-markdown-wrap config-validate myconfig.json
 ```
+
+### Init
+
+Create a configuration file interactively:
+
+```bash
+mermaid-markdown-wrap init
+```
+
+This command will guide you through creating a configuration file by asking about:
+- Configuration file format (TypeScript, JavaScript, JSON, YAML, etc.)
+- Output directory
+- File extension
+- Header/footer text
+- Whether to keep source files
+- Whether to show command in output
 
 ## Configuration
 

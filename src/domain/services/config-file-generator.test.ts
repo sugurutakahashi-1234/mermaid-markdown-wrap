@@ -1,0 +1,104 @@
+import { describe, expect, it } from "bun:test";
+import type { ConfigOptions } from "../models/options.js";
+import {
+  CONFIG_FORMATS,
+  generateConfigFileContent,
+  generateConfigFileName,
+} from "./config-file-generator.js";
+
+describe("config-file-generator", () => {
+  const testConfig: ConfigOptions = {
+    outDir: "docs",
+    extension: ".md",
+    header: "<!-- AUTO-GENERATED -->",
+    footer: "<!-- END -->",
+    keepSource: false,
+    showCommand: true,
+  };
+
+  describe("generateConfigFileName", () => {
+    it("should generate correct file names for each format", () => {
+      expect(generateConfigFileName("ts")).toBe(
+        "mermaid-markdown-wrap.config.ts",
+      );
+      expect(generateConfigFileName("js")).toBe(
+        "mermaid-markdown-wrap.config.js",
+      );
+      expect(generateConfigFileName("cjs")).toBe(
+        "mermaid-markdown-wrap.config.cjs",
+      );
+      expect(generateConfigFileName("mjs")).toBe(
+        "mermaid-markdown-wrap.config.mjs",
+      );
+      expect(generateConfigFileName("json")).toBe(
+        ".mermaid-markdown-wraprc.json",
+      );
+      expect(generateConfigFileName("yaml")).toBe(
+        ".mermaid-markdown-wraprc.yaml",
+      );
+    });
+  });
+
+  describe("generateConfigFileContent", () => {
+    it("should generate TypeScript config with proper type imports", () => {
+      const content = generateConfigFileContent(testConfig, "ts");
+      expect(content).toContain(
+        "import type { Config } from 'mermaid-markdown-wrap/config';",
+      );
+      expect(content).toContain("const config: Config =");
+      expect(content).toContain("export default config;");
+      expect(content).toContain('"outDir": "docs"');
+    });
+
+    it("should generate JavaScript config with JSDoc comments", () => {
+      const content = generateConfigFileContent(testConfig, "js");
+      expect(content).toContain(
+        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+      );
+      expect(content).toContain("module.exports =");
+      expect(content).toContain('"outDir": "docs"');
+    });
+
+    it("should generate CommonJS config", () => {
+      const content = generateConfigFileContent(testConfig, "cjs");
+      expect(content).toContain(
+        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+      );
+      expect(content).toContain("module.exports =");
+    });
+
+    it("should generate ESM config", () => {
+      const content = generateConfigFileContent(testConfig, "mjs");
+      expect(content).toContain(
+        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+      );
+      expect(content).toContain("export default");
+    });
+
+    it("should generate JSON config", () => {
+      const content = generateConfigFileContent(testConfig, "json");
+      const parsed = JSON.parse(content);
+      expect(parsed).toEqual(testConfig);
+    });
+
+    it("should generate YAML config", () => {
+      const content = generateConfigFileContent(testConfig, "yaml");
+      expect(content).toContain("outDir: docs");
+      expect(content).toContain("extension: .md");
+      expect(content).toContain("keepSource: false");
+      expect(content).toContain("showCommand: true");
+    });
+  });
+
+  describe("CONFIG_FORMATS", () => {
+    it("should have all supported formats", () => {
+      const formats = CONFIG_FORMATS.map((f) => f.format);
+      expect(formats).toEqual(["ts", "js", "cjs", "mjs", "json", "yaml"]);
+    });
+
+    it("should have correct labels", () => {
+      const tsFormat = CONFIG_FORMATS.find((f) => f.format === "ts");
+      expect(tsFormat?.label).toBe("TypeScript (.ts)");
+    });
+  });
+});

@@ -10,6 +10,9 @@
 # グローバルインストール
 npm install -g mermaid-markdown-wrap
 
+# 設定ファイルを作成（オプション）
+mermaid-markdown-wrap init
+
 # MermaidファイルをMarkdownに変換
 mermaid-markdown-wrap diagram.mmd
 ```
@@ -87,6 +90,22 @@ mermaid-markdown-wrap config-validate
 # 特定の設定ファイルを検証
 mermaid-markdown-wrap config-validate myconfig.json
 ```
+
+### Init
+
+設定ファイルを対話的に作成:
+
+```bash
+mermaid-markdown-wrap init
+```
+
+このコマンドは、以下の項目について順番に質問しながら設定ファイルを作成します:
+- 設定ファイル形式（TypeScript、JavaScript、JSON、YAML など）
+- 出力ディレクトリ
+- ファイル拡張子
+- ヘッダー/フッターテキスト
+- ソースファイルを保持するか
+- 出力にコマンドを表示するか
 
 ## Configuration
 

@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import { convertFilesUseCase } from "../application/use-cases/convert-files.js";
+import { initConfigUseCase } from "../application/use-cases/init-config.js";
 import { showConfigUseCase } from "../application/use-cases/show-config.js";
 import { validateConfigUseCase } from "../application/use-cases/validate-config.js";
 import {
@@ -97,6 +98,7 @@ Examples:
   $ ${getPackageName()} "*.mermaid" --header "# Docs" # Add header to all files
 
   # Configuration
+  $ ${getPackageName()} init                         # Create a configuration file interactively
   $ ${getPackageName()} -c myconfig.yaml "*.mermaid" # Use specific config file
   $ ${getPackageName()} config-show                  # Show current configuration
   $ ${getPackageName()} config-show custom.yaml       # Show config from specific file
@@ -201,6 +203,36 @@ The config-validate command will:
       // Handle file reading or other errors
       console.error(
         "❌ Error loading config:",
+        error instanceof Error ? error.message : String(error),
+      );
+      process.exit(1);
+    }
+  });
+
+// Add init subcommand
+program
+  .command("init")
+  .description("Interactive wizard to create a configuration file")
+  .addHelpText(
+    "after",
+    `
+Examples:
+  $ ${getPackageName()} init                              # Start interactive configuration
+
+The init command will guide you through creating a configuration file by asking about:
+  - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
+  - Output directory and file extension
+  - Header/footer text
+  - Whether to keep source files
+  - Whether to include generation command in output
+`,
+  )
+  .action(async () => {
+    try {
+      await initConfigUseCase();
+    } catch (error) {
+      console.error(
+        "❌ Error during init:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
