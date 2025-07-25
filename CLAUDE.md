@@ -76,14 +76,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **ブランチ操作制限**: ブランチの作成・切り替え・削除もユーザーの明示的な指示が必要
 - **自動コミットの防止**: 変更を加えた後も、ユーザーの指示がない限りコミットしない
 
-### 作業完了時の通知音
-- ユーザーへの報告時は最後に音で通知
-- 以下のコマンドを実行して通知する：
-
-```shell
-play /System/Library/Sounds/Frog.aiff vol 0.5
-```
-
 ## プロジェクト固有の設定
 
 ### CIスクリプトの実行
