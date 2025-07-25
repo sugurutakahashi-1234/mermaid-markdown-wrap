@@ -1,14 +1,10 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
-import * as v from "valibot";
-import {
-  ConfigOptionsSchema,
-  DEFAULT_OPTIONS,
-  parseCLIOptions,
-} from "../domain/cli-options.js";
-import { loadConfig } from "../infrastructure/config.js";
-import { getPackageName, getVersion } from "../infrastructure/package-info.js";
+import { showConfigUseCase } from "../application/use-cases/show-config.js";
+import { validateConfigUseCase } from "../application/use-cases/validate-config.js";
+import { parseCLIOptions } from "../domain/cli-options.js";
+import { getPackageName, getVersion } from "../domain/package-info.js";
 import { runCommand } from "./cli-adapter.js";
 
 const program = new Command();
@@ -115,17 +111,8 @@ The config-show command will:
   )
   .action(async (configFile?: string) => {
     try {
-      // Load configuration
-      const config = await loadConfig(configFile);
-
-      // Merge options (without requiring glob)
-      const mergedOptions = {
-        extension: config.extension ?? DEFAULT_OPTIONS.extension,
-        header: config.header ?? DEFAULT_OPTIONS.header,
-        footer: config.footer ?? DEFAULT_OPTIONS.footer,
-        keepSource: config.keepSource ?? DEFAULT_OPTIONS.keepSource,
-        ...(config.outDir ? { outDir: config.outDir } : {}),
-      };
+      // Use the show config use case
+      const mergedOptions = await showConfigUseCase(configFile);
 
       // Print merged configuration
       console.log("✅ Current configuration:");
@@ -163,11 +150,8 @@ The config-validate command will:
   )
   .action(async (configFile?: string) => {
     try {
-      // Load configuration
-      const config = await loadConfig(configFile);
-
-      // Validate using Valibot schema
-      const result = v.safeParse(ConfigOptionsSchema, config);
+      // Use the validate config use case
+      const result = await validateConfigUseCase(configFile);
 
       if (result.success) {
         console.log("✅ Config looks good!");
@@ -175,9 +159,8 @@ The config-validate command will:
       } else {
         // Display validation errors
         console.error("❌ Invalid config:");
-        for (const issue of result.issues) {
-          const path = issue.path?.map((p) => p.key).join(".") || "root";
-          console.error(`  - ${path}: ${issue.message}`);
+        for (const error of result.errors || []) {
+          console.error(`  - ${error.path}: ${error.message}`);
         }
         process.exit(1);
       }

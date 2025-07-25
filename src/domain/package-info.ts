@@ -1,3 +1,10 @@
+/**
+ * NPM package metadata constants
+ *
+ * This module provides access to basic package information from package.json.
+ * These are treated as application constants/metadata in the domain layer
+ * following NPM conventions.
+ */
 import packageJson from "../../package.json" with { type: "json" };
 
 /**

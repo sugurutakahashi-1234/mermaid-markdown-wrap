@@ -28,15 +28,14 @@ flowchart LR
     src/infrastructure-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
     src/infrastructure-->src/domain
-    src/infrastructure-->package.json
-    src/infrastructure-->node//modules/globby/index.d.ts
     src/application-->src/domain
     src/application-->src/infrastructure
+    src/application-->node//modules/valibot/dist/index.d.cts
+    src/domain-->package.json
+    src/infrastructure-->node//modules/globby/index.d.ts
     src/presentation-->src/application
     src/presentation-->src/domain
     src/presentation-->node//modules/commander/typings/index.d.ts
-    src/presentation-->node//modules/valibot/dist/index.d.cts
-    src/presentation-->src/infrastructure
     src/index.ts-->src/presentation
     src/types/config.ts-->src/domain
 ```

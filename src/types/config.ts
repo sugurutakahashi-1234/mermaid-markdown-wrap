@@ -1,6 +1,10 @@
 /**
  * Configuration file type definitions for mermaid-markdown-wrap
  *
+ * IMPORTANT: This file is publicly exported via package.json "exports" field
+ * as "mermaid-markdown-wrap/config" and MUST remain in this location.
+ * Moving this file would be a breaking change for TypeScript users.
+ *
  * You can use this type definition in your TypeScript configuration file:
  *
  * @example
