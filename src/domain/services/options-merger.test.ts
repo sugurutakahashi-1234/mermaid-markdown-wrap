@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mergeOptions } from "./config.js";
+import { mergeOptions } from "../../domain/services/options-merger.js";
 
 describe("mergeOptions", () => {
   test("CLI options take precedence over config options", () => {

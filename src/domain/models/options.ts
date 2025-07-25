@@ -1,5 +1,4 @@
 import * as v from "valibot";
-import { InvalidOptionsError } from "./errors.js";
 
 /**
  * Base schema for configuration options (from config file)
@@ -23,7 +22,7 @@ const CLISpecificOptionsSchema = v.object({
 /**
  * Combined CLI options schema (includes config options)
  */
-const CLIOptionsSchema = v.object({
+export const CLIOptionsSchema = v.object({
   ...ConfigOptionsSchema.entries,
   ...CLISpecificOptionsSchema.entries,
 });
@@ -57,16 +56,3 @@ export const DEFAULT_OPTIONS: Required<
   footer: "",
   keepSource: false,
 } as const;
-
-/**
- * Parse and validate CLI options
- */
-export function parseCLIOptions(options: unknown): CLIOptions {
-  const result = v.safeParse(CLIOptionsSchema, options);
-  if (!result.success) {
-    throw new InvalidOptionsError(
-      result.issues[0]?.message || "Unknown validation error",
-    );
-  }
-  return result.output;
-}

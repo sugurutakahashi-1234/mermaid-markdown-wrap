@@ -25,4 +25,4 @@
  *
  * @public
  */
-export type { ConfigOptions as Config } from "../domain/cli-options.js";
+export type { ConfigOptions as Config } from "../domain/models/options.js";

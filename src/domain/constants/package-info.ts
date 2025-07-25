@@ -5,7 +5,7 @@
  * These are treated as application constants/metadata in the domain layer
  * following NPM conventions.
  */
-import packageJson from "../../package.json" with { type: "json" };
+import packageJson from "../../../package.json" with { type: "json" };
 
 /**
  * Get the version of the package

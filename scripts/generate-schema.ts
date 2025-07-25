@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toJsonSchema } from "@valibot/to-json-schema";
-import { ConfigOptionsSchema } from "../src/domain/cli-options.js";
+import { ConfigOptionsSchema } from "../src/domain/models/options.js";
 
 // Get the project root directory
 const __filename = fileURLToPath(import.meta.url);

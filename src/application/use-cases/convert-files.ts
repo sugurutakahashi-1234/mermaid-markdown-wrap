@@ -1,88 +1,44 @@
-import type {
-  CLIOptions,
-  ConfigOptions,
-  Options,
-} from "../../domain/cli-options.js";
-import { NoFilesFoundError } from "../../domain/errors.js";
-import { loadConfig, mergeOptions } from "../../infrastructure/config.js";
-import {
-  createDirectory,
-  findFiles,
-} from "../../infrastructure/file-system.js";
-import { convertFile } from "../mermaid-file-processor.js";
-import type { ProcessResult } from "../process-result-types.js";
-
-/**
- * Process all files matching the glob pattern
- */
-async function processFiles(
-  globPattern: string,
-  options: Options,
-): Promise<ProcessResult[]> {
-  // Find files
-  const files = await findFiles(globPattern);
-
-  if (files.length === 0) {
-    throw new NoFilesFoundError(globPattern);
-  }
-
-  // Create output directory if specified
-  if (options.outDir) {
-    await createDirectory(options.outDir);
-  }
-
-  // Process files in parallel
-  const results = await Promise.allSettled(
-    files.map(async (file): Promise<ProcessResult> => {
-      try {
-        await convertFile(file, options);
-        return { file, success: true };
-      } catch (error) {
-        return {
-          file,
-          success: false,
-          error: error instanceof Error ? error : new Error(String(error)),
-        };
-      }
-    }),
-  );
-
-  // Transform Promise.allSettled results to ProcessResult[]
-  return results.map((result, index) => {
-    if (result.status === "fulfilled") {
-      return result.value;
-    } else {
-      return {
-        file: files[index] || "unknown",
-        success: false,
-        error:
-          result.reason instanceof Error
-            ? result.reason
-            : new Error(String(result.reason)),
-      };
-    }
-  });
-}
-
 /**
  * Convert files use case
- * Pure business logic without side effects
+ *
+ * This is a simplified use case that orchestrates the file conversion process.
+ * It delegates the actual work to the infrastructure layer while maintaining
+ * the application flow.
+ */
+
+import type { ConfigOptions } from "../../domain/models/options.js";
+import type { FileConversionResult } from "../../domain/models/result.js";
+import { mergeOptions } from "../../domain/services/options-merger.js";
+import { parseCLIOptions } from "../../domain/services/validation.service.js";
+import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
+import { batchProcessor } from "../../infrastructure/services/batch-processor.service.js";
+
+/**
+ * Convert Mermaid files to Markdown format
+ *
+ * This use case:
+ * 1. Validates CLI options
+ * 2. Loads configuration
+ * 3. Merges options
+ * 4. Delegates to the file converter service
  */
 export async function convertFilesUseCase(
   globPattern: string,
-  cliOptions: CLIOptions,
-): Promise<{ results: ProcessResult[]; config: ConfigOptions }> {
-  // Load configuration
-  const config = await loadConfig(cliOptions.config);
+  rawCliOptions: unknown,
+): Promise<{ results: FileConversionResult[]; config: ConfigOptions }> {
+  // Validate CLI options within the use case
+  const cliOptions = parseCLIOptions(rawCliOptions);
+  // Load configuration from file
+  const config = await loadConfigurationFile(cliOptions.config);
 
-  // Merge options
+  // Merge CLI options with config file options
   const options = mergeOptions(cliOptions, config);
 
-  // Use explicit glob pattern if provided
+  // Use explicit glob pattern if provided via CLI
   const pattern = cliOptions.glob || globPattern;
 
-  // Process files
-  const results = await processFiles(pattern, options);
+  // Delegate the actual conversion to infrastructure service
+  const results = await batchProcessor.convertFiles(pattern, options);
 
   return { results, config };
 }

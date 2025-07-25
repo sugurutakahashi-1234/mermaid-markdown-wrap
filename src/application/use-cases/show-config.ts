@@ -1,6 +1,6 @@
-import type { ConfigOptions } from "../../domain/cli-options.js";
-import { DEFAULT_OPTIONS } from "../../domain/cli-options.js";
-import { loadConfig } from "../../infrastructure/config.js";
+import type { ConfigOptions } from "../../domain/models/options.js";
+import { DEFAULT_OPTIONS } from "../../domain/models/options.js";
+import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
 
 /**
  * Show configuration use case
@@ -10,7 +10,7 @@ export async function showConfigUseCase(
   configFile?: string,
 ): Promise<ConfigOptions> {
   // Load configuration
-  const config = await loadConfig(configFile);
+  const config = await loadConfigurationFile(configFile);
 
   // Merge options (without requiring glob)
   const mergedOptions: ConfigOptions = {

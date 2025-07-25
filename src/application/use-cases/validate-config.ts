@@ -1,7 +1,7 @@
 import * as v from "valibot";
-import type { ConfigOptions } from "../../domain/cli-options.js";
-import { ConfigOptionsSchema } from "../../domain/cli-options.js";
-import { loadConfig } from "../../infrastructure/config.js";
+import type { ConfigOptions } from "../../domain/models/options.js";
+import { ConfigOptionsSchema } from "../../domain/models/options.js";
+import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
 
 /**
  * Validation result for configuration
@@ -20,7 +20,7 @@ export async function validateConfigUseCase(
   configFile?: string,
 ): Promise<ConfigValidationResult> {
   // Load configuration
-  const config = await loadConfig(configFile);
+  const config = await loadConfigurationFile(configFile);
 
   // Validate using Valibot schema
   const result = v.safeParse(ConfigOptionsSchema, config);

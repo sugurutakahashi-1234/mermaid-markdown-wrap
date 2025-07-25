@@ -1,11 +1,15 @@
 #!/usr/bin/env bun
 
 import { Command } from "commander";
+import { convertFilesUseCase } from "../application/use-cases/convert-files.js";
 import { showConfigUseCase } from "../application/use-cases/show-config.js";
 import { validateConfigUseCase } from "../application/use-cases/validate-config.js";
-import { parseCLIOptions } from "../domain/cli-options.js";
-import { getPackageName, getVersion } from "../domain/package-info.js";
-import { runCommand } from "./cli-adapter.js";
+import {
+  getPackageName,
+  getVersion,
+} from "../domain/constants/package-info.js";
+import { NoFilesFoundError } from "../domain/models/errors.js";
+import { hasFailures } from "../domain/services/result-checker.js";
 
 const program = new Command();
 
@@ -40,13 +44,40 @@ program
   )
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
-      // Parse and validate CLI options
-      const validatedOptions = parseCLIOptions(cmdOptions);
+      // Execute the file conversion use case (validation happens inside)
+      const { results } = await convertFilesUseCase(globArg, cmdOptions);
 
-      // Run command
-      await runCommand(globArg, validatedOptions);
+      // Print results
+      const failureCount = results.filter((r) => !r.success).length;
+
+      console.log(`Converting ${results.length} file(s)...`);
+
+      for (const result of results) {
+        if (result.success) {
+          console.log(`✓ ${result.filePath}`);
+        } else {
+          console.error(`✗ ${result.filePath}: ${result.error?.message}`);
+        }
+      }
+
+      if (failureCount === 0) {
+        console.log("Done!");
+      } else {
+        console.error(`\nCompleted with ${failureCount} error(s)`);
+      }
+
+      // Exit with error code if there were failures
+      if (hasFailures(results)) {
+        process.exit(1);
+      }
     } catch (error) {
-      // Handle errors
+      // Handle specific errors
+      if (error instanceof NoFilesFoundError) {
+        console.error(`Error: ${error.message}`);
+        process.exit(1);
+      }
+
+      // Handle other errors
       console.error("Error:", error);
       process.exit(1);
     }
