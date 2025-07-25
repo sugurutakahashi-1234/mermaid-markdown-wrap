@@ -15,9 +15,10 @@ flowchart LR
                 src/domain/models/errors.ts["errors.ts"]
             end
             subgraph src/domain/services["/services"]
+                src/domain/services/cli//options//parser.ts["cli-options-parser.ts"]
                 src/domain/services/options//merger.ts["options-merger.ts"]
-                src/domain/services/validation.service.ts["validation.service.ts"]
                 src/domain/services/mermaid//formatter.ts["mermaid-formatter.ts"]
+                src/domain/services/path//calculator.ts["path-calculator.ts"]
                 src/domain/services/result//checker.ts["result-checker.ts"]
             end
             subgraph src/domain/constants["/constants"]
@@ -31,8 +32,7 @@ flowchart LR
                 src/infrastructure/adapters/glob//search.adapter.ts["glob-search.adapter.ts"]
             end
             subgraph src/infrastructure/services["/services"]
-                src/infrastructure/services/file//storage.service.ts["file-storage.service.ts"]
-                src/infrastructure/services/batch//processor.service.ts["batch-processor.service.ts"]
+                src/infrastructure/services/file//batch//processor.ts["file-batch-processor.ts"]
             end
         end
         subgraph src/application/use//cases["/application/use-cases"]
@@ -55,29 +55,29 @@ flowchart LR
         node//modules/commander/typings/index.d.ts["commander"]
     end
     src/domain/models/options.ts-->node//modules/valibot/dist/index.d.cts
+    src/domain/services/cli//options//parser.ts-->node//modules/valibot/dist/index.d.cts
+    src/domain/services/cli//options//parser.ts-->src/domain/models/errors.ts
+    src/domain/services/cli//options//parser.ts-->src/domain/models/options.ts
     src/domain/services/options//merger.ts-->src/domain/models/options.ts
-    src/domain/services/validation.service.ts-->node//modules/valibot/dist/index.d.cts
-    src/domain/services/validation.service.ts-->src/domain/models/errors.ts
-    src/domain/services/validation.service.ts-->src/domain/models/options.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->src/domain/models/options.ts
     src/domain/services/mermaid//formatter.ts-->src/domain/models/options.ts
+    src/domain/services/path//calculator.ts-->src/domain/models/options.ts
     src/infrastructure/adapters/glob//search.adapter.ts-->node//modules/globby/index.d.ts
-    src/infrastructure/services/file//storage.service.ts-->src/domain/models/options.ts
-    src/infrastructure/services/file//storage.service.ts-->src/infrastructure/adapters/file//system.adapter.ts
-    src/infrastructure/services/file//storage.service.ts-->src/infrastructure/adapters/glob//search.adapter.ts
-    src/infrastructure/services/batch//processor.service.ts-->src/domain/models/errors.ts
-    src/infrastructure/services/batch//processor.service.ts-->src/domain/models/options.ts
-    src/infrastructure/services/batch//processor.service.ts-->src/domain/models/result.ts
-    src/infrastructure/services/batch//processor.service.ts-->src/domain/services/mermaid//formatter.ts
-    src/infrastructure/services/batch//processor.service.ts-->src/infrastructure/services/file//storage.service.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/models/errors.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/models/options.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/models/result.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/services/mermaid//formatter.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/domain/services/path//calculator.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/infrastructure/adapters/file//system.adapter.ts
+    src/infrastructure/services/file//batch//processor.ts-->src/infrastructure/adapters/glob//search.adapter.ts
     src/application/use//cases/convert//files.ts-->src/domain/models/options.ts
     src/application/use//cases/convert//files.ts-->src/domain/models/result.ts
+    src/application/use//cases/convert//files.ts-->src/domain/services/cli//options//parser.ts
     src/application/use//cases/convert//files.ts-->src/domain/services/options//merger.ts
-    src/application/use//cases/convert//files.ts-->src/domain/services/validation.service.ts
     src/application/use//cases/convert//files.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
-    src/application/use//cases/convert//files.ts-->src/infrastructure/services/batch//processor.service.ts
+    src/application/use//cases/convert//files.ts-->src/infrastructure/services/file//batch//processor.ts
     src/application/use//cases/show//config.ts-->src/domain/models/options.ts
     src/application/use//cases/show//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
     src/application/use//cases/validate//config.ts-->node//modules/valibot/dist/index.d.cts

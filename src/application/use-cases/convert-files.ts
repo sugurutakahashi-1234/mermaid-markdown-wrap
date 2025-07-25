@@ -8,10 +8,10 @@
 
 import type { ConfigOptions } from "../../domain/models/options.js";
 import type { FileConversionResult } from "../../domain/models/result.js";
+import { parseCLIOptions } from "../../domain/services/cli-options-parser.js";
 import { mergeOptions } from "../../domain/services/options-merger.js";
-import { parseCLIOptions } from "../../domain/services/validation.service.js";
 import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
-import { batchProcessor } from "../../infrastructure/services/batch-processor.service.js";
+import { processFiles } from "../../infrastructure/services/file-batch-processor.js";
 
 /**
  * Convert Mermaid files to Markdown format
@@ -38,7 +38,7 @@ export async function convertFilesUseCase(
   const pattern = cliOptions.glob || globPattern;
 
   // Delegate the actual conversion to infrastructure service
-  const results = await batchProcessor.convertFiles(pattern, options);
+  const results = await processFiles(pattern, options);
 
   return { results, config };
 }
