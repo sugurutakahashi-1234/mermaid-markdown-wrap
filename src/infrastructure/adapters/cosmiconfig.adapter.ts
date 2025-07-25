@@ -13,11 +13,13 @@ import type { ConfigOptions } from "../../domain/models/options.js";
 /**
  * Load configuration from file using cosmiconfig
  *
- * Searches for configuration in the following places:
+ * Searches for configuration in the following places (cosmiconfig defaults):
+ * - package.json ("mermaid-markdown-wrap" property)
  * - .mermaid-markdown-wraprc (no extension)
  * - .mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}
+ * - .config/mermaid-markdown-wraprc (no extension)
+ * - .config/mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}
  * - mermaid-markdown-wrap.config.{js,ts,mjs,cjs}
- * - package.json "mermaid-markdown-wrap" property
  */
 export async function loadConfigurationFile(
   configPath?: string,

@@ -1,127 +1,110 @@
 # mermaid-markdown-wrap
 
+[English](README.md) | [日本語](README.ja.md)
+
 A minimal CLI tool to wrap `.mmd` and `.mermaid` files (Mermaid diagrams) in Markdown code blocks without modifying the original content.
 
-## Supported File Formats
-
-- **Input**: `.mmd`, `.mermaid` - Plain text files containing Mermaid diagram syntax
-- **Output**: `.md` (default) - Markdown files with mermaid code blocks
-- **Config**: `.json`, `.yaml`, `.yml`, `.js`, `.ts`, `.mjs`, `.cjs` - Configuration files
-
-## Installation
+## Quick Start
 
 ```bash
+# Install globally
 npm install -g mermaid-markdown-wrap
+
+# Convert a Mermaid file to Markdown
+mermaid-markdown-wrap diagram.mmd
 ```
 
+## Features
+
+- ✅ Convert `.mmd` and `.mermaid` files to Markdown with proper code blocks
+- ✅ Batch processing with glob patterns
+- ✅ Flexible configuration (YAML, JSON, JavaScript, TypeScript)
+- ✅ GitHub Actions support
+- ✅ Command validation and configuration inspection tools
+
 ## Usage
+
+### Basic Examples
+
+```bash
+# Convert a single file
+mermaid-markdown-wrap diagram.mmd
+
+# Convert multiple files
+mermaid-markdown-wrap "**/*.mmd"
+
+# Specify output directory
+mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
+
+# Keep source files after conversion
+mermaid-markdown-wrap diagram.mmd --keep-source
+```
+
+### Options
+
+| Option                | Description                   | Default            |
+| --------------------- | ----------------------------- | ------------------ |
+| `-o, --out-dir <dir>` | Output directory              | Same as input      |
+| `--extension <ext>`   | Output file extension         | `.md`              |
+| `--header <text>`     | Text to prepend to output     | -                  |
+| `--footer <text>`     | Text to append to output      | -                  |
+| `--keep-source`       | Keep source files             | `false`            |
+| `--no-show-command`   | Hide command in output        | `false`            |
+| `-c, --config <file>` | Config file path              | Auto-search        |
+| `-h, --help`          | Show help                     | -                  |
+| `-v, --version`       | Show version                  | -                  |
+
+## Commands
+
+### Convert (default)
 
 ```bash
 mermaid-markdown-wrap <glob> [options]
 ```
 
-### Arguments
+Converts Mermaid files to Markdown. This is the default command when no subcommand is specified.
 
-- `<glob>` - Glob pattern for Mermaid files to convert (e.g., `*.mmd`, `*.mermaid`, `**/*.{mmd,mermaid}`)
+### Config Show
 
-### Options
-
-CLI arguments take precedence over config file settings.
-
-| Option                | Description                         | Default                  |
-| --------------------- | ----------------------------------- | ------------------------ |
-| `-o, --out-dir <dir>` | Output directory                    | Same as input file       |
-| `--extension <ext>`   | Output file extension               | `.md`                    |
-| `--header <text>`     | Text to prepend to output           | None                     |
-| `--footer <text>`     | Text to append to output            | None                     |
-| `--glob <pattern>`    | Override glob pattern               | None                     |
-| `-c, --config <file>` | Config file path                    | Auto-search              |
-| `--keep-source`       | Keep source `.mmd`/`.mermaid` files | `false` (deletes source) |
-| `--no-show-command`   | Hide the command used in output     | `false` (shows command)  |
-| `-h, --help`          | Show help                           | -                        |
-| `-v, --version`       | Show version                        | -                        |
-
-## Examples
-
-### Basic conversion
-
-Convert a single file:
-```bash
-mermaid-markdown-wrap diagram.mmd
-mermaid-markdown-wrap flowchart.mermaid
-```
-
-Convert multiple files:
-```bash
-mermaid-markdown-wrap "**/*.mmd"
-mermaid-markdown-wrap "**/*.mermaid"
-mermaid-markdown-wrap "**/*.{mmd,mermaid}"  # Both extensions
-```
-
-### With options
-
-Add header and footer:
-```bash
-mermaid-markdown-wrap diagram.mmd --header "# My Diagram" --footer "_Generated on $(date)_"
-```
-
-Output to different directory:
-```bash
-mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
-```
-
-Keep source files:
-```bash
-mermaid-markdown-wrap diagram.mmd --keep-source
-```
-
-Hide command information in output:
-```bash
-mermaid-markdown-wrap diagram.mmd --no-show-command
-```
-
-## Configuration Commands
-
-### Show Configuration
-
-Display the current configuration (merged from all sources):
+Display the current configuration:
 
 ```bash
-# Show configuration from default locations
+# Show auto-discovered config
 mermaid-markdown-wrap config-show
 
-# Show configuration from a specific file
-mermaid-markdown-wrap config-show custom.yaml
+# Show specific config file
+mermaid-markdown-wrap config-show myconfig.yaml
 ```
 
-### Validate Configuration
+### Config Validate
 
-Check your configuration file for errors:
+Check configuration files for errors:
 
 ```bash
-# Search for and validate config in default locations
+# Validate auto-discovered config
 mermaid-markdown-wrap config-validate
 
-# Validate a specific config file
+# Validate specific config file
 mermaid-markdown-wrap config-validate myconfig.json
-mermaid-markdown-wrap config-validate myconfig.yaml
-mermaid-markdown-wrap config-validate myconfig.ts
 ```
 
-## Configuration File
+## Configuration
 
-Create a configuration file. The tool searches for config files in the following order:
+The tool automatically searches for configuration files in the following locations (powered by [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig)):
 
-1. `.mermaid-markdown-wraprc` (no extension)
-2. `.mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
-3. `mermaid-markdown-wrap.config.{js,ts,mjs,cjs}`
-4. `.config/mermaid-markdown-wraprc.*` (in .config subdirectory)
-5. `"mermaid-markdown-wrap"` property in package.json
+- `package.json` (`"mermaid-markdown-wrap"` property)
+- `.mermaid-markdown-wraprc` (no extension)
+- `.mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `.config/mermaid-markdown-wraprc` (no extension)
+- `.config/mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `mermaid-markdown-wrap.config.{js,ts,mjs,cjs}`
 
-> **Note**: CLI arguments override config file settings.
+You can also specify a config file using the `-c` option.
 
-### YAML example
+### YAML Configuration
+
 ```yaml
+# .mermaid-markdown-wraprc.yaml
 outDir: docs
 extension: .md
 header: |
@@ -129,67 +112,98 @@ header: |
 footer: |
   _(Generated by mermaid-markdown-wrap)_
 keepSource: true
-showCommand: true  # Show command used in output (default: true)
 ```
 
-### JSON example
+> **Tip**: To enable IntelliSense for YAML files:
+> 
+> **Option 1 - VS Code Settings** (with [YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)):
+> ```json
+> // .vscode/settings.json
+> {
+>   "yaml.schemas": {
+>     "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
+>       ".mermaid-markdown-wraprc",
+>       ".mermaid-markdown-wraprc.yaml",
+>       ".mermaid-markdown-wraprc.yml",
+>       ".config/mermaid-markdown-wraprc",
+>       ".config/mermaid-markdown-wraprc.yaml",
+>       ".config/mermaid-markdown-wraprc.yml"
+>     ]
+>   }
+> }
+> ```
+> 
+> **Option 2 - YAML Comment** (supported by some editors):
+> ```yaml
+> # yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
+> outDir: docs
+> extension: .md
+> ```
+
+### JSON Configuration (with Schema)
+
 ```json
+// .mermaid-markdown-wraprc.json
 {
+  "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
   "extension": ".md",
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
-  "keepSource": true,
-  "showCommand": true
+  "keepSource": true
 }
 ```
 
-### JavaScript example
-```js
-module.exports = {
-  outDir: 'docs',
-  extension: '.md',
-  header: '# Mermaid Diagram',
-  footer: `_Generated on ${new Date().toISOString()}_`,
-  keepSource: process.env.NODE_ENV === 'development',
-  showCommand: true
-};
-```
+The `$schema` property enables IntelliSense, validation, and hover documentation in supported editors.
 
-### TypeScript example
+For TypeScript configurations, install the package locally to get type definitions:
+
 ```ts
+// mermaid-markdown-wrap.config.ts
 import type { Config } from 'mermaid-markdown-wrap/config';
 
 const config: Config = {
   outDir: 'docs',
   extension: '.md',
-  header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
   keepSource: false,
-  showCommand: true,
 };
 
 export default config;
 ```
 
-## How it works
+## GitHub Actions
 
-1. Reads `.mmd` or `.mermaid` files containing Mermaid diagram syntax
-2. Wraps the content in a Markdown mermaid code block
-3. Adds optional header/footer text
-4. Saves with the specified extension (default `.md`)
-5. Optionally deletes the source `.mmd`/`.mermaid` file
+Use this tool in your CI/CD pipelines:
 
-### Example transformation
+```yaml
+name: Convert Mermaid Diagrams
+on:
+  push:
+    paths: ["**/*.mmd", "**/*.mermaid"]
 
-Input (`diagram.mmd` or `diagram.mermaid`):
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+        with:
+          pattern: "**/*.{mmd,mermaid}"
+          out-dir: docs
+          keep-source: true
+```
+
+## How It Works
+
+**Input** (`diagram.mmd`):
 ```
 graph TD
   A[Start] --> B[Process]
   B --> C[End]
 ```
 
-Output (`diagram.md`):
+**Output** (`diagram.md`):
 ````markdown
 ```bash
 mermaid-markdown-wrap diagram.mmd
@@ -201,103 +215,6 @@ graph TD
   B --> C[End]
 ```
 ````
-
-## GitHub Actions
-
-You can use this tool directly in GitHub Actions workflows:
-
-### Basic Usage
-
-```yaml
-name: Wrap Mermaid
-on:
-  push:
-    paths: ["**/*.mmd", "**/*.mermaid"]
-
-jobs:
-  wrap:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-        with:
-          pattern: "**/*.{mmd,mermaid}"
-```
-
-### Available Inputs
-
-All CLI options are available as action inputs:
-
-| Input         | Description                    | Required | Default       |
-| ------------- | ------------------------------ | -------- | ------------- |
-| `pattern`     | Glob pattern for Mermaid files | **Yes**  | -             |
-| `out-dir`     | Output directory               | No       | Same as input |
-| `extension`   | Output file extension          | No       | `.md`         |
-| `header`      | Text to prepend to output      | No       | -             |
-| `footer`      | Text to append to output       | No       | -             |
-| `glob`        | Override glob pattern          | No       | -             |
-| `config`      | Config file path               | No       | Auto-search   |
-| `keep-source` | Keep source files              | No       | `false`       |
-| `show-command` | Show command in output         | No       | `true`        |
-
-### Advanced Examples
-
-#### With all options
-```yaml
-- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-  with:
-    pattern: "diagrams/**/*.mmd"
-    out-dir: docs/diagrams
-    extension: .markdown
-    header: |
-      <!-- AUTO-GENERATED: DO NOT EDIT -->
-      <!-- Source: ${{ github.repository }} -->
-    footer: |
-      ---
-      _Generated on ${{ github.event.head_commit.timestamp }}_
-    keep-source: true
-```
-
-#### Using configuration file
-```yaml
-- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-  with:
-    pattern: "**/*.mermaid"
-    config: .github/mermaid-config.yaml
-```
-
-#### Multiple directories with matrix
-```yaml
-strategy:
-  matrix:
-    dir: [frontend, backend, docs]
-steps:
-  - uses: actions/checkout@v4
-  
-  - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-    with:
-      pattern: "${{ matrix.dir }}/**/*.{mmd,mermaid}"
-      out-dir: "generated/${{ matrix.dir }}"
-```
-
-#### Commit generated files
-```yaml
-- uses: actions/checkout@v4
-
-- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-  with:
-    pattern: "**/*.mmd"
-    keep-source: true
-
-- name: Commit changes
-  run: |
-    git config user.name "github-actions[bot]"
-    git config user.email "github-actions[bot]@users.noreply.github.com"
-    git add -A
-    git diff --staged --quiet || git commit -m "docs: auto-generate markdown from mermaid files"
-    git push
-```
 
 ## License
 

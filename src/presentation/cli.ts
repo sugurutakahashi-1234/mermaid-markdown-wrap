@@ -105,12 +105,13 @@ Examples:
   $ ${getPackageName()} config-validate              # Validate config files
   $ ${getPackageName()} config-validate custom.json   # Validate specific file
 
-Config file search order (auto-discovery):
-  1. .${getPackageName()}rc (no extension)
-  2. .${getPackageName()}rc.{json,yaml,yml,js,ts,mjs,cjs}
-  3. ${getPackageName()}.config.{js,ts,mjs,cjs}
-  4. .config/${getPackageName()}rc.* (in .config subdirectory)
-  5. "${getPackageName()}" property in package.json
+Config file search locations (powered by cosmiconfig):
+  - package.json ("${getPackageName()}" property)
+  - .${getPackageName()}rc (no extension)
+  - .${getPackageName()}rc.{json,yaml,yml,js,ts,mjs,cjs}
+  - .config/${getPackageName()}rc (no extension)
+  - .config/${getPackageName()}rc.{json,yaml,yml,js,ts,mjs,cjs}
+  - ${getPackageName()}.config.{js,ts,mjs,cjs}
 
 Use -c option to specify any custom config file path.
 Note: CLI arguments take precedence over config file settings.
