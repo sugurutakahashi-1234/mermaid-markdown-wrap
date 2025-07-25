@@ -9,7 +9,7 @@ import {
 } from "../domain/cli-options.js";
 import { loadConfig } from "../infrastructure/config.js";
 import { getPackageName, getVersion } from "../infrastructure/package-info.js";
-import { runCommand } from "./command-executor.js";
+import { runCommand } from "./cli-adapter.js";
 
 const program = new Command();
 

@@ -1,11 +1,16 @@
-import { convertFile } from "../application/mermaid-file-processor.js";
-import type { ProcessResult } from "../application/process-result-types.js";
-import { hasErrors } from "../application/process-result-types.js";
-import type { CLIOptions, Options } from "../domain/cli-options.js";
-import { NoFilesFoundError } from "../domain/errors.js";
-import { loadConfig, mergeOptions } from "../infrastructure/config.js";
-import { createDirectory, findFiles } from "../infrastructure/file-system.js";
-import { printResults } from "./console-reporter.js";
+import type {
+  CLIOptions,
+  ConfigOptions,
+  Options,
+} from "../../domain/cli-options.js";
+import { NoFilesFoundError } from "../../domain/errors.js";
+import { loadConfig, mergeOptions } from "../../infrastructure/config.js";
+import {
+  createDirectory,
+  findFiles,
+} from "../../infrastructure/file-system.js";
+import { convertFile } from "../mermaid-file-processor.js";
+import type { ProcessResult } from "../process-result-types.js";
 
 /**
  * Process all files matching the glob pattern
@@ -60,37 +65,24 @@ async function processFiles(
 }
 
 /**
- * Run the CLI command
+ * Convert files use case
+ * Pure business logic without side effects
  */
-export async function runCommand(
+export async function convertFilesUseCase(
   globPattern: string,
   cliOptions: CLIOptions,
-): Promise<void> {
-  try {
-    // Load configuration
-    const config = await loadConfig(cliOptions.config);
+): Promise<{ results: ProcessResult[]; config: ConfigOptions }> {
+  // Load configuration
+  const config = await loadConfig(cliOptions.config);
 
-    // Merge options
-    const options = mergeOptions(cliOptions, config);
+  // Merge options
+  const options = mergeOptions(cliOptions, config);
 
-    // Use explicit glob pattern if provided
-    const pattern = cliOptions.glob || globPattern;
+  // Use explicit glob pattern if provided
+  const pattern = cliOptions.glob || globPattern;
 
-    // Process files
-    const results = await processFiles(pattern, options);
+  // Process files
+  const results = await processFiles(pattern, options);
 
-    // Print results
-    printResults(results);
-
-    // Exit with error code if there were failures
-    if (hasErrors(results)) {
-      process.exit(1);
-    }
-  } catch (error) {
-    if (error instanceof NoFilesFoundError) {
-      console.error(`Error: ${error.message}`);
-      process.exit(1);
-    }
-    throw error;
-  }
+  return { results, config };
 }

@@ -6,12 +6,12 @@
     "access": "public"
   },
   "bin": {
-    "mermaid-markdown-wrap": "./dist/presentation/index.js"
+    "mermaid-markdown-wrap": "./dist/index.js"
   },
   "exports": {
-    ".": "./dist/presentation/index.js",
+    ".": "./dist/index.js",
     "./config": {
-      "types": "./dist/presentation/config-types.d.ts"
+      "types": "./dist/types/config.d.ts"
     }
   },
   "keywords": [
@@ -45,13 +45,13 @@
   "packageManager": "bun@1.2.19",
   "scripts": {
     "prepare": "husky",
-    "help": "bun src/presentation/index.ts --help",
-    "help:config-show": "bun src/presentation/index.ts config-show --help",
-    "help:config-validate": "bun src/presentation/index.ts config-validate --help",
+    "help": "bun src/index.ts --help",
+    "help:config-show": "bun src/index.ts config-show --help",
+    "help:config-validate": "bun src/index.ts config-validate --help",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prebuild": "bun run schema:generate",
-    "build": "bun build src/presentation/index.ts --outdir dist/presentation --target node --minify --splitting && tsc -p tsconfig.build.json",
-    "dev": "bun run src/presentation/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node --minify --splitting && tsc -p tsconfig.build.json",
+    "dev": "bun run src/index.ts",
     "lint": "biome check --write .",
     "lint:unsafe": "biome check --write --unsafe .",
     "lint:check": "biome check .",
