@@ -1,0 +1,85 @@
+name: mermaid-markdown-wrap
+description: Wrap .mmd Mermaid files with ```mermaid``` code blocks in Markdown
+author: Suguru Takahashi
+branding:
+  icon: file-text
+  color: purple
+
+################################
+# Input definitions - Matching CLI options
+################################
+inputs:
+  # Required: Conversion target
+  pattern:
+    description: "Glob pattern for .mmd files (e.g. 'src/**/*.mmd')"
+    required: true
+
+  # Basic output settings
+  # -o, --out-dir
+  out-dir:
+    description: "Output directory"
+    required: false
+
+  # --extension
+  extension:
+    description: "Output file extension (default: .md)"
+    required: false
+
+  # Content modification
+  # --header
+  header:
+    description: "Header text to prepend"
+    required: false
+    
+  # --footer
+  footer:
+    description: "Footer text to append"
+    required: false
+
+  # Advanced input settings
+  # --glob
+  glob:
+    description: "Explicit glob pattern that overrides <pattern>"
+    required: false
+
+  # Configuration file settings
+  # -c, --config
+  config:
+    description: "Config file path"
+    required: false
+
+  # Behavior control
+  # --keep-source
+  keep-source:
+    description: "Keep original .mmd files (true/false)"
+    required: false
+    default: "false"
+
+####################
+# Run steps
+####################
+runs:
+  using: "composite"
+  steps:
+    - id: run
+      shell: bash
+      run: |
+        # Build CLI arguments ----------------------------------------
+        args=()
+
+        # 1) Required parameter
+        args+=("${{ inputs.glob || inputs.pattern }}")
+
+        # 2) Options (add if they exist)
+        [[ -n "${{ inputs.out-dir }}"     ]] && args+=(--out-dir "${{ inputs.out-dir }}")
+        [[ -n "${{ inputs.extension }}"   ]] && args+=(--extension "${{ inputs.extension }}")
+        [[ -n "${{ inputs.header }}"      ]] && args+=(--header "${{ inputs.header }}")
+        [[ -n "${{ inputs.footer }}"      ]] && args+=(--footer "${{ inputs.footer }}")
+        [[ -n "${{ inputs.glob }}"        ]] && args+=(--glob "${{ inputs.glob }}")
+        [[ -n "${{ inputs.config }}"      ]] && args+=(--config "${{ inputs.config }}")
+
+        # 3) Boolean values require string comparison
+        [[ "${{ inputs.keep-source }}"  == "true" ]] && args+=(--keep-source)
+
+        # 4) Execute (always get latest CLI)
+        npx --yes mermaid-markdown-wrap "${args[@]}"

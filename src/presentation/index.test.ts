@@ -184,8 +184,8 @@ describe("CLI", () => {
     expect(flowchartExists).toBe(true);
   });
 
-  test("prints config", async () => {
-    const proc = spawn(["bun", cliPath, "test", "--print-config"], {
+  test("config-show command shows config", async () => {
+    const proc = spawn(["bun", cliPath, "config-show"], {
       stdout: "pipe",
       stderr: "pipe",
     });
@@ -194,11 +194,13 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
+    expect(output).toContain("✅ Current configuration:");
     expect(output).toContain('"extension"');
     expect(output).toContain('"keepSource"');
 
-    // Verify it's valid JSON
-    const config = JSON.parse(output);
+    // Extract JSON from output (skip the first line with the message)
+    const jsonPart = output.split("\n").slice(1).join("\n");
+    const config = JSON.parse(jsonPart);
     expect(config).toHaveProperty("extension");
     expect(config).toHaveProperty("keepSource");
   });
@@ -282,12 +284,12 @@ describe("CLI", () => {
     expect(output).toContain("0.1.0");
   });
 
-  describe("validate subcommand", () => {
+  describe("config-validate subcommand", () => {
     test("validates valid config file", async () => {
       const configPath = join(testDir, "valid-config.yaml");
       await writeFile(configPath, `header: "Test header"\nkeepSource: true`);
 
-      const proc = spawn(["bun", cliPath, "validate", configPath], {
+      const proc = spawn(["bun", cliPath, "config-validate", configPath], {
         cwd: testDir,
         stdout: "pipe",
         stderr: "pipe",
@@ -310,7 +312,7 @@ describe("CLI", () => {
         }),
       );
 
-      const proc = spawn(["bun", cliPath, "validate", configPath], {
+      const proc = spawn(["bun", cliPath, "config-validate", configPath], {
         cwd: testDir,
         stdout: "pipe",
         stderr: "pipe",
@@ -330,7 +332,7 @@ describe("CLI", () => {
       const configPath = join(testDir, ".mermaid-markdown-wraprc.yaml");
       await writeFile(configPath, `footer: "Default footer"`);
 
-      const proc = spawn(["bun", cliPath, "validate"], {
+      const proc = spawn(["bun", cliPath, "config-validate"], {
         cwd: testDir,
         stdout: "pipe",
         stderr: "pipe",
@@ -343,19 +345,22 @@ describe("CLI", () => {
       expect(output).toContain("✅ Config looks good!");
     });
 
-    test("handles missing config file gracefully", async () => {
-      const proc = spawn(["bun", cliPath, "validate", "nonexistent.yaml"], {
-        cwd: testDir,
-        stdout: "pipe",
-        stderr: "pipe",
-      });
+    test("handles missing config file with error", async () => {
+      const proc = spawn(
+        ["bun", cliPath, "config-validate", "nonexistent.yaml"],
+        {
+          cwd: testDir,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
 
-      const output = await new Response(proc.stdout).text();
+      const stderr = await new Response(proc.stderr).text();
       await proc.exited;
 
-      // Should pass validation when no config is found (empty config is valid)
-      expect(proc.exitCode).toBe(0);
-      expect(output).toContain("✅ Config looks good!");
+      // Should fail when specified config file is not found
+      expect(proc.exitCode).toBe(1);
+      expect(stderr).toContain("❌ Error loading config:");
     });
   });
 });

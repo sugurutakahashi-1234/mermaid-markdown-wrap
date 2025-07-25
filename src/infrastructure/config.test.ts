@@ -32,13 +32,9 @@ describe("mergeOptions", () => {
   });
 
   test("handles optional fields correctly", () => {
-    const result = mergeOptions(
-      { glob: "**/*.mmd", printConfig: true },
-      { outDir: "output" },
-    );
+    const result = mergeOptions({ glob: "**/*.mmd" }, { outDir: "output" });
 
     expect(result.glob).toBe("**/*.mmd");
-    expect(result.printConfig).toBe(true);
     expect(result.outDir).toBe("output");
   });
 

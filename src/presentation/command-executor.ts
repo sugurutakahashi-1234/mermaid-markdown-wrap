@@ -73,12 +73,6 @@ export async function runCommand(
     // Merge options
     const options = mergeOptions(cliOptions, config);
 
-    // Print config if requested
-    if (cliOptions.printConfig) {
-      console.log(JSON.stringify(options, null, 2));
-      return;
-    }
-
     // Use explicit glob pattern if provided
     const pattern = cliOptions.glob || globPattern;
 

@@ -24,10 +24,11 @@ export async function loadConfig(configPath?: string): Promise<ConfigOptions> {
 
     return configResult?.config || {};
   } catch (error) {
-    // If config loading fails, return empty config
-    if (error instanceof Error && configPath?.endsWith(".ts")) {
-      console.error("Failed to load TypeScript config:", error.message);
+    // If a specific config file was requested but failed to load, throw the error
+    if (configPath && error instanceof Error) {
+      throw error;
     }
+    // If auto-searching for config and none found, return empty config
     return {};
   }
 }
@@ -56,6 +57,5 @@ export function mergeOptions(
       : {}),
     ...(cliOptions.glob ? { glob: cliOptions.glob } : {}),
     ...(cliOptions.config ? { config: cliOptions.config } : {}),
-    ...(cliOptions.printConfig ? { printConfig: cliOptions.printConfig } : {}),
   };
 }

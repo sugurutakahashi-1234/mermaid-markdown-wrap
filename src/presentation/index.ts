@@ -2,7 +2,11 @@
 
 import { Command } from "commander";
 import * as v from "valibot";
-import { ConfigOptionsSchema, parseCLIOptions } from "../domain/cli-options.js";
+import {
+  ConfigOptionsSchema,
+  DEFAULT_OPTIONS,
+  parseCLIOptions,
+} from "../domain/cli-options.js";
 import { loadConfig } from "../infrastructure/config.js";
 import { getPackageName, getVersion } from "../infrastructure/package-info.js";
 import { runCommand } from "./command-executor.js";
@@ -19,16 +23,20 @@ program
     "<glob>",
     "file path or glob pattern (e.g., 'file.mmd', '*.mermaid', '**/*.{mmd,mermaid}')",
   )
+  // Basic output settings
   .option(
     "-o, --out-dir <dir>",
     "output directory (default: same as input file)",
   )
   .option("--extension <ext>", "output file extension", ".md")
+  // Content modification
   .option("--header <text>", "header text to prepend")
   .option("--footer <text>", "footer text to append")
+  // Advanced input settings
   .option("--glob <pattern>", "explicit glob pattern (overrides argument)")
+  // Configuration file settings
   .option("-c, --config <file>", "config file path")
-  .option("--print-config", "print merged configuration and exit")
+  // Behavior control
   .option(
     "--keep-source",
     "keep source .mmd/.mermaid files after conversion",
@@ -61,34 +69,93 @@ Examples:
   $ ${getPackageName()} "*.mermaid" --header "# Docs" # Add header to all files
 
   # Configuration
-  $ ${getPackageName()} --print-config               # Show current configuration
   $ ${getPackageName()} -c myconfig.yaml "*.mermaid" # Use specific config file
-  $ ${getPackageName()} validate                     # Validate default config
-  $ ${getPackageName()} validate myconfig.json       # Validate specific config
+  $ ${getPackageName()} config-show                  # Show current configuration
+  $ ${getPackageName()} config-show custom.yaml       # Show config from specific file
+  $ ${getPackageName()} config-validate              # Validate config files
+  $ ${getPackageName()} config-validate custom.json   # Validate specific file
 
-Config file formats: .json, .yaml, .yml, .js, .ts, .cjs, .mjs
-Config file names: .mermaid-markdown-wraprc, mermaid-markdown-wrap.config.*
+Config file search order (auto-discovery):
+  1. .mermaid-markdown-wraprc (no extension)
+  2. .mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}
+  3. mermaid-markdown-wrap.config.{js,ts,mjs,cjs}
+  4. .config/mermaid-markdown-wraprc.* (in .config subdirectory)
+  5. "mermaid-markdown-wrap" property in package.json
+
+Use -c option to specify any custom config file path.
+Note: CLI arguments take precedence over config file settings.
 
 For more options and detailed documentation:
   https://www.npmjs.com/package/${getPackageName()}
 `,
   );
 
-// Add validate subcommand
+// Add config-show subcommand
 program
-  .command("validate [configFile]")
-  .description("Validate configuration file without performing any conversion")
+  .command("config-show [configFile]")
+  .description("Show current configuration (merged from all sources)")
   .addHelpText(
     "after",
     `
 Examples:
-  $ ${getPackageName()} validate                     # Validate config in current directory
-  $ ${getPackageName()} validate config.json         # Validate specific JSON config
-  $ ${getPackageName()} validate config.yaml         # Validate specific YAML config
-  $ ${getPackageName()} validate config.ts           # Validate TypeScript config
+  $ ${getPackageName()} config-show                        # Show config from default locations
+  $ ${getPackageName()} config-show myconfig.json          # Show config from specific JSON file
+  $ ${getPackageName()} config-show myconfig.yaml          # Show config from specific YAML file
+  $ ${getPackageName()} config-show myconfig.ts            # Show config from TypeScript file
 
-The validate command will:
-  - Load the configuration file (or search for default config)
+Without arguments: searches for config files in default locations
+With argument: loads the specified file directly
+
+The config-show command will:
+  - Load configuration from file or auto-discovered locations
+  - Merge with default values
+  - Output the final configuration as JSON
+  - Useful for debugging config file issues
+`,
+  )
+  .action(async (configFile?: string) => {
+    try {
+      // Load configuration
+      const config = await loadConfig(configFile);
+
+      // Merge options (without requiring glob)
+      const mergedOptions = {
+        extension: config.extension ?? DEFAULT_OPTIONS.extension,
+        header: config.header ?? DEFAULT_OPTIONS.header,
+        footer: config.footer ?? DEFAULT_OPTIONS.footer,
+        keepSource: config.keepSource ?? DEFAULT_OPTIONS.keepSource,
+        ...(config.outDir ? { outDir: config.outDir } : {}),
+      };
+
+      // Print merged configuration
+      console.log("✅ Current configuration:");
+      console.log(JSON.stringify(mergedOptions, null, 2));
+    } catch (error) {
+      console.error(
+        "❌ Error loading config:",
+        error instanceof Error ? error.message : String(error),
+      );
+      process.exit(1);
+    }
+  });
+
+// Add config-validate subcommand
+program
+  .command("config-validate [configFile]")
+  .description("Validate configuration file")
+  .addHelpText(
+    "after",
+    `
+Examples:
+  $ ${getPackageName()} config-validate                     # Validate config in current directory
+  $ ${getPackageName()} config-validate myconfig.json       # Validate specific config file
+  $ ${getPackageName()} config-validate myconfig.yaml       # Validate specific YAML config
+  $ ${getPackageName()} config-validate myconfig.ts         # Validate TypeScript config
+
+Without arguments: searches for config files in default locations
+With argument: validates the specified file directly
+
+The config-validate command will:
   - Check all field types and values
   - Report any validation errors with details
   - Exit with code 0 if valid, 1 if invalid
@@ -124,4 +191,4 @@ The validate command will:
     }
   });
 
-program.parse();
+program.parse(process.argv);

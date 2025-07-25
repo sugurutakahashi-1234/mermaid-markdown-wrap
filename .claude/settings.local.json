@@ -140,8 +140,7 @@
       "WebFetch(domain:support.anthropic.com)",
       "WebFetch(domain:docs.renovatebot.com)",
       "WebFetch(domain:nodejs.org)",
-      "WebFetch(domain:valibot.dev)",
-      "Bash(./dist/presentation/index.js --help)"
+      "WebFetch(domain:valibot.dev)"
     ],
     "deny": []
   },

@@ -18,7 +18,6 @@ export const ConfigOptionsSchema = v.object({
 const CLISpecificOptionsSchema = v.object({
   glob: v.optional(v.string()),
   config: v.optional(v.string()),
-  printConfig: v.optional(v.boolean()),
 });
 
 /**
@@ -40,7 +39,6 @@ const OptionsSchema = v.object({
   outDir: v.optional(v.string()),
   glob: v.optional(v.string()),
   config: v.optional(v.string()),
-  printConfig: v.optional(v.boolean()),
 });
 
 // Type exports
