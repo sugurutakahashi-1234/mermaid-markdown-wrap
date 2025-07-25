@@ -55,6 +55,12 @@ inputs:
     required: false
     default: "false"
 
+  # --no-show-command (inverted logic)
+  show-command:
+    description: "Show the command used in the output (true/false)"
+    required: false
+    default: "true"
+
 ####################
 # Run steps
 ####################
@@ -80,6 +86,7 @@ runs:
 
         # 3) Boolean values require string comparison
         [[ "${{ inputs.keep-source }}"  == "true" ]] && args+=(--keep-source)
+        [[ "${{ inputs.show-command }}" == "false" ]] && args+=(--no-show-command)
 
         # 4) Execute (always get latest CLI)
         npx --yes mermaid-markdown-wrap "${args[@]}"

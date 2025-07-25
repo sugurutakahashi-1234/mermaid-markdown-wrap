@@ -38,10 +38,13 @@ program
   // Behavior control
   .option(
     "--keep-source",
-    "keep source .mmd/.mermaid files after conversion",
+    "keep source .mmd/.mermaid files after conversion (default: deletes source)",
     false,
   )
-  .option("--no-show-command", "disable showing the command used in the output")
+  .option(
+    "--no-show-command",
+    "hide the command used in output (default: shows command)",
+  )
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
       // Execute the file conversion use case (validation happens inside)
