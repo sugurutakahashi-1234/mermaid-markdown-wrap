@@ -9,7 +9,6 @@ import {
   getVersion,
 } from "../domain/constants/package-info.js";
 import { NoFilesFoundError } from "../domain/models/errors.js";
-import { hasFailures } from "../domain/services/result-checker.js";
 
 const program = new Command();
 
@@ -67,7 +66,7 @@ program
       }
 
       // Exit with error code if there were failures
-      if (hasFailures(results)) {
+      if (results.some((r) => !r.success)) {
         process.exit(1);
       }
     } catch (error) {

@@ -19,7 +19,6 @@ flowchart LR
                 src/domain/services/options//merger.ts["options-merger.ts"]
                 src/domain/services/mermaid//formatter.ts["mermaid-formatter.ts"]
                 src/domain/services/path//calculator.ts["path-calculator.ts"]
-                src/domain/services/result//checker.ts["result-checker.ts"]
             end
             subgraph src/domain/constants["/constants"]
                 src/domain/constants/package//info.ts["package-info.ts"]
@@ -84,14 +83,12 @@ flowchart LR
     src/application/use//cases/validate//config.ts-->src/domain/models/options.ts
     src/application/use//cases/validate//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
     src/domain/constants/package//info.ts-->package.json
-    src/domain/services/result//checker.ts-->src/domain/models/result.ts
     src/presentation/cli.ts-->node//modules/commander/typings/index.d.ts
     src/presentation/cli.ts-->src/application/use//cases/convert//files.ts
     src/presentation/cli.ts-->src/application/use//cases/show//config.ts
     src/presentation/cli.ts-->src/application/use//cases/validate//config.ts
     src/presentation/cli.ts-->src/domain/constants/package//info.ts
     src/presentation/cli.ts-->src/domain/models/errors.ts
-    src/presentation/cli.ts-->src/domain/services/result//checker.ts
     src/index.ts-->src/presentation/cli.ts
     src/types/config.ts-->src/domain/models/options.ts
 ```
