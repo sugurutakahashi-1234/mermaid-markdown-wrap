@@ -10,8 +10,8 @@ branding:
 ################################
 inputs:
   # Required: Conversion target
-  pattern:
-    description: "Glob pattern for .mmd files (e.g. 'src/**/*.mmd')"
+  input:
+    description: "File path or glob pattern for .mmd/.mermaid files (e.g. 'diagram.mmd', 'src/**/*.{mmd,mermaid}')"
     required: true
 
   # Basic output settings
@@ -34,12 +34,6 @@ inputs:
   # --footer
   footer:
     description: "Footer text to append"
-    required: false
-
-  # Advanced input settings
-  # --glob
-  glob:
-    description: "Explicit glob pattern that overrides <pattern>"
     required: false
 
   # Configuration file settings
@@ -74,14 +68,13 @@ runs:
         args=()
 
         # 1) Required parameter
-        args+=("${{ inputs.glob || inputs.pattern }}")
+        args+=("${{ inputs.input }}")
 
         # 2) Options (add if they exist)
         [[ -n "${{ inputs.out-dir }}"     ]] && args+=(--out-dir "${{ inputs.out-dir }}")
         [[ -n "${{ inputs.extension }}"   ]] && args+=(--extension "${{ inputs.extension }}")
         [[ -n "${{ inputs.header }}"      ]] && args+=(--header "${{ inputs.header }}")
         [[ -n "${{ inputs.footer }}"      ]] && args+=(--footer "${{ inputs.footer }}")
-        [[ -n "${{ inputs.glob }}"        ]] && args+=(--glob "${{ inputs.glob }}")
         [[ -n "${{ inputs.config }}"      ]] && args+=(--config "${{ inputs.config }}")
 
         # 3) Boolean values require string comparison

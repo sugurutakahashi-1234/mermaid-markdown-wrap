@@ -34,9 +34,12 @@ describe("mergeOptions", () => {
   });
 
   test("handles optional fields correctly", () => {
-    const result = mergeOptions({ glob: "**/*.mmd" }, { outDir: "output" });
+    const result = mergeOptions(
+      { config: "custom.json" },
+      { outDir: "output" },
+    );
 
-    expect(result.glob).toBe("**/*.mmd");
+    expect(result.config).toBe("custom.json");
     expect(result.outDir).toBe("output");
   });
 

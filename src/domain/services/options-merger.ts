@@ -41,7 +41,6 @@ export function mergeOptions(
       : {}),
 
     // CLI-only options
-    ...(cliOptions.glob ? { glob: cliOptions.glob } : {}),
     ...(cliOptions.config ? { config: cliOptions.config } : {}),
   };
 }

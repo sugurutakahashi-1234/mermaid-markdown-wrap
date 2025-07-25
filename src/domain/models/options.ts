@@ -16,7 +16,6 @@ export const ConfigOptionsSchema = v.object({
  * CLI-specific options that are not in config files
  */
 const CLISpecificOptionsSchema = v.object({
-  glob: v.optional(v.string()),
   config: v.optional(v.string()),
 });
 
@@ -38,7 +37,6 @@ const OptionsSchema = v.object({
   keepSource: v.boolean(),
   showCommand: v.boolean(),
   outDir: v.optional(v.string()),
-  glob: v.optional(v.string()),
   config: v.optional(v.string()),
 });
 

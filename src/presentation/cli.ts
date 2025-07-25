@@ -19,7 +19,7 @@ program
   )
   .version(getVersion(), "-v, --version", "display version number")
   .argument(
-    "<glob>",
+    "<input>",
     "file path or glob pattern (e.g., 'file.mmd', '*.mermaid', '**/*.{mmd,mermaid}')",
   )
   // Basic output settings
@@ -31,8 +31,6 @@ program
   // Content modification
   .option("--header <text>", "header text to prepend")
   .option("--footer <text>", "footer text to append")
-  // Advanced input settings
-  .option("--glob <pattern>", "explicit glob pattern (overrides argument)")
   // Configuration file settings
   .option("-c, --config <file>", "config file path")
   // Behavior control

@@ -34,11 +34,13 @@ export async function convertFilesUseCase(
   // Merge CLI options with config file options
   const options = mergeOptions(cliOptions, config);
 
-  // Use explicit glob pattern if provided via CLI
-  const pattern = cliOptions.glob || globPattern;
-
   // Delegate the actual conversion to infrastructure service
-  const results = await processFiles(pattern, options, globPattern, cliOptions);
+  const results = await processFiles(
+    globPattern,
+    options,
+    globPattern,
+    cliOptions,
+  );
 
   return { results, config };
 }
