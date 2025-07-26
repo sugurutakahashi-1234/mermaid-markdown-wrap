@@ -19,6 +19,12 @@
     },
     "hideCommand": {
       "type": "boolean"
+    },
+    "logFormat": {
+      "enum": ["text", "json"]
+    },
+    "quiet": {
+      "type": "boolean"
     }
   },
   "required": []

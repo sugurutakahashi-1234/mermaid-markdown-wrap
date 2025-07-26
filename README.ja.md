@@ -120,6 +120,8 @@ mermaid-markdown-wrap init
 - ヘッダー/フッターテキスト
 - ソースファイルを削除するか
 - 出力にコマンドを非表示にするか
+- ログ出力形式（text/json）
+- エラー以外の出力を抑制するか
 
 ## Configuration
 
@@ -143,6 +145,8 @@ header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 removeSource: false
 hideCommand: false
+logFormat: text
+quiet: false
 ```
 
 > **ヒント**: YAMLファイルでIntelliSenseを有効にする方法：
@@ -180,7 +184,9 @@ hideCommand: false
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "removeSource": false,
-  "hideCommand": false
+  "hideCommand": false,
+  "logFormat": "text",
+  "quiet": false
 }
 ```
 
@@ -198,6 +204,8 @@ module.exports = {
   footer: '<!-- END -->',
   removeSource: false,
   hideCommand: false,
+  logFormat: 'text',
+  quiet: false,
 };
 ```
 
@@ -217,6 +225,8 @@ const config: Config = {
   footer: '<!-- END -->',
   removeSource: false,
   hideCommand: false,
+  logFormat: 'text',
+  quiet: false,
 };
 
 export default config;

@@ -77,6 +77,20 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
           message: "Hide the generation command in output files?",
           initialValue: false,
         }),
+      logFormat: () =>
+        select({
+          message: "Log output format",
+          options: [
+            { label: "Text (human-readable)", value: "text" },
+            { label: "JSON (machine-readable)", value: "json" },
+          ],
+          initialValue: "text" as const,
+        }),
+      quiet: () =>
+        confirm({
+          message: "Suppress non-error output?",
+          initialValue: false,
+        }),
     },
     {
       // On cancel callback
@@ -105,6 +119,12 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
   }
   if (result.hideCommand !== false) {
     config.hideCommand = Boolean(result.hideCommand);
+  }
+  if (result.logFormat !== "text") {
+    config.logFormat = result.logFormat as "text" | "json";
+  }
+  if (result.quiet !== false) {
+    config.quiet = Boolean(result.quiet);
   }
 
   return {

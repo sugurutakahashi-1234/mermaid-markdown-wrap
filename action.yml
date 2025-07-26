@@ -40,15 +40,13 @@ inputs:
   # Behavior control
   # --remove-source
   remove-source:
-    description: "Remove original .mmd files after conversion (true/false)"
+    description: "Remove original .mmd files after conversion (default: false)"
     required: false
-    default: "false"
 
   # --hide-command
   hide-command:
-    description: "Hide the command used in the output (true/false)"
+    description: "Hide the command used in the output (default: false)"
     required: false
-    default: "false"
 
   # GitHub Actions specific options
   # --pr-comment-mode

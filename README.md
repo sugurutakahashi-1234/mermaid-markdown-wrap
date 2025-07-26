@@ -120,6 +120,8 @@ This command will guide you through creating a configuration file by asking abou
 - Header/footer text
 - Whether to remove source files
 - Whether to hide command in output
+- Log output format (text/json)
+- Whether to suppress non-error output
 
 ## Configuration
 
@@ -143,6 +145,8 @@ header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 removeSource: false
 hideCommand: false
+logFormat: text
+quiet: false
 ```
 
 > **Tip**: To enable IntelliSense for YAML files:
@@ -180,7 +184,9 @@ hideCommand: false
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "removeSource": false,
-  "hideCommand": false
+  "hideCommand": false,
+  "logFormat": "text",
+  "quiet": false
 }
 ```
 
@@ -198,6 +204,8 @@ module.exports = {
   footer: '<!-- END -->',
   removeSource: false,
   hideCommand: false,
+  logFormat: 'text',
+  quiet: false,
 };
 ```
 
@@ -217,6 +225,8 @@ const config: Config = {
   footer: '<!-- END -->',
   removeSource: false,
   hideCommand: false,
+  logFormat: 'text',
+  quiet: false,
 };
 
 export default config;

@@ -19,6 +19,8 @@ export const ConfigOptionsSchema = v.object({
   footer: v.optional(v.string()),
   removeSource: v.optional(v.boolean()),
   hideCommand: v.optional(v.boolean()),
+  logFormat: v.optional(v.picklist(OUTPUT_FORMATS, "Invalid log format")),
+  quiet: v.optional(v.boolean()),
 });
 
 /**
