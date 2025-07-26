@@ -18,7 +18,7 @@ export const ConfigOptionsSchema = v.object({
   header: v.optional(v.string()),
   footer: v.optional(v.string()),
   removeSource: v.optional(v.boolean()),
-  showCommand: v.optional(v.boolean()),
+  hideCommand: v.optional(v.boolean()),
 });
 
 /**
@@ -27,7 +27,7 @@ export const ConfigOptionsSchema = v.object({
  * Purpose: Capture exactly what the user typed on the command line
  *
  * Why needed:
- * - The showCommand feature needs to display the exact command the user ran
+ * - The hideCommand feature controls whether to hide the command the user ran
  * - We shouldn't show default values that the user didn't explicitly set
  * - Example: If user runs "mermaid-markdown-wrap *.mmd --header 'Title'",
  *   the command shown should be exactly that, not include default values
@@ -40,7 +40,7 @@ export const RawCLIOptionsSchema = v.object({
   header: v.optional(v.string()),
   footer: v.optional(v.string()),
   removeSource: v.optional(v.boolean()),
-  showCommand: v.optional(v.boolean()),
+  hideCommand: v.optional(v.boolean()),
   // CLI-only options
   config: v.optional(v.string()), // Path to configuration file
   logFormat: v.optional(v.picklist(OUTPUT_FORMATS, "Invalid log format")),
@@ -67,7 +67,7 @@ export const ProcessingOptionsSchema = v.object({
   footer: v.optional(v.string(), ""),
   // Behavioral flags with sensible defaults
   removeSource: v.optional(v.boolean(), false), // Keep source files by default
-  showCommand: v.optional(v.boolean(), true), // Show command by default
+  hideCommand: v.optional(v.boolean(), false), // Don't hide command by default
   // CLI output control options
   logFormat: v.optional(v.picklist(OUTPUT_FORMATS), "text"), // Default to text output
   quiet: v.optional(v.boolean(), false), // Show output by default

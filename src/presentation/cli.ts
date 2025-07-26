@@ -37,18 +37,11 @@ program
   // Behavior control
   .option(
     "--remove-source",
-    "remove source .mmd/.mermaid files after conversion (default: keeps source)",
+    "remove source .mmd/.mermaid files after conversion",
     false,
   )
-  .option(
-    "--no-show-command",
-    "hide the command used in output (default: shows command)",
-  )
-  .option(
-    "--log-format <format>",
-    "log output format: text or json (default: text)",
-    "text",
-  )
+  .option("--hide-command", "hide the command used in output", false)
+  .option("--log-format <format>", "log output format: text or json", "text")
   .option("--quiet", "suppress non-error output", false)
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {

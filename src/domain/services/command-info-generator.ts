@@ -60,7 +60,7 @@ export function generateCommandInfo(
     parts.push("--quiet");
   }
 
-  // Note: we don't include --no-show-command since that would be redundant
+  // Note: we don't include --hide-command since that would be redundant
   // when the command is being shown
 
   return parts.join(" ");

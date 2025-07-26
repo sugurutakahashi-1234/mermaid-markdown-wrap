@@ -51,7 +51,7 @@ export async function processFiles(
   // Generate command info once for all files
   // Use raw CLI options if available to show exact user input
   const commandInfo =
-    options.showCommand && rawCliOptions
+    !options.hideCommand && rawCliOptions
       ? generateCommandInfo(pattern, rawCliOptions)
       : undefined;
 

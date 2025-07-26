@@ -17,7 +17,7 @@
     "removeSource": {
       "type": "boolean"
     },
-    "showCommand": {
+    "hideCommand": {
       "type": "boolean"
     }
   },

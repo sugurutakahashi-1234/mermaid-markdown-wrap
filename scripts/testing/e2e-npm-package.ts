@@ -21,7 +21,7 @@ import { join } from "node:path";
 
 console.log("🧪 Starting npm package E2E test...\n");
 
-const projectRoot = join(import.meta.dir, "..");
+const projectRoot = join(import.meta.dir, "..", "..");
 const packageJsonPath = join(projectRoot, "package.json");
 const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
 const packageName = packageJson.name;

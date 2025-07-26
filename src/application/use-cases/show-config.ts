@@ -16,7 +16,7 @@ export async function showConfigUseCase(
     header: config.header ?? "",
     footer: config.footer ?? "",
     removeSource: config.removeSource ?? false,
-    showCommand: config.showCommand ?? true,
+    hideCommand: config.hideCommand ?? false,
     ...(config.outDir ? { outDir: config.outDir } : {}),
   };
 

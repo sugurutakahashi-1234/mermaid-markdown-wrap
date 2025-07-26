@@ -11,7 +11,7 @@ describe("loadAndCombineConfigUseCase", () => {
       header: "Test Header",
       footer: "Test Footer",
       removeSource: true,
-      showCommand: false,
+      hideCommand: true,
       outDir: "test-output",
     };
     await fileSystemAdapter.writeFile(
@@ -50,7 +50,7 @@ describe("loadAndCombineConfigUseCase", () => {
     expect(result.processingOptions.header).toBe("CLI Header"); // CLI wins
     expect(result.processingOptions.footer).toBe("Test Footer"); // From config
     expect(result.processingOptions.removeSource).toBe(true); // From config
-    expect(result.processingOptions.showCommand).toBe(false); // From config
+    expect(result.processingOptions.hideCommand).toBe(true); // From config
     expect(result.processingOptions.outDir).toBe("test-output"); // From config
     expect(result.processingOptions.quiet).toBe(true); // From CLI
     expect(result.processingOptions.logFormat).toBe("text"); // Default
@@ -72,7 +72,7 @@ describe("loadAndCombineConfigUseCase", () => {
     expect(result.processingOptions.header).toBe("CLI Only Header");
     expect(result.processingOptions.footer).toBe(""); // Default
     expect(result.processingOptions.removeSource).toBe(false);
-    expect(result.processingOptions.showCommand).toBe(true); // Default
+    expect(result.processingOptions.hideCommand).toBe(false); // Default
     expect(result.processingOptions.logFormat).toBe("json");
   });
 
@@ -95,7 +95,7 @@ describe("loadAndCombineConfigUseCase", () => {
     expect(result.processingOptions.header).toBe("");
     expect(result.processingOptions.footer).toBe("");
     expect(result.processingOptions.removeSource).toBe(false);
-    expect(result.processingOptions.showCommand).toBe(true);
+    expect(result.processingOptions.hideCommand).toBe(false);
     expect(result.processingOptions.logFormat).toBe("text");
     expect(result.processingOptions.quiet).toBe(false);
     expect(result.processingOptions.outDir).toBeUndefined();

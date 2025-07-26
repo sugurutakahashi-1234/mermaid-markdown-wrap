@@ -16,7 +16,7 @@ import { RawCLIOptionsSchema } from "../models/options.js";
  * Purpose: Parse exactly what the user typed on the command line
  *
  * Why this returns RawCLIOptions:
- * - We need to preserve the original input for the showCommand feature
+ * - We need to preserve the original input for the hideCommand feature
  * - Default values will be applied later when creating ProcessingOptions
  * - This separation ensures command display accuracy
  */

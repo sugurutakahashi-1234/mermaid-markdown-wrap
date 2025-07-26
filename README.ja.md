@@ -65,7 +65,7 @@ mermaid-markdown-wrap config-validate custom.json  # 特定のファイルを検
 | `--header <text>`     | 出力の先頭に追加するテキスト            | -                  |
 | `--footer <text>`     | 出力の末尾に追加するテキスト            | -                  |
 | `--remove-source`     | ソースファイルを削除                    | `false`            |
-| `--no-show-command`   | 出力にコマンドを表示しない              | `false`            |
+| `--hide-command`      | 出力にコマンドを非表示にする            | `false`            |
 | `--log-format <format>`| ログ出力形式: text または json         | `text`             |
 | `--quiet`             | エラー以外の出力を抑制                  | `false`            |
 | `-c, --config <file>` | 設定ファイルのパス                      | 自動検索           |
@@ -119,7 +119,7 @@ mermaid-markdown-wrap init
 - 出力ディレクトリ
 - ヘッダー/フッターテキスト
 - ソースファイルを削除するか
-- 出力にコマンドを表示するか
+- 出力にコマンドを非表示にするか
 
 ## Configuration
 
@@ -142,7 +142,7 @@ outDir: docs
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 removeSource: false
-showCommand: true
+hideCommand: false
 ```
 
 > **ヒント**: YAMLファイルでIntelliSenseを有効にする方法：
@@ -180,7 +180,7 @@ showCommand: true
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "removeSource": false,
-  "showCommand": true
+  "hideCommand": false
 }
 ```
 
@@ -197,7 +197,7 @@ module.exports = {
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
 };
 ```
 
@@ -216,7 +216,7 @@ const config: Config = {
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
 };
 
 export default config;
@@ -271,12 +271,32 @@ jobs:
           pr-comment-mode: changed  # オプション: 'off', 'changed', 'all'
 ```
 
-#### PR Comment Modes
+#### PR Comment Options
+
+| オプション | 説明 | デフォルト |
+|--------|-------------|---------|
+| `pr-comment-mode` | コメント投稿モード: `'off'`, `'changed'`, `'all'` | `'off'` |
+| `pr-comment-header` | PRコメントにヘッダーを表示 | `'true'` |
+| `pr-comment-details` | PRコメントに折りたたみ可能なdetailsタグを使用 | `'false'` |
+| `github-token` | PRコメント用のGitHubトークン | `${{ github.token }}` |
+
+**PRコメントモード:**
 - `off` (デフォルト): PRコメントなし
 - `changed`: PRで変更されたファイルのみコメント
 - `all`: この実行で生成された全ファイルをコメント
 
+**全PRオプションを使用した例:**
+```yaml
+- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+  with:
+    input: "**/*.{mmd,mermaid}"
+    pr-comment-mode: all
+    pr-comment-header: false      # ヘッダーを非表示
+    pr-comment-details: true      # コンテンツをdetailsタグで折りたたむ
+    github-token: ${{ secrets.GITHUB_TOKEN }}  # カスタムトークン（オプション）
 ```
+
+**注意:** `pull_request`と`pull_request_target`イベントの両方で動作します。`pull_request_target`を使用する場合は、信頼できないPRコードをチェックアウトしないよう注意してください。
 
 ## How It Works
 

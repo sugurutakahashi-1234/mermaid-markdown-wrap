@@ -11,7 +11,7 @@ describe("config-file-generator", () => {
     header: "<!-- AUTO-GENERATED -->",
     footer: "<!-- END -->",
     removeSource: false,
-    showCommand: true,
+    hideCommand: false,
   };
 
   describe("generateConfigFileName", () => {
@@ -83,7 +83,7 @@ describe("config-file-generator", () => {
       const content = generateConfigFileContent(testConfig, "yaml");
       expect(content).toContain("outDir: docs");
       expect(content).toContain("removeSource: false");
-      expect(content).toContain("showCommand: true");
+      expect(content).toContain("hideCommand: false");
     });
   });
 });

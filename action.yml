@@ -44,11 +44,11 @@ inputs:
     required: false
     default: "false"
 
-  # --no-show-command (inverted logic)
-  show-command:
-    description: "Show the command used in the output (true/false)"
+  # --hide-command
+  hide-command:
+    description: "Hide the command used in the output (true/false)"
     required: false
-    default: "true"
+    default: "false"
 
   # GitHub Actions specific options
   # --pr-comment-mode
@@ -56,6 +56,23 @@ inputs:
     description: "PR comment mode: 'off' (no comments), 'changed' (only for changed source files), or 'all' (all files generated in this run)"
     required: false
     default: "off"
+  
+  # PR comment display options
+  pr-comment-header:
+    description: "Show header in PR comments (true/false)"
+    required: false
+    default: "true"
+  
+  pr-comment-details:
+    description: "Use collapsible details for PR comments (true/false)"
+    required: false
+    default: "false"
+  
+  # GitHub token input
+  github-token:
+    description: "GitHub token for PR comments (defaults to github.token)"
+    required: false
+    default: ${{ github.token }}
 
 ####################
 # Run steps
@@ -63,29 +80,18 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Install dependencies for PR comment feature if needed
+    # Node.js is required for the runner script
     - name: Setup Node.js
-      if: ${{ inputs.pr-comment-mode != 'off' }}
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
-    
-    - name: Install GitHub Actions dependencies
-      if: ${{ inputs.pr-comment-mode != 'off' }}
-      shell: bash
-      run: |
-        npm install @actions/github @actions/core
+        node-version: 'lts/*'
     
     - name: Run mermaid-markdown-wrap
+      id: convert
       shell: bash
-      env:
-        PR_COMMENT_MODE: ${{ inputs.pr-comment-mode }}
-        GITHUB_TOKEN: ${{ github.token }}
-        GITHUB_EVENT_NAME: ${{ github.event_name }}
       run: |
         # Build CLI arguments
-        args=()
-        args+=("${{ inputs.input }}")
+        args=("${{ inputs.input }}")
         
         # Add optional arguments
         [[ -n "${{ inputs.out-dir }}" ]] && args+=(--out-dir "${{ inputs.out-dir }}")
@@ -95,9 +101,119 @@ runs:
         
         # Add boolean flags
         [[ "${{ inputs.remove-source }}" == "true" ]] && args+=(--remove-source)
-        [[ "${{ inputs.show-command }}" == "false" ]] && args+=(--no-show-command)
+        [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
-        # Execute using the unified runner script
-        node ${{ github.action_path }}/scripts/github-action-runner.js "${args[@]}"
+        # Run with JSON output and save to file
+        npx --yes mermaid-markdown-wrap "${args[@]}" --log-format json > conversion-results.json
+        
+        # Display results
+        cat conversion-results.json
+        
+        # Check exit status
+        FAILED=$(jq -r '.summary.failedConversions' conversion-results.json)
+        if [[ "$FAILED" -gt 0 ]]; then
+          echo "exit_code=1" >> $GITHUB_OUTPUT
+          exit 1
+        else
+          echo "exit_code=0" >> $GITHUB_OUTPUT
+        fi
     
-    # PR comments are now handled within the unified runner script
+    # PR comment posting using github-script
+    - name: Post PR comments
+      if: |
+        inputs.pr-comment-mode != 'off' && 
+        (github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Read conversion results
+          const resultsJson = fs.readFileSync('conversion-results.json', 'utf8');
+          const results = JSON.parse(resultsJson);
+          
+          // Get PR number (works for both pull_request and pull_request_target)
+          const prNumber = context.payload.pull_request?.number || context.issue.number;
+          if (!prNumber) {
+            console.log('No PR number found, skipping comments');
+            return;
+          }
+          
+          // Filter files based on mode
+          let filesToComment = [];
+          const mode = '${{ inputs.pr-comment-mode }}';
+          
+          if (mode === 'all') {
+            // Comment on all successfully converted files in this run
+            filesToComment = results.conversions.filter(c => c.converted);
+            console.log(`PR comment mode: all - will comment on ${filesToComment.length} converted files`);
+            
+          } else if (mode === 'changed') {
+            // Only comment on files that were changed in this PR
+            try {
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber
+              });
+              
+              const changedMermaidFiles = files
+                .filter(f => f.filename.endsWith('.mmd') || f.filename.endsWith('.mermaid'))
+                .map(f => f.filename);
+              
+              // Filter to only include changed source files that were successfully converted
+              const allConverted = results.conversions.filter(c => c.converted);
+              filesToComment = allConverted.filter(c => 
+                changedMermaidFiles.includes(c.mermaidFile)
+              );
+              
+              console.log(`PR comment mode: changed - found ${changedMermaidFiles.length} changed source files, ${filesToComment.length} were converted`);
+            } catch (e) {
+              console.error('Failed to get changed files from GitHub API:', e.message);
+              console.error('Falling back to commenting on all converted files');
+              filesToComment = results.conversions.filter(c => c.converted);
+            }
+            
+          } else {
+            // This should not happen due to the if condition in the step, but just in case
+            throw new Error(`Invalid pr-comment-mode: ${mode}. Expected 'all' or 'changed'.`);
+          }
+          
+          // Post comments for each converted file
+          for (const conversion of filesToComment) {
+            try {
+              const content = fs.readFileSync(conversion.markdownFile, 'utf8');
+              const filename = path.basename(conversion.markdownFile);
+              
+              // Build comment body based on options
+              const useDetails = '${{ inputs.pr-comment-details }}' === 'true';
+              const showHeader = '${{ inputs.pr-comment-header }}' !== 'false';
+              
+              let body = '';
+              
+              // Add header if enabled
+              if (showHeader) {
+                body += `### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi12345/mermaid-markdown-wrap) generated: \`${filename}\`\n\n`;
+              }
+              
+              // Add content with or without details
+              if (useDetails) {
+                body += `<details>\n<summary>Click to expand</summary>\n\n\`\`\`markdown\n${content}\n\`\`\`\n\n</details>`;
+              } else {
+                body += `\`\`\`markdown\n${content}\n\`\`\``;
+              }
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: body
+              });
+              
+              console.log(`✓ Posted comment for: ${filename}`);
+            } catch (e) {
+              console.error(`Failed to post comment for ${conversion.markdownFile}:`, e.message);
+            }
+          }

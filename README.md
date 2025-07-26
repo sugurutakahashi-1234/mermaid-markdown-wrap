@@ -65,7 +65,7 @@ mermaid-markdown-wrap config-validate custom.json  # Validate specific file
 | `--header <text>`     | Text to prepend to output            | -             |
 | `--footer <text>`     | Text to append to output             | -             |
 | `--remove-source`     | Remove source files                  | `false`       |
-| `--no-show-command`   | Hide command in output               | `false`       |
+| `--hide-command`      | Hide command in output               | `false`       |
 | `--log-format <format>`| Log output format: text or json      | `text`        |
 | `--quiet`             | Suppress non-error output            | `false`       |
 | `-c, --config <file>` | Config file path                     | Auto-search   |
@@ -119,7 +119,7 @@ This command will guide you through creating a configuration file by asking abou
 - Output directory
 - Header/footer text
 - Whether to remove source files
-- Whether to show command in output
+- Whether to hide command in output
 
 ## Configuration
 
@@ -142,7 +142,7 @@ outDir: docs
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 removeSource: false
-showCommand: true
+hideCommand: false
 ```
 
 > **Tip**: To enable IntelliSense for YAML files:
@@ -180,7 +180,7 @@ showCommand: true
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
   "removeSource": false,
-  "showCommand": true
+  "hideCommand": false
 }
 ```
 
@@ -197,7 +197,7 @@ module.exports = {
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
 };
 ```
 
@@ -216,7 +216,7 @@ const config: Config = {
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
 };
 
 export default config;
@@ -271,12 +271,32 @@ jobs:
           pr-comment-mode: changed  # Options: 'off', 'changed', 'all'
 ```
 
-#### PR Comment Modes
+#### PR Comment Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `pr-comment-mode` | Comment posting mode: `'off'`, `'changed'`, `'all'` | `'off'` |
+| `pr-comment-header` | Show header in PR comments | `'true'` |
+| `pr-comment-details` | Use collapsible details for PR comments | `'false'` |
+| `github-token` | GitHub token for PR comments | `${{ github.token }}` |
+
+**PR Comment Modes:**
 - `off` (default): No PR comments
 - `changed`: Only comment files that were changed in the PR
 - `all`: Comment all files generated in this run
 
+**Example with all PR options:**
+```yaml
+- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+  with:
+    input: "**/*.{mmd,mermaid}"
+    pr-comment-mode: all
+    pr-comment-header: false      # Hide the header
+    pr-comment-details: true      # Collapse content in details tag
+    github-token: ${{ secrets.GITHUB_TOKEN }}  # Custom token (optional)
 ```
+
+**Note:** Works with both `pull_request` and `pull_request_target` events. When using `pull_request_target`, be careful not to checkout untrusted PR code.
 
 ## How It Works
 

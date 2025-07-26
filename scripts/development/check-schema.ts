@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 // Get the project root directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const projectRoot = join(__dirname, "..");
+const projectRoot = join(__dirname, "..", "..");
 
 const schemaPath = join(projectRoot, "schema", "config.schema.json");
 

@@ -27,8 +27,8 @@ export function formatMermaidAsMarkdown(
     parts.push(""); // Empty line after header
   }
 
-  // Add command info if showCommand is true and commandInfo is provided
-  if (options.showCommand && commandInfo) {
+  // Add command info if hideCommand is false and commandInfo is provided
+  if (!options.hideCommand && commandInfo) {
     parts.push("```bash");
     parts.push(commandInfo);
     parts.push("```");

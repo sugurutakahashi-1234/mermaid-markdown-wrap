@@ -72,10 +72,10 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
           message: "Remove original .mmd files after conversion?",
           initialValue: false,
         }),
-      showCommand: () =>
+      hideCommand: () =>
         confirm({
-          message: "Include the generation command in output files?",
-          initialValue: true,
+          message: "Hide the generation command in output files?",
+          initialValue: false,
         }),
     },
     {
@@ -103,8 +103,8 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
   if (result.removeSource !== false) {
     config.removeSource = Boolean(result.removeSource);
   }
-  if (result.showCommand !== true) {
-    config.showCommand = Boolean(result.showCommand);
+  if (result.hideCommand !== false) {
+    config.hideCommand = Boolean(result.hideCommand);
   }
 
   return {

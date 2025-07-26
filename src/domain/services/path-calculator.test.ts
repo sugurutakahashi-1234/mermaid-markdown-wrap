@@ -9,7 +9,7 @@ const createOptions = (
   header: "",
   footer: "",
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
   logFormat: "text",
   quiet: false,
   ...overrides,

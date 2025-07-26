@@ -9,7 +9,7 @@ const createOptions = (
   header: "",
   footer: "",
   removeSource: false,
-  showCommand: true,
+  hideCommand: false,
   logFormat: "text",
   quiet: false,
   ...overrides,
@@ -121,10 +121,10 @@ describe("formatMermaidAsMarkdown", () => {
     );
   });
 
-  test("includes command info when showCommand is true and commandInfo is provided", () => {
+  test("includes command info when hideCommand is false and commandInfo is provided", () => {
     const content = "graph TD";
     const options = createOptions({
-      showCommand: true,
+      hideCommand: false,
     });
     const commandInfo = "mermaid-markdown-wrap diagram.mmd";
 
@@ -135,10 +135,10 @@ describe("formatMermaidAsMarkdown", () => {
     );
   });
 
-  test("excludes command info when showCommand is false", () => {
+  test("excludes command info when hideCommand is true", () => {
     const content = "graph TD";
     const options = createOptions({
-      showCommand: false,
+      hideCommand: true,
     });
     const commandInfo = "mermaid-markdown-wrap diagram.mmd";
 
@@ -152,7 +152,7 @@ describe("formatMermaidAsMarkdown", () => {
     const options = createOptions({
       header: "# Diagram",
       footer: "© 2024",
-      showCommand: true,
+      hideCommand: false,
     });
     const commandInfo = 'mermaid-markdown-wrap "*.mmd"';
 
