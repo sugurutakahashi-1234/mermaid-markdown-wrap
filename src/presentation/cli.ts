@@ -9,7 +9,10 @@ import {
   getPackageName,
   getVersion,
 } from "../domain/constants/package-info.js";
-import { NoFilesFoundError } from "../domain/models/errors.js";
+import {
+  NoFilesFoundError,
+  UserCancelledError,
+} from "../domain/models/errors.js";
 
 const program = new Command();
 
@@ -231,6 +234,10 @@ The init command will guide you through creating a configuration file by asking 
     try {
       await initConfigUseCase();
     } catch (error) {
+      if (error instanceof UserCancelledError) {
+        // User cancelled - exit gracefully without error message
+        process.exit(0);
+      }
       console.error(
         "❌ Error during init:",
         error instanceof Error ? error.message : String(error),

@@ -93,13 +93,13 @@ flowchart LR
     src/domain/services/config//file//generator.ts-->src/domain/models/options.ts
     src/infrastructure/services/interactive//prompts.ts-->node//modules///clack/prompts/dist/index.d.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/constants/package//info.ts
+    src/infrastructure/services/interactive//prompts.ts-->src/domain/models/errors.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/models/options.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/services/config//file//generator.ts
     src/application/use//cases/init//config.ts-->src/domain/constants/package//info.ts
     src/application/use//cases/init//config.ts-->src/domain/services/config//file//generator.ts
     src/application/use//cases/init//config.ts-->src/infrastructure/adapters/file//system.adapter.ts
     src/application/use//cases/init//config.ts-->src/infrastructure/services/interactive//prompts.ts
-    src/application/use//cases/init//config.ts-->node//modules///clack/prompts/dist/index.d.ts
     src/application/use//cases/show//config.ts-->src/domain/models/options.ts
     src/application/use//cases/show//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
     src/application/use//cases/validate//config.ts-->node//modules/valibot/dist/index.d.cts

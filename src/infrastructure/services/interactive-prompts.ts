@@ -8,6 +8,7 @@
 import {
   cancel,
   confirm,
+  group,
   intro,
   isCancel,
   outro,
@@ -16,6 +17,7 @@ import {
   text,
 } from "@clack/prompts";
 import { getPackageName } from "../../domain/constants/package-info.js";
+import { UserCancelledError } from "../../domain/models/errors.js";
 import {
   type ConfigOptions,
   DEFAULT_OPTIONS,
@@ -39,101 +41,78 @@ export interface PromptResult {
 export async function runInteractivePrompts(): Promise<PromptResult> {
   intro(`🧙 ${getPackageName()} init`);
 
-  // Select configuration file format
-  const format = await select({
-    message: "Choose a config file format",
-    options: CONFIG_FORMATS.map((fmt) => ({
-      label: fmt.label,
-      value: fmt.value,
-    })),
-    initialValue: "ts" as ConfigFormat,
-  });
-
-  if (isCancel(format)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
-  // Get output directory
-  const outDir = await text({
-    message: "Output directory (leave empty for same as input)",
-    placeholder: "docs",
-  });
-
-  if (isCancel(outDir)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
-  // Get header text
-  const header = await text({
-    message: "Header text to prepend",
-    placeholder: "<!-- AUTO-GENERATED -->",
-    initialValue: DEFAULT_OPTIONS.header,
-  });
-
-  if (isCancel(header)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
-  // Get footer text
-  const footer = await text({
-    message: "Footer text to append",
-    placeholder: "<!-- END -->",
-    initialValue: DEFAULT_OPTIONS.footer,
-  });
-
-  if (isCancel(footer)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
-  // Ask about removing source files
-  const removeSource = await confirm({
-    message: "Remove original .mmd files after conversion?",
-    initialValue: DEFAULT_OPTIONS.removeSource,
-  });
-
-  if (isCancel(removeSource)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
-
-  // Ask about showing command in output
-  const showCommand = await confirm({
-    message: "Include the generation command in output files?",
-    initialValue: DEFAULT_OPTIONS.showCommand,
-  });
-
-  if (isCancel(showCommand)) {
-    cancel("Init cancelled");
-    process.exit(0);
-  }
+  // Use group to collect all prompts at once
+  const result = await group(
+    {
+      format: () =>
+        select({
+          message: "Choose a config file format",
+          options: CONFIG_FORMATS.map((fmt) => ({
+            label: fmt.label,
+            value: fmt.value,
+          })),
+          initialValue: "ts" as ConfigFormat,
+        }),
+      outDir: () =>
+        text({
+          message: "Output directory (leave empty for same as input)",
+          placeholder: "docs",
+        }),
+      header: () =>
+        text({
+          message: "Header text to prepend to each converted file",
+          placeholder: "<!-- AUTO-GENERATED -->",
+          initialValue: DEFAULT_OPTIONS.header,
+        }),
+      footer: () =>
+        text({
+          message: "Footer text to append to each converted file",
+          placeholder: "<!-- END -->",
+          initialValue: DEFAULT_OPTIONS.footer,
+        }),
+      removeSource: () =>
+        confirm({
+          message: "Remove original .mmd files after conversion?",
+          initialValue: DEFAULT_OPTIONS.removeSource,
+        }),
+      showCommand: () =>
+        confirm({
+          message: "Include the generation command in output files?",
+          initialValue: DEFAULT_OPTIONS.showCommand,
+        }),
+    },
+    {
+      // On cancel callback
+      onCancel: () => {
+        cancel("Init cancelled");
+        throw new UserCancelledError("Init cancelled");
+      },
+    },
+  );
 
   // Build configuration object
   const config: ConfigOptions = {};
 
   // Only add non-default values to keep config minimal
-  if (outDir && String(outDir).trim()) {
-    config.outDir = String(outDir).trim();
+  if (result.outDir && String(result.outDir).trim()) {
+    config.outDir = String(result.outDir).trim();
   }
-  if (header !== DEFAULT_OPTIONS.header) {
-    config.header = String(header);
+  if (result.header !== DEFAULT_OPTIONS.header) {
+    config.header = String(result.header);
   }
-  if (footer !== DEFAULT_OPTIONS.footer) {
-    config.footer = String(footer);
+  if (result.footer !== DEFAULT_OPTIONS.footer) {
+    config.footer = String(result.footer);
   }
-  if (removeSource !== DEFAULT_OPTIONS.removeSource) {
-    config.removeSource = Boolean(removeSource);
+  if (result.removeSource !== DEFAULT_OPTIONS.removeSource) {
+    config.removeSource = Boolean(result.removeSource);
   }
-  if (showCommand !== DEFAULT_OPTIONS.showCommand) {
-    config.showCommand = Boolean(showCommand);
+  if (result.showCommand !== DEFAULT_OPTIONS.showCommand) {
+    config.showCommand = Boolean(result.showCommand);
   }
 
   return {
     config,
-    format: format as ConfigFormat,
+    format: result.format as ConfigFormat,
   };
 }
 
@@ -156,6 +135,27 @@ export function showSpinner(message: string): {
     },
   };
 }
+
+/**
+ * Confirm file overwrite
+ */
+export async function confirmOverwrite(fileName: string): Promise<boolean> {
+  const result = await confirm({
+    message: `${fileName} already exists. Do you want to overwrite it?`,
+    initialValue: false,
+  });
+
+  if (isCancel(result)) {
+    throw new UserCancelledError("Init cancelled - file overwrite declined");
+  }
+
+  return result;
+}
+
+/**
+ * Export utilities for use in other modules
+ */
+export { isCancel };
 
 /**
  * Show outro message

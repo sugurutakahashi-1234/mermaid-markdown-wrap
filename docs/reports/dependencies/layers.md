@@ -36,7 +36,6 @@ flowchart LR
     src/application-->src/infrastructure
     src/domain-->node//modules/yaml/dist/index.d.ts
     src/infrastructure-->node//modules///clack/prompts/dist/index.d.ts
-    src/application-->node//modules///clack/prompts/dist/index.d.ts
     src/application-->node//modules/valibot/dist/index.d.cts
     src/presentation-->node//modules/commander/typings/index.d.ts
     src/presentation-->src/application

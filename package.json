@@ -87,7 +87,7 @@
     "deps:update": "bunx ncu -u --deep && bun install"
   },
   "dependencies": {
-    "@clack/prompts": "^0.8.2",
+    "@clack/prompts": "^0.11.0",
     "commander": "^14.0.0",
     "cosmiconfig": "^9.0.0",
     "cosmiconfig-typescript-loader": "^6.1.0",
