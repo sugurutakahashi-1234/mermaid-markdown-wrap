@@ -46,18 +46,22 @@ async function runGitHubAction() {
       }
 
       // Display human-readable output
-      console.log(`\nProcessing ${results.totalFiles} file(s)...`);
+      console.log(
+        `\nProcessing ${results.summary.totalMermaidFiles} file(s)...`,
+      );
 
-      for (const file of results.files) {
-        if (file.success) {
-          console.log(`✓ ${file.source}`);
+      for (const conversion of results.conversions) {
+        if (conversion.converted) {
+          console.log(`✓ ${conversion.mermaidFile}`);
         } else {
-          console.error(`✗ ${file.source}: ${file.error || "Unknown error"}`);
+          console.error(
+            `✗ ${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+          );
         }
       }
 
       console.log(
-        `\nDone! Successful: ${results.successful}, Failed: ${results.failed}`,
+        `\nDone! Successful: ${results.summary.successfulConversions}, Failed: ${results.summary.failedConversions}`,
       );
 
       // Save results for PR comment posting
@@ -67,7 +71,7 @@ async function runGitHubAction() {
       }
 
       // Exit with appropriate code
-      if (results.failed > 0) {
+      if (results.summary.failedConversions > 0) {
         process.exit(1);
       }
     } else {
@@ -106,7 +110,9 @@ async function postPRComments(conversionResults, mode) {
 
     // Get list of markdown files to post
     let mdFiles = [];
-    const successfulFiles = conversionResults.files.filter((f) => f.success);
+    const successfulFiles = conversionResults.conversions.filter(
+      (f) => f.converted,
+    );
 
     if (mode === "changed") {
       // Get only changed source files from git
@@ -121,18 +127,18 @@ async function postPRComments(conversionResults, mode) {
       } catch (e) {
         console.warn("Failed to get changed files:", e.message);
         // Fall back to all files
-        mdFiles = successfulFiles.map((file) => file.output);
+        mdFiles = successfulFiles.map((file) => file.markdownFile);
       }
 
       if (changedFiles.length > 0) {
         // Filter to only include changed files that were successfully converted
         mdFiles = successfulFiles
-          .filter((file) => changedFiles.includes(file.source))
-          .map((file) => file.output);
+          .filter((file) => changedFiles.includes(file.mermaidFile))
+          .map((file) => file.markdownFile);
       }
     } else {
       // Get all files generated in this run
-      mdFiles = successfulFiles.map((file) => file.output);
+      mdFiles = successfulFiles.map((file) => file.markdownFile);
     }
 
     if (mdFiles.length === 0) {

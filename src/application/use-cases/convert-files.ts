@@ -6,49 +6,45 @@
  * the application flow.
  */
 
-import type { ConversionResultOutput } from "../../domain/models/json-output.js";
-import type { CLIOptions } from "../../domain/models/options.js";
-import { mergeOptions } from "../../domain/services/options-merger.js";
-import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
+import type { ConversionReport } from "../../domain/models/conversion.js";
+import type {
+  ProcessingOptions,
+  RawCLIOptions,
+} from "../../domain/models/options.js";
 import { processFiles } from "../../infrastructure/services/file-batch-processor.js";
 
 /**
  * Convert Mermaid files to Markdown format
  *
- * This use case:
- * 1. Loads configuration
- * 2. Merges options
- * 3. Delegates to the file converter service
- * 4. Aggregates results into ConversionResultOutput
+ * This use case now focuses purely on the business logic:
+ * 1. Delegates to the file converter service
+ * 2. Aggregates results into ConversionReport
+ *
+ * Options processing has been moved to the CLI layer for better separation of concerns.
  */
 export async function convertFilesUseCase(
   globPattern: string,
-  cliOptions: CLIOptions,
-): Promise<ConversionResultOutput> {
-  // Load configuration from file
-  const config = await loadConfigurationFile(cliOptions.config);
-
-  // Merge CLI options with config file options
-  const options = mergeOptions(cliOptions, config);
-
+  processingOptions: ProcessingOptions,
+  rawCliOptions?: RawCLIOptions,
+): Promise<ConversionReport> {
   // Delegate the actual conversion to infrastructure service
-  const results = await processFiles(globPattern, options, cliOptions);
+  // Pass both processing options and raw CLI options (for command display)
+  const results = await processFiles(
+    globPattern,
+    processingOptions,
+    rawCliOptions,
+  );
 
-  // Aggregate results into structured output
-  const successful = results.filter((r) => r.success);
-  const failed = results.filter((r) => !r.success);
-
-  const files = results.map((result) => ({
-    source: result.filePath,
-    output: result.outputPath || "",
-    success: result.success,
-    ...(result.error?.message && { error: result.error.message }),
-  }));
+  // Aggregate results into conversion report
+  const successful = results.filter((r) => r.converted);
+  const failed = results.filter((r) => !r.converted);
 
   return {
-    totalFiles: results.length,
-    successful: successful.length,
-    failed: failed.length,
-    files,
+    summary: {
+      totalMermaidFiles: results.length,
+      successfulConversions: successful.length,
+      failedConversions: failed.length,
+    },
+    conversions: results,
   };
 }

@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import { convertFilesUseCase } from "../application/use-cases/convert-files.js";
 import { initConfigUseCase } from "../application/use-cases/init-config.js";
+import { loadAndCombineConfigUseCase } from "../application/use-cases/load-and-combine-config.js";
 import { showConfigUseCase } from "../application/use-cases/show-config.js";
 import { validateConfigUseCase } from "../application/use-cases/validate-config.js";
 import {
@@ -10,7 +11,6 @@ import {
   getVersion,
 } from "../domain/constants/package-info.js";
 import { UserCancelledError } from "../domain/models/errors.js";
-import { parseCLIOptions } from "../domain/services/cli-options-parser.js";
 
 const program = new Command();
 
@@ -52,15 +52,20 @@ program
   .option("--quiet", "suppress non-error output", false)
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
-      // Parse and validate CLI options early
-      const cliOptions = parseCLIOptions(cmdOptions);
+      // Load configuration and combine with CLI options
+      const { rawCliOptions, processingOptions } =
+        await loadAndCombineConfigUseCase(cmdOptions);
 
-      // Execute the file conversion use case with validated options
-      const result = await convertFilesUseCase(globArg, cliOptions);
+      // Execute the file conversion use case with processing options
+      const result = await convertFilesUseCase(
+        globArg,
+        processingOptions,
+        rawCliOptions,
+      );
 
-      // Use validated options for output formatting
-      const isJson = cliOptions.logFormat === "json";
-      const quiet = cliOptions.quiet ?? false;
+      // Use processing options for output formatting
+      const isJson = processingOptions.logFormat === "json";
+      const quiet = processingOptions.quiet;
 
       if (isJson) {
         // Output as JSON
@@ -69,32 +74,38 @@ program
         // Output as text
         if (!quiet) {
           // Display file conversions
-          result.files.forEach((file) => {
-            if (file.success) {
-              console.log(`${file.source} -> ${file.output}`);
+          result.conversions.forEach((conversion) => {
+            if (conversion.converted) {
+              console.log(
+                `${conversion.mermaidFile} -> ${conversion.markdownFile}`,
+              );
             } else {
-              console.error(`${file.source}: ${file.error || "Unknown error"}`);
+              console.error(
+                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+              );
             }
           });
 
           // Display summary for multiple files
-          if (result.totalFiles > 1) {
+          if (result.summary.totalMermaidFiles > 1) {
             console.log(
-              `\n${result.totalFiles} files converted (${result.successful} success, ${result.failed} failed)`,
+              `\n${result.summary.totalMermaidFiles} files converted (${result.summary.successfulConversions} success, ${result.summary.failedConversions} failed)`,
             );
           }
         } else {
           // In quiet mode, only show errors
-          result.files.forEach((file) => {
-            if (!file.success) {
-              console.error(`${file.source}: ${file.error || "Unknown error"}`);
+          result.conversions.forEach((conversion) => {
+            if (!conversion.converted) {
+              console.error(
+                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+              );
             }
           });
         }
       }
 
       // Exit with error code if there were failures
-      process.exit(result.failed > 0 ? 1 : 0);
+      process.exit(result.summary.failedConversions > 0 ? 1 : 0);
     } catch (error) {
       if (error instanceof UserCancelledError) {
         process.exit(0);

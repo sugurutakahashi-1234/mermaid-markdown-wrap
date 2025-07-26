@@ -7,18 +7,21 @@
 
 import * as v from "valibot";
 import { InvalidOptionsError } from "../models/errors.js";
-import type { CLIOptions } from "../models/options.js";
-import { CLIOptionsSchema } from "../models/options.js";
+import type { RawCLIOptions } from "../models/options.js";
+import { RawCLIOptionsSchema } from "../models/options.js";
 
 /**
- * Parse and validate CLI options
+ * Parse and validate raw CLI options
  *
- * Validates raw input against the CLIOptions schema.
- * This is a domain service because it enforces business rules
- * about what constitutes valid options.
+ * Purpose: Parse exactly what the user typed on the command line
+ *
+ * Why this returns RawCLIOptions:
+ * - We need to preserve the original input for the showCommand feature
+ * - Default values will be applied later when creating ProcessingOptions
+ * - This separation ensures command display accuracy
  */
-export function parseCLIOptions(options: unknown): CLIOptions {
-  const result = v.safeParse(CLIOptionsSchema, options);
+export function parseRawCLIOptions(options: unknown): RawCLIOptions {
+  const result = v.safeParse(RawCLIOptionsSchema, options);
   if (!result.success) {
     throw new InvalidOptionsError(
       result.issues[0]?.message || "Unknown validation error",

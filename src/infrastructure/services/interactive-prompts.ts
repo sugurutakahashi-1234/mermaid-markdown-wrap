@@ -18,10 +18,7 @@ import {
 } from "@clack/prompts";
 import { getPackageName } from "../../domain/constants/package-info.js";
 import { UserCancelledError } from "../../domain/models/errors.js";
-import {
-  type ConfigOptions,
-  DEFAULT_OPTIONS,
-} from "../../domain/models/options.js";
+import type { ConfigOptions } from "../../domain/models/options.js";
 import {
   CONFIG_FORMATS,
   type ConfigFormat,
@@ -62,23 +59,23 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
         text({
           message: "Header text to prepend to each converted file",
           placeholder: "<!-- AUTO-GENERATED -->",
-          initialValue: DEFAULT_OPTIONS.header,
+          initialValue: "",
         }),
       footer: () =>
         text({
           message: "Footer text to append to each converted file",
           placeholder: "<!-- END -->",
-          initialValue: DEFAULT_OPTIONS.footer,
+          initialValue: "",
         }),
       removeSource: () =>
         confirm({
           message: "Remove original .mmd files after conversion?",
-          initialValue: DEFAULT_OPTIONS.removeSource,
+          initialValue: false,
         }),
       showCommand: () =>
         confirm({
           message: "Include the generation command in output files?",
-          initialValue: DEFAULT_OPTIONS.showCommand,
+          initialValue: true,
         }),
     },
     {
@@ -97,16 +94,16 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
   if (result.outDir && String(result.outDir).trim()) {
     config.outDir = String(result.outDir).trim();
   }
-  if (result.header !== DEFAULT_OPTIONS.header) {
+  if (result.header !== "") {
     config.header = String(result.header);
   }
-  if (result.footer !== DEFAULT_OPTIONS.footer) {
+  if (result.footer !== "") {
     config.footer = String(result.footer);
   }
-  if (result.removeSource !== DEFAULT_OPTIONS.removeSource) {
+  if (result.removeSource !== false) {
     config.removeSource = Boolean(result.removeSource);
   }
-  if (result.showCommand !== DEFAULT_OPTIONS.showCommand) {
+  if (result.showCommand !== true) {
     config.showCommand = Boolean(result.showCommand);
   }
 

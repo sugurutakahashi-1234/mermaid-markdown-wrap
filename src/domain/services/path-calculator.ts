@@ -8,7 +8,7 @@
  */
 
 import { basename, dirname, extname, join } from "node:path";
-import type { MergedOptions } from "../models/options.js";
+import type { ProcessingOptions } from "../models/options.js";
 
 /**
  * Calculate output path for a converted file
@@ -20,7 +20,7 @@ import type { MergedOptions } from "../models/options.js";
  */
 export function getOutputPath(
   inputPath: string,
-  options: MergedOptions,
+  options: ProcessingOptions,
 ): string {
   const dir = dirname(inputPath);
   const baseName = basename(inputPath, extname(inputPath));

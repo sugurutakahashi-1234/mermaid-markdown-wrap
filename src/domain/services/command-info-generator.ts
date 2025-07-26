@@ -6,17 +6,21 @@
  */
 
 import { getPackageName } from "../constants/package-info.js";
-import type { CLIOptions } from "../models/options.js";
+import type { RawCLIOptions } from "../models/options.js";
 
 /**
- * Generate command info string from CLI options and glob pattern
+ * Generate command info string from raw CLI options and glob pattern
  *
- * Reconstructs the command that was used to invoke the tool,
- * including all specified options.
+ * Purpose: Reconstruct the exact command the user typed
+ *
+ * Why this uses RawCLIOptions:
+ * - Shows only the options the user explicitly provided
+ * - Doesn't include default values the user didn't set
+ * - Maintains accuracy of the displayed command
  */
 export function generateCommandInfo(
   globPattern: string,
-  cliOptions: CLIOptions,
+  rawCliOptions: RawCLIOptions,
 ): string {
   const parts: string[] = [getPackageName()];
 
@@ -28,31 +32,31 @@ export function generateCommandInfo(
   }
 
   // Add options in a consistent order
-  if (cliOptions.outDir) {
-    parts.push("--out-dir", cliOptions.outDir);
+  if (rawCliOptions.outDir) {
+    parts.push("--out-dir", rawCliOptions.outDir);
   }
 
-  if (cliOptions.header) {
-    parts.push("--header", `"${cliOptions.header}"`);
+  if (rawCliOptions.header) {
+    parts.push("--header", `"${rawCliOptions.header}"`);
   }
 
-  if (cliOptions.footer) {
-    parts.push("--footer", `"${cliOptions.footer}"`);
+  if (rawCliOptions.footer) {
+    parts.push("--footer", `"${rawCliOptions.footer}"`);
   }
 
-  if (cliOptions.config) {
-    parts.push("--config", cliOptions.config);
+  if (rawCliOptions.config) {
+    parts.push("--config", rawCliOptions.config);
   }
 
-  if (cliOptions.removeSource === true) {
+  if (rawCliOptions.removeSource === true) {
     parts.push("--remove-source");
   }
 
-  if (cliOptions.logFormat && cliOptions.logFormat !== "text") {
-    parts.push("--log-format", cliOptions.logFormat);
+  if (rawCliOptions.logFormat && rawCliOptions.logFormat !== "text") {
+    parts.push("--log-format", rawCliOptions.logFormat);
   }
 
-  if (cliOptions.quiet === true) {
+  if (rawCliOptions.quiet === true) {
     parts.push("--quiet");
   }
 

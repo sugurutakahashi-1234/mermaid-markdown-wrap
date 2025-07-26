@@ -357,15 +357,16 @@ describe("CLI", () => {
 
     // Parse JSON output
     const result = JSON.parse(output);
-    expect(result).toHaveProperty("totalFiles", 1);
-    expect(result).toHaveProperty("successful", 1);
-    expect(result).toHaveProperty("failed", 0);
-    expect(result).toHaveProperty("files");
-    expect(result.files).toBeArray();
-    expect(result.files).toHaveLength(1);
-    expect(result.files[0].success).toBe(true);
-    expect(result.files[0].source).toContain("test.mmd");
-    expect(result.files[0].output).toContain("test.md");
+    expect(result).toHaveProperty("summary");
+    expect(result.summary).toHaveProperty("totalMermaidFiles", 1);
+    expect(result.summary).toHaveProperty("successfulConversions", 1);
+    expect(result.summary).toHaveProperty("failedConversions", 0);
+    expect(result).toHaveProperty("conversions");
+    expect(result.conversions).toBeArray();
+    expect(result.conversions).toHaveLength(1);
+    expect(result.conversions[0].converted).toBe(true);
+    expect(result.conversions[0].mermaidFile).toContain("test.mmd");
+    expect(result.conversions[0].markdownFile).toContain("test.md");
   });
 
   test("outputs JSON format with failures", async () => {
@@ -403,14 +404,14 @@ describe("CLI", () => {
     expect(proc.exitCode).toBe(1);
 
     const result = JSON.parse(output);
-    expect(result.totalFiles).toBeGreaterThanOrEqual(1);
-    expect(result.successful).toBeGreaterThanOrEqual(1);
+    expect(result.summary.totalMermaidFiles).toBeGreaterThanOrEqual(1);
+    expect(result.summary.successfulConversions).toBeGreaterThanOrEqual(1);
 
     if (process.platform !== "win32") {
-      expect(result.failed).toBeGreaterThanOrEqual(1);
-      const failedFile = result.files.find((f: any) => !f.success);
+      expect(result.summary.failedConversions).toBeGreaterThanOrEqual(1);
+      const failedFile = result.conversions.find((f: any) => !f.converted);
       expect(failedFile).toBeDefined();
-      expect(failedFile.error).toBeDefined();
+      expect(failedFile.failureReason).toBeDefined();
     }
   });
 

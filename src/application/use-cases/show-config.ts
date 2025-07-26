@@ -1,5 +1,4 @@
 import type { ConfigOptions } from "../../domain/models/options.js";
-import { DEFAULT_OPTIONS } from "../../domain/models/options.js";
 import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig.adapter.js";
 
 /**
@@ -12,12 +11,12 @@ export async function showConfigUseCase(
   // Load configuration
   const config = await loadConfigurationFile(configFile);
 
-  // Merge options (without requiring glob)
+  // Apply defaults to configuration for display
   const mergedOptions: ConfigOptions = {
-    header: config.header ?? DEFAULT_OPTIONS.header,
-    footer: config.footer ?? DEFAULT_OPTIONS.footer,
-    removeSource: config.removeSource ?? DEFAULT_OPTIONS.removeSource,
-    showCommand: config.showCommand ?? DEFAULT_OPTIONS.showCommand,
+    header: config.header ?? "",
+    footer: config.footer ?? "",
+    removeSource: config.removeSource ?? false,
+    showCommand: config.showCommand ?? true,
     ...(config.outDir ? { outDir: config.outDir } : {}),
   };
 

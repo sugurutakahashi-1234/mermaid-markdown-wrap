@@ -5,9 +5,12 @@
  * in parallel, including error handling and result aggregation.
  */
 
+import type { MermaidConversion } from "../../domain/models/conversion.js";
 import { NoFilesFoundError } from "../../domain/models/errors.js";
-import type { CLIOptions, MergedOptions } from "../../domain/models/options.js";
-import type { FileConversionResult } from "../../domain/models/result.js";
+import type {
+  ProcessingOptions,
+  RawCLIOptions,
+} from "../../domain/models/options.js";
 import { generateCommandInfo } from "../../domain/services/command-info-generator.js";
 import { formatMermaidAsMarkdown } from "../../domain/services/mermaid-formatter.js";
 import { getOutputPath } from "../../domain/services/path-calculator.js";
@@ -30,9 +33,9 @@ import { findFilesByPattern } from "../adapters/glob-search.adapter.js";
  */
 export async function processFiles(
   pattern: string,
-  options: MergedOptions,
-  cliOptions: CLIOptions,
-): Promise<FileConversionResult[]> {
+  options: ProcessingOptions,
+  rawCliOptions?: RawCLIOptions,
+): Promise<MermaidConversion[]> {
   // Find files matching pattern
   const files = await findFilesByPattern(pattern);
 
@@ -46,13 +49,15 @@ export async function processFiles(
   }
 
   // Generate command info once for all files
-  const commandInfo = options.showCommand
-    ? generateCommandInfo(pattern, cliOptions)
-    : undefined;
+  // Use raw CLI options if available to show exact user input
+  const commandInfo =
+    options.showCommand && rawCliOptions
+      ? generateCommandInfo(pattern, rawCliOptions)
+      : undefined;
 
   // Process files in parallel with error handling
   const results = await Promise.allSettled(
-    files.map(async (filePath): Promise<FileConversionResult> => {
+    files.map(async (filePath): Promise<MermaidConversion> => {
       try {
         // Calculate output path before conversion
         const outputPath = getOutputPath(filePath, options);
@@ -76,15 +81,16 @@ export async function processFiles(
         }
 
         return {
-          filePath,
-          success: true,
-          outputPath,
+          mermaidFile: filePath,
+          converted: true,
+          markdownFile: outputPath,
         };
       } catch (error) {
         return {
-          filePath,
-          success: false,
-          error: error instanceof Error ? error : new Error(String(error)),
+          mermaidFile: filePath,
+          converted: false,
+          markdownFile: "",
+          failureReason: error instanceof Error ? error.message : String(error),
         };
       }
     }),
@@ -96,12 +102,13 @@ export async function processFiles(
       return result.value;
     }
     return {
-      filePath: files[index] || "unknown",
-      success: false,
-      error:
+      mermaidFile: files[index] || "unknown",
+      converted: false,
+      markdownFile: "",
+      failureReason:
         result.reason instanceof Error
-          ? result.reason
-          : new Error(String(result.reason)),
+          ? result.reason.message
+          : String(result.reason),
     };
   });
 }

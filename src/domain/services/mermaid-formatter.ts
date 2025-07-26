@@ -6,7 +6,7 @@
  * application does - wrapping Mermaid diagrams in Markdown code blocks.
  */
 
-import type { MergedOptions } from "../models/options.js";
+import type { ProcessingOptions } from "../models/options.js";
 
 /**
  * Format Mermaid content as a Markdown code block with optional header/footer and command info
@@ -16,7 +16,7 @@ import type { MergedOptions } from "../models/options.js";
  */
 export function formatMermaidAsMarkdown(
   mermaidContent: string,
-  options: MergedOptions,
+  options: ProcessingOptions,
   commandInfo?: string,
 ): string {
   const parts: string[] = [];
