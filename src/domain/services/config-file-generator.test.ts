@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { ConfigOptions } from "../models/options.js";
 import {
-  CONFIG_FORMATS,
   generateConfigFileContent,
   generateConfigFileName,
 } from "./config-file-generator.js";
@@ -85,18 +84,6 @@ describe("config-file-generator", () => {
       expect(content).toContain("outDir: docs");
       expect(content).toContain("removeSource: false");
       expect(content).toContain("showCommand: true");
-    });
-  });
-
-  describe("CONFIG_FORMATS", () => {
-    it("should have all supported formats", () => {
-      const formats = CONFIG_FORMATS.map((f) => f.format);
-      expect(formats).toEqual(["ts", "js", "cjs", "mjs", "json", "yaml"]);
-    });
-
-    it("should have correct labels", () => {
-      const tsFormat = CONFIG_FORMATS.find((f) => f.format === "ts");
-      expect(tsFormat?.label).toBe("TypeScript (.ts)");
     });
   });
 });

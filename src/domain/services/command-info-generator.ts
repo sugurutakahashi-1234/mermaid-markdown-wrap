@@ -48,6 +48,14 @@ export function generateCommandInfo(
     parts.push("--remove-source");
   }
 
+  if (cliOptions.logFormat && cliOptions.logFormat !== "text") {
+    parts.push("--log-format", cliOptions.logFormat);
+  }
+
+  if (cliOptions.quiet === true) {
+    parts.push("--quiet");
+  }
+
   // Note: we don't include --no-show-command since that would be redundant
   // when the command is being shown
 

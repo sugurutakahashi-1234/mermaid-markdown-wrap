@@ -140,7 +140,8 @@
       "WebFetch(domain:support.anthropic.com)",
       "WebFetch(domain:docs.renovatebot.com)",
       "WebFetch(domain:nodejs.org)",
-      "WebFetch(domain:valibot.dev)"
+      "WebFetch(domain:valibot.dev)",
+      "Bash(mermaid-markdown-wrap:*)"
     ],
     "deny": []
   },

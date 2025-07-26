@@ -42,8 +42,9 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("Converting 1 file(s)");
-    expect(output).toContain("✓");
+    expect(output).toContain("->");
+    expect(output).toContain("diagram.mmd");
+    expect(output).toContain("diagram.md");
 
     const result = await readFile(outputFile, "utf-8");
     expect(result).toContain("```mermaid");
@@ -97,8 +98,9 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("Converting 1 file(s)");
-    expect(output).toContain("✓");
+    expect(output).toContain("->");
+    expect(output).toContain("flowchart.mermaid");
+    expect(output).toContain("flowchart.md");
 
     const result = await readFile(outputFile, "utf-8");
     expect(result).toContain("```mermaid");
@@ -120,10 +122,9 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("Converting");
-    expect(output).toContain("file(s)");
-    expect(output).toContain("✓ a.mmd");
-    expect(output).toContain("✓ b.mmd");
+    expect(output).toContain("2 files converted (2 success, 0 failed)");
+    expect(output).toContain("a.mmd ->");
+    expect(output).toContain("b.mmd ->");
 
     const aExists = await Bun.file(join(testDir, "a.md")).exists();
     const bExists = await Bun.file(join(testDir, "b.md")).exists();
@@ -145,10 +146,9 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("Converting");
-    expect(output).toContain("file(s)");
-    expect(output).toContain("✓ flow.mermaid");
-    expect(output).toContain("✓ seq.mermaid");
+    expect(output).toContain("2 files converted (2 success, 0 failed)");
+    expect(output).toContain("flow.mermaid ->");
+    expect(output).toContain("seq.mermaid ->");
 
     const flowExists = await Bun.file(join(testDir, "flow.md")).exists();
     const seqExists = await Bun.file(join(testDir, "seq.md")).exists();
@@ -170,10 +170,9 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("Converting");
-    expect(output).toContain("file(s)");
-    expect(output).toContain("✓ diagram.mmd");
-    expect(output).toContain("✓ flowchart.mermaid");
+    expect(output).toContain("2 files converted (2 success, 0 failed)");
+    expect(output).toContain("diagram.mmd ->");
+    expect(output).toContain("flowchart.mermaid ->");
 
     const diagramExists = await Bun.file(join(testDir, "diagram.md")).exists();
     const flowchartExists = await Bun.file(
@@ -281,6 +280,140 @@ describe("CLI", () => {
     expect(output).toContain("0.1.0");
   });
 
+  test("shows output path in default mode", async () => {
+    const inputFile = join(testDir, "test.mmd");
+    await writeFile(inputFile, "graph TD\n  A --> B");
+
+    const proc = spawn(["bun", cliPath, inputFile], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+    expect(output).toContain("->");
+    expect(output).toContain("test.mmd");
+    expect(output).toContain("test.md");
+  });
+
+  test("quiet mode suppresses normal output", async () => {
+    const inputFile = join(testDir, "test.mmd");
+    await writeFile(inputFile, "graph TD\n  A --> B");
+
+    const proc = spawn(["bun", cliPath, inputFile, "--quiet"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+    expect(output.trim()).toBe(""); // No output in quiet mode
+
+    // But file should still be created
+    const outputFile = join(testDir, "test.md");
+    const exists = await Bun.file(outputFile).exists();
+    expect(exists).toBe(true);
+  });
+
+  // Verbose mode has been removed
+
+  test("invalid log format shows error", async () => {
+    const inputFile = join(testDir, "test.mmd");
+    await writeFile(inputFile, "graph TD");
+
+    const proc = spawn(["bun", cliPath, inputFile, "--log-format", "invalid"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const stderr = await new Response(proc.stderr).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(1);
+    expect(stderr).toContain("Error: Invalid options: Invalid log format");
+  });
+
+  test("outputs JSON format with --log-format json", async () => {
+    const inputFile = join(testDir, "test.mmd");
+    await writeFile(inputFile, "graph TD\n  A --> B");
+
+    const proc = spawn(["bun", cliPath, inputFile, "--log-format", "json"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    expect(proc.exitCode).toBe(0);
+
+    // Parse JSON output
+    const result = JSON.parse(output);
+    expect(result).toHaveProperty("totalFiles", 1);
+    expect(result).toHaveProperty("successful", 1);
+    expect(result).toHaveProperty("failed", 0);
+    expect(result).toHaveProperty("files");
+    expect(result.files).toBeArray();
+    expect(result.files).toHaveLength(1);
+    expect(result.files[0].success).toBe(true);
+    expect(result.files[0].source).toContain("test.mmd");
+    expect(result.files[0].output).toContain("test.md");
+  });
+
+  test("outputs JSON format with failures", async () => {
+    // Create a file that will fail to read
+    const inputPattern = "**/*.mmd";
+    const validFile = join(testDir, "valid.mmd");
+    await writeFile(validFile, "graph TD\n  A --> B");
+
+    // Create subdirectory for permission test
+    const subDir = join(testDir, "restricted");
+    await mkdir(subDir);
+    const restrictedFile = join(subDir, "noaccess.mmd");
+    await writeFile(restrictedFile, "graph TD");
+
+    // Make file unreadable (skip on Windows)
+    if (process.platform !== "win32") {
+      await Bun.spawn(["chmod", "000", restrictedFile]).exited;
+    }
+
+    const proc = spawn(["bun", cliPath, inputPattern, "--log-format", "json"], {
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    const output = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    // Clean up permissions before assertions
+    if (process.platform !== "win32") {
+      await Bun.spawn(["chmod", "644", restrictedFile]).exited;
+    }
+
+    // Should exit with error code when there are failures
+    expect(proc.exitCode).toBe(1);
+
+    const result = JSON.parse(output);
+    expect(result.totalFiles).toBeGreaterThanOrEqual(1);
+    expect(result.successful).toBeGreaterThanOrEqual(1);
+
+    if (process.platform !== "win32") {
+      expect(result.failed).toBeGreaterThanOrEqual(1);
+      const failedFile = result.files.find((f: any) => !f.success);
+      expect(failedFile).toBeDefined();
+      expect(failedFile.error).toBeDefined();
+    }
+  });
+
   describe("config-validate subcommand", () => {
     test("validates valid config file", async () => {
       const configPath = join(testDir, "valid-config.yaml");
@@ -357,7 +490,7 @@ describe("CLI", () => {
 
       // Should fail when specified config file is not found
       expect(proc.exitCode).toBe(1);
-      expect(stderr).toContain("❌ Error loading config:");
+      expect(stderr).toContain("Error loading config:");
     });
   });
 });

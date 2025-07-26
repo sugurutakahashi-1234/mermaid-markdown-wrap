@@ -13,4 +13,5 @@ export interface FileConversionResult {
   filePath: string;
   success: boolean;
   error?: Error;
+  outputPath?: string; // Path where the markdown file was generated
 }

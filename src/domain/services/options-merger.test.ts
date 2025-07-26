@@ -36,7 +36,7 @@ describe("mergeOptions", () => {
       { outDir: "output" },
     );
 
-    expect(result.config).toBe("custom.json");
+    // config is not included in merged options
     expect(result.outDir).toBe("output");
   });
 

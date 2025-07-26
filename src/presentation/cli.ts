@@ -9,10 +9,8 @@ import {
   getPackageName,
   getVersion,
 } from "../domain/constants/package-info.js";
-import {
-  NoFilesFoundError,
-  UserCancelledError,
-} from "../domain/models/errors.js";
+import { UserCancelledError } from "../domain/models/errors.js";
+import { parseCLIOptions } from "../domain/services/cli-options-parser.js";
 
 const program = new Command();
 
@@ -46,43 +44,63 @@ program
     "--no-show-command",
     "hide the command used in output (default: shows command)",
   )
+  .option(
+    "--log-format <format>",
+    "log output format: text or json (default: text)",
+    "text",
+  )
+  .option("--quiet", "suppress non-error output", false)
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
-      // Execute the file conversion use case (validation happens inside)
-      const { results } = await convertFilesUseCase(globArg, cmdOptions);
+      // Parse and validate CLI options early
+      const cliOptions = parseCLIOptions(cmdOptions);
 
-      // Print results
-      const failureCount = results.filter((r) => !r.success).length;
+      // Execute the file conversion use case with validated options
+      const result = await convertFilesUseCase(globArg, cliOptions);
 
-      console.log(`Converting ${results.length} file(s)...`);
+      // Use validated options for output formatting
+      const isJson = cliOptions.logFormat === "json";
+      const quiet = cliOptions.quiet ?? false;
 
-      for (const result of results) {
-        if (result.success) {
-          console.log(`✓ ${result.filePath}`);
+      if (isJson) {
+        // Output as JSON
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        // Output as text
+        if (!quiet) {
+          // Display file conversions
+          result.files.forEach((file) => {
+            if (file.success) {
+              console.log(`${file.source} -> ${file.output}`);
+            } else {
+              console.error(`${file.source}: ${file.error || "Unknown error"}`);
+            }
+          });
+
+          // Display summary for multiple files
+          if (result.totalFiles > 1) {
+            console.log(
+              `\n${result.totalFiles} files converted (${result.successful} success, ${result.failed} failed)`,
+            );
+          }
         } else {
-          console.error(`✗ ${result.filePath}: ${result.error?.message}`);
+          // In quiet mode, only show errors
+          result.files.forEach((file) => {
+            if (!file.success) {
+              console.error(`${file.source}: ${file.error || "Unknown error"}`);
+            }
+          });
         }
       }
 
-      if (failureCount === 0) {
-        console.log("Done!");
-      } else {
-        console.error(`\nCompleted with ${failureCount} error(s)`);
-      }
-
       // Exit with error code if there were failures
-      if (results.some((r) => !r.success)) {
-        process.exit(1);
-      }
+      process.exit(result.failed > 0 ? 1 : 0);
     } catch (error) {
-      // Handle specific errors
-      if (error instanceof NoFilesFoundError) {
-        console.error(`Error: ${error.message}`);
-        process.exit(1);
+      if (error instanceof UserCancelledError) {
+        process.exit(0);
       }
-
-      // Handle other errors
-      console.error("Error:", error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error: ${message}`);
       process.exit(1);
     }
   })
@@ -157,7 +175,7 @@ The config-show command will:
       console.log(JSON.stringify(mergedOptions, null, 2));
     } catch (error) {
       console.error(
-        "❌ Error loading config:",
+        "Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
@@ -205,7 +223,7 @@ The config-validate command will:
     } catch (error) {
       // Handle file reading or other errors
       console.error(
-        "❌ Error loading config:",
+        "Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
@@ -235,13 +253,10 @@ The init command will guide you through creating a configuration file by asking 
       await initConfigUseCase();
     } catch (error) {
       if (error instanceof UserCancelledError) {
-        // User cancelled - exit gracefully without error message
         process.exit(0);
       }
-      console.error(
-        "❌ Error during init:",
-        error instanceof Error ? error.message : String(error),
-      );
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error: ${message}`);
       process.exit(1);
     }
   });

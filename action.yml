@@ -50,30 +50,54 @@ inputs:
     required: false
     default: "true"
 
+  # GitHub Actions specific options
+  # --pr-comment-mode
+  pr-comment-mode:
+    description: "PR comment mode: 'off' (no comments), 'changed' (only for changed source files), or 'all' (all files generated in this run)"
+    required: false
+    default: "off"
+
 ####################
 # Run steps
 ####################
 runs:
   using: "composite"
   steps:
-    - id: run
+    # Install dependencies for PR comment feature if needed
+    - name: Setup Node.js
+      if: ${{ inputs.pr-comment-mode != 'off' }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install GitHub Actions dependencies
+      if: ${{ inputs.pr-comment-mode != 'off' }}
       shell: bash
       run: |
-        # Build CLI arguments ----------------------------------------
+        npm install @actions/github @actions/core
+    
+    - name: Run mermaid-markdown-wrap
+      shell: bash
+      env:
+        PR_COMMENT_MODE: ${{ inputs.pr-comment-mode }}
+        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+      run: |
+        # Build CLI arguments
         args=()
-
-        # 1) Required parameter
         args+=("${{ inputs.input }}")
-
-        # 2) Options (add if they exist)
-        [[ -n "${{ inputs.out-dir }}"     ]] && args+=(--out-dir "${{ inputs.out-dir }}")
-        [[ -n "${{ inputs.header }}"      ]] && args+=(--header "${{ inputs.header }}")
-        [[ -n "${{ inputs.footer }}"      ]] && args+=(--footer "${{ inputs.footer }}")
-        [[ -n "${{ inputs.config }}"      ]] && args+=(--config "${{ inputs.config }}")
-
-        # 3) Boolean values require string comparison
-        [[ "${{ inputs.remove-source }}"  == "true" ]] && args+=(--remove-source)
+        
+        # Add optional arguments
+        [[ -n "${{ inputs.out-dir }}" ]] && args+=(--out-dir "${{ inputs.out-dir }}")
+        [[ -n "${{ inputs.header }}" ]] && args+=(--header "${{ inputs.header }}")
+        [[ -n "${{ inputs.footer }}" ]] && args+=(--footer "${{ inputs.footer }}")
+        [[ -n "${{ inputs.config }}" ]] && args+=(--config "${{ inputs.config }}")
+        
+        # Add boolean flags
+        [[ "${{ inputs.remove-source }}" == "true" ]] && args+=(--remove-source)
         [[ "${{ inputs.show-command }}" == "false" ]] && args+=(--no-show-command)
-
-        # 4) Execute (always get latest CLI)
-        npx --yes mermaid-markdown-wrap "${args[@]}"
+        
+        # Execute using the unified runner script
+        node ${{ github.action_path }}/scripts/github-action-runner.js "${args[@]}"
+    
+    # PR comments are now handled within the unified runner script

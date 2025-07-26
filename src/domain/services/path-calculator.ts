@@ -8,7 +8,7 @@
  */
 
 import { basename, dirname, extname, join } from "node:path";
-import type { Options } from "../models/options.js";
+import type { MergedOptions } from "../models/options.js";
 
 /**
  * Calculate output path for a converted file
@@ -18,7 +18,10 @@ import type { Options } from "../models/options.js";
  * - Always use .md extension
  * - Be placed in outDir if specified, otherwise same directory as input
  */
-export function getOutputPath(inputPath: string, options: Options): string {
+export function getOutputPath(
+  inputPath: string,
+  options: MergedOptions,
+): string {
   const dir = dirname(inputPath);
   const baseName = basename(inputPath, extname(inputPath));
   const outputDir = options.outDir || dir;

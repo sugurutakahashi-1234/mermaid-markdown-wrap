@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { CLIOptions } from "../../../src/domain/models/options.js";
-import { generateCommandInfo } from "../../../src/domain/services/command-info-generator.js";
+import type { CLIOptions } from "../models/options.js";
+import { generateCommandInfo } from "./command-info-generator.js";
 
 describe("generateCommandInfo", () => {
   it("should generate basic command with glob pattern", () => {

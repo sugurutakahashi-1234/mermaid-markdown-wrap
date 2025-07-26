@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import type { Options } from "../models/options.js";
+import type { MergedOptions } from "../models/options.js";
 import { getOutputPath } from "./path-calculator.js";
 
 describe("getOutputPath", () => {
   test("calculates output path for basic .mmd file", () => {
     const inputPath = "/project/diagrams/flow.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -19,7 +19,7 @@ describe("getOutputPath", () => {
 
   test("calculates output path for .mermaid file", () => {
     const inputPath = "/home/user/chart.mermaid";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -33,7 +33,7 @@ describe("getOutputPath", () => {
 
   test("handles files without extension", () => {
     const inputPath = "/tmp/diagram";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -47,7 +47,7 @@ describe("getOutputPath", () => {
 
   test("handles files with multiple dots in name", () => {
     const inputPath = "/docs/my.diagram.test.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -61,7 +61,7 @@ describe("getOutputPath", () => {
 
   test("uses outDir when specified", () => {
     const inputPath = "/source/diagrams/flow.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -76,7 +76,7 @@ describe("getOutputPath", () => {
 
   test("handles relative paths", () => {
     const inputPath = "src/diagrams/architecture.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -90,7 +90,7 @@ describe("getOutputPath", () => {
 
   test("handles relative outDir", () => {
     const inputPath = "diagrams/flow.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -105,7 +105,7 @@ describe("getOutputPath", () => {
 
   test("handles nested directory structures", () => {
     const inputPath = "/project/src/components/ui/diagram.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -120,7 +120,7 @@ describe("getOutputPath", () => {
 
   test("handles current directory files", () => {
     const inputPath = "diagram.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -134,7 +134,7 @@ describe("getOutputPath", () => {
 
   test("handles Windows-style paths", () => {
     const inputPath = "C:\\Users\\project\\diagram.mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",
@@ -149,7 +149,7 @@ describe("getOutputPath", () => {
 
   test("preserves trailing dots in filename", () => {
     const inputPath = "/project/diagram..mmd";
-    const options: Options = {
+    const options: MergedOptions = {
       removeSource: false,
       header: "",
       footer: "",

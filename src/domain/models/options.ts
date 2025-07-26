@@ -1,7 +1,10 @@
 import * as v from "valibot";
 
+// Output format constants
+export const OUTPUT_FORMATS = ["text", "json"] as const;
+
 /**
- * Base schema for configuration options (from config file)
+ * Configuration file options
  */
 export const ConfigOptionsSchema = v.object({
   outDir: v.optional(v.string()),
@@ -12,43 +15,42 @@ export const ConfigOptionsSchema = v.object({
 });
 
 /**
- * CLI-specific options that are not in config files
- */
-const CLISpecificOptionsSchema = v.object({
-  config: v.optional(v.string()),
-});
-
-/**
- * Combined CLI options schema (includes config options)
+ * CLI options (includes all possible options from command line)
  */
 export const CLIOptionsSchema = v.object({
-  ...ConfigOptionsSchema.entries,
-  ...CLISpecificOptionsSchema.entries,
+  // Config file options
+  outDir: v.optional(v.string()),
+  header: v.optional(v.string()),
+  footer: v.optional(v.string()),
+  removeSource: v.optional(v.boolean()),
+  showCommand: v.optional(v.boolean()),
+  // CLI-only options
+  config: v.optional(v.string()),
+  logFormat: v.optional(v.picklist(OUTPUT_FORMATS, "Invalid log format")),
+  quiet: v.optional(v.boolean()),
 });
 
 /**
- * Complete options schema with required fields
+ * Merged options with all required fields
  */
-const OptionsSchema = v.object({
+const MergedOptionsSchema = v.object({
   header: v.string(),
   footer: v.string(),
   removeSource: v.boolean(),
   showCommand: v.boolean(),
   outDir: v.optional(v.string()),
-  config: v.optional(v.string()),
+  // Note: config, format, and quiet are not included in merged options
 });
 
 // Type exports
 export type ConfigOptions = v.InferOutput<typeof ConfigOptionsSchema>;
 export type CLIOptions = v.InferOutput<typeof CLIOptionsSchema>;
-export type Options = v.InferOutput<typeof OptionsSchema>;
+export type MergedOptions = v.InferOutput<typeof MergedOptionsSchema>;
 
 /**
- * Default options
+ * Default option values
  */
-export const DEFAULT_OPTIONS: Required<
-  Pick<Options, "header" | "footer" | "removeSource" | "showCommand">
-> = {
+export const DEFAULT_OPTIONS: MergedOptions = {
   header: "",
   footer: "",
   removeSource: false,

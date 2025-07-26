@@ -5,7 +5,11 @@
  * from different sources with the correct priority order.
  */
 
-import type { CLIOptions, ConfigOptions, Options } from "../models/options.js";
+import type {
+  CLIOptions,
+  ConfigOptions,
+  MergedOptions,
+} from "../models/options.js";
 import { DEFAULT_OPTIONS } from "../models/options.js";
 
 /**
@@ -17,7 +21,7 @@ import { DEFAULT_OPTIONS } from "../models/options.js";
 export function mergeOptions(
   cliOptions: CLIOptions,
   configOptions: ConfigOptions,
-): Options {
+): MergedOptions {
   return {
     // Required options with defaults
     header: cliOptions.header ?? configOptions.header ?? DEFAULT_OPTIONS.header,
@@ -36,7 +40,6 @@ export function mergeOptions(
       ? { outDir: cliOptions.outDir ?? configOptions.outDir }
       : {}),
 
-    // CLI-only options
-    ...(cliOptions.config ? { config: cliOptions.config } : {}),
+    // Note: config and logMode are not included in merged options
   };
 }

@@ -32,29 +32,45 @@ mermaid-markdown-wrap diagram.mmd
 ```bash
 # 単一ファイルの変換
 mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap flowchart.mermaid
 
 # 複数ファイルの変換
-mermaid-markdown-wrap "**/*.mmd"
+mermaid-markdown-wrap "*.mmd"                      # 現在のディレクトリの全ての.mmdファイル
+mermaid-markdown-wrap "*.mermaid"                  # 全ての.mermaidファイル
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"         # 再帰的に全てのMermaidファイル
 
 # 出力ディレクトリを指定
-mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
+mermaid-markdown-wrap "src/**/*.mmd" -o dist/      # 出力ディレクトリを指定して変換
+
+# ヘッダー/フッターを追加
+mermaid-markdown-wrap "*.mermaid" --header "# Docs"
 
 # 変換後にソースファイルを削除
 mermaid-markdown-wrap diagram.mmd --remove-source
+
+# 設定
+mermaid-markdown-wrap init                         # 対話的に設定ファイルを作成
+mermaid-markdown-wrap -c myconfig.yaml "*.mermaid" # 特定の設定ファイルを使用
+mermaid-markdown-wrap config-show                  # 現在の設定を表示
+mermaid-markdown-wrap config-show custom.yaml      # 特定のファイルから設定を表示
+mermaid-markdown-wrap config-validate              # 設定ファイルを検証
+mermaid-markdown-wrap config-validate custom.json  # 特定のファイルを検証
 ```
 
 ### Options
 
-| オプション            | 説明                          | デフォルト         |
-| --------------------- | ----------------------------- | ------------------ |
-| `-o, --out-dir <dir>` | 出力ディレクトリ              | 入力ファイルと同じ |
-| `--header <text>`     | 出力の先頭に追加するテキスト  | -                  |
-| `--footer <text>`     | 出力の末尾に追加するテキスト  | -                  |
-| `--remove-source`     | ソースファイルを削除          | `false`            |
-| `--no-show-command`   | 出力にコマンドを表示しない    | `false`            |
-| `-c, --config <file>` | 設定ファイルのパス            | 自動検索           |
-| `-h, --help`          | ヘルプを表示                  | -                  |
-| `-v, --version`       | バージョンを表示              | -                  |
+| オプション            | 説明                                    | デフォルト         |
+| --------------------- | --------------------------------------- | ------------------ |
+| `-o, --out-dir <dir>` | 出力ディレクトリ                        | 入力ファイルと同じ |
+| `--header <text>`     | 出力の先頭に追加するテキスト            | -                  |
+| `--footer <text>`     | 出力の末尾に追加するテキスト            | -                  |
+| `--remove-source`     | ソースファイルを削除                    | `false`            |
+| `--no-show-command`   | 出力にコマンドを表示しない              | `false`            |
+| `--log-format <format>`| ログ出力形式: text または json         | `text`             |
+| `--quiet`             | エラー以外の出力を抑制                  | `false`            |
+| `-c, --config <file>` | 設定ファイルのパス                      | 自動検索           |
+| `-h, --help`          | ヘルプを表示                            | -                  |
+| `-v, --version`       | バージョンを表示                        | -                  |
 
 ## Commands
 
@@ -227,6 +243,39 @@ jobs:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
           remove-source: true
+```
+
+### PR Comment Feature
+
+生成されたマークダウンファイルを自動的にPRコメントとして投稿:
+
+```yaml
+name: Convert and Comment
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # コメント投稿に必要
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+        with:
+          input: "**/*.{mmd,mermaid}"
+          out-dir: docs
+          pr-comment-mode: changed  # オプション: 'off', 'changed', 'all'
+```
+
+#### PR Comment Modes
+- `off` (デフォルト): PRコメントなし
+- `changed`: PRで変更されたファイルのみコメント
+- `all`: この実行で生成された全ファイルをコメント
+
 ```
 
 ## How It Works

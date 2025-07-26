@@ -6,7 +6,7 @@
  */
 
 import { NoFilesFoundError } from "../../domain/models/errors.js";
-import type { CLIOptions, Options } from "../../domain/models/options.js";
+import type { CLIOptions, MergedOptions } from "../../domain/models/options.js";
 import type { FileConversionResult } from "../../domain/models/result.js";
 import { generateCommandInfo } from "../../domain/services/command-info-generator.js";
 import { formatMermaidAsMarkdown } from "../../domain/services/mermaid-formatter.js";
@@ -20,36 +20,6 @@ import {
 import { findFilesByPattern } from "../adapters/glob-search.adapter.js";
 
 /**
- * Convert a single file
- */
-async function convertSingleFile(
-  filePath: string,
-  options: Options,
-  commandInfo?: string,
-): Promise<void> {
-  // Read source content
-  const content = await readTextFile(filePath);
-
-  // Apply business rule: format as markdown
-  const formattedContent = formatMermaidAsMarkdown(
-    content,
-    options,
-    commandInfo,
-  );
-
-  // Calculate output path
-  const outputPath = getOutputPath(filePath, options);
-
-  // Write formatted content
-  await writeTextFile(outputPath, formattedContent);
-
-  // Delete source if requested
-  if (options.removeSource) {
-    await deleteFile(filePath);
-  }
-}
-
-/**
  * Process multiple Mermaid files in parallel
  *
  * This function handles the technical aspects of:
@@ -60,8 +30,7 @@ async function convertSingleFile(
  */
 export async function processFiles(
   pattern: string,
-  options: Options,
-  globPattern: string,
+  options: MergedOptions,
   cliOptions: CLIOptions,
 ): Promise<FileConversionResult[]> {
   // Find files matching pattern
@@ -78,15 +47,39 @@ export async function processFiles(
 
   // Generate command info once for all files
   const commandInfo = options.showCommand
-    ? generateCommandInfo(globPattern, cliOptions)
+    ? generateCommandInfo(pattern, cliOptions)
     : undefined;
 
   // Process files in parallel with error handling
   const results = await Promise.allSettled(
     files.map(async (filePath): Promise<FileConversionResult> => {
       try {
-        await convertSingleFile(filePath, options, commandInfo);
-        return { filePath, success: true };
+        // Calculate output path before conversion
+        const outputPath = getOutputPath(filePath, options);
+
+        // Read source content
+        const content = await readTextFile(filePath);
+
+        // Apply business rule: format as markdown
+        const formattedContent = formatMermaidAsMarkdown(
+          content,
+          options,
+          commandInfo,
+        );
+
+        // Write formatted content
+        await writeTextFile(outputPath, formattedContent);
+
+        // Delete source if requested
+        if (options.removeSource) {
+          await deleteFile(filePath);
+        }
+
+        return {
+          filePath,
+          success: true,
+          outputPath,
+        };
       } catch (error) {
         return {
           filePath,

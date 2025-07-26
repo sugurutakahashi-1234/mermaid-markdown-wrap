@@ -30,31 +30,47 @@ mermaid-markdown-wrap diagram.mmd
 ### Basic Examples
 
 ```bash
-# Convert a single file
+# Convert single file
 mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap flowchart.mermaid
 
 # Convert multiple files
-mermaid-markdown-wrap "**/*.mmd"
+mermaid-markdown-wrap "*.mmd"                      # All .mmd files in current directory
+mermaid-markdown-wrap "*.mermaid"                  # All .mermaid files
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"         # All Mermaid files recursively
 
 # Specify output directory
-mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
+mermaid-markdown-wrap "src/**/*.mmd" -o dist/      # Convert with output directory
+
+# Add header/footer
+mermaid-markdown-wrap "*.mermaid" --header "# Docs"
 
 # Remove source files after conversion
 mermaid-markdown-wrap diagram.mmd --remove-source
+
+# Configuration
+mermaid-markdown-wrap init                         # Create config file interactively
+mermaid-markdown-wrap -c myconfig.yaml "*.mermaid" # Use specific config file
+mermaid-markdown-wrap config-show                  # Show current configuration
+mermaid-markdown-wrap config-show custom.yaml      # Show config from specific file
+mermaid-markdown-wrap config-validate              # Validate config files
+mermaid-markdown-wrap config-validate custom.json  # Validate specific file
 ```
 
 ### Options
 
-| Option                | Description                   | Default            |
-| --------------------- | ----------------------------- | ------------------ |
-| `-o, --out-dir <dir>` | Output directory              | Same as input      |
-| `--header <text>`     | Text to prepend to output     | -                  |
-| `--footer <text>`     | Text to append to output      | -                  |
-| `--remove-source`     | Remove source files           | `false`            |
-| `--no-show-command`   | Hide command in output        | `false`            |
-| `-c, --config <file>` | Config file path              | Auto-search        |
-| `-h, --help`          | Show help                     | -                  |
-| `-v, --version`       | Show version                  | -                  |
+| Option                | Description                          | Default       |
+| --------------------- | ------------------------------------ | ------------- |
+| `-o, --out-dir <dir>` | Output directory                     | Same as input |
+| `--header <text>`     | Text to prepend to output            | -             |
+| `--footer <text>`     | Text to append to output             | -             |
+| `--remove-source`     | Remove source files                  | `false`       |
+| `--no-show-command`   | Hide command in output               | `false`       |
+| `--log-format <format>`| Log output format: text or json      | `text`        |
+| `--quiet`             | Suppress non-error output            | `false`       |
+| `-c, --config <file>` | Config file path                     | Auto-search   |
+| `-h, --help`          | Show help                            | -             |
+| `-v, --version`       | Show version                         | -             |
 
 ## Commands
 
@@ -227,6 +243,39 @@ jobs:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
           remove-source: true
+```
+
+### PR Comment Feature
+
+Automatically post generated markdown files as PR comments:
+
+```yaml
+name: Convert and Comment
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # Required for posting comments
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+        with:
+          input: "**/*.{mmd,mermaid}"
+          out-dir: docs
+          pr-comment-mode: changed  # Options: 'off', 'changed', 'all'
+```
+
+#### PR Comment Modes
+- `off` (default): No PR comments
+- `changed`: Only comment files that were changed in the PR
+- `all`: Comment all files generated in this run
+
 ```
 
 ## How It Works
