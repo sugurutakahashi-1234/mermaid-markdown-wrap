@@ -14,7 +14,7 @@
     "footer": {
       "type": "string"
     },
-    "keepSource": {
+    "removeSource": {
       "type": "boolean"
     },
     "showCommand": {

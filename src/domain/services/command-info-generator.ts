@@ -44,8 +44,8 @@ export function generateCommandInfo(
     parts.push("--config", cliOptions.config);
   }
 
-  if (cliOptions.keepSource === true) {
-    parts.push("--keep-source");
+  if (cliOptions.removeSource === true) {
+    parts.push("--remove-source");
   }
 
   // Note: we don't include --no-show-command since that would be redundant

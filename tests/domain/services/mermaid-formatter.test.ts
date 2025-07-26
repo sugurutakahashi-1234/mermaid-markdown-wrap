@@ -6,7 +6,7 @@ describe("formatMermaidAsMarkdown", () => {
   const baseOptions: Options = {
     header: "",
     footer: "",
-    keepSource: false,
+    removeSource: false,
     showCommand: true,
   };
 

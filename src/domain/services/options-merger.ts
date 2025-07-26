@@ -22,10 +22,10 @@ export function mergeOptions(
     // Required options with defaults
     header: cliOptions.header ?? configOptions.header ?? DEFAULT_OPTIONS.header,
     footer: cliOptions.footer ?? configOptions.footer ?? DEFAULT_OPTIONS.footer,
-    keepSource:
-      cliOptions.keepSource ??
-      configOptions.keepSource ??
-      DEFAULT_OPTIONS.keepSource,
+    removeSource:
+      cliOptions.removeSource ??
+      configOptions.removeSource ??
+      DEFAULT_OPTIONS.removeSource,
     showCommand:
       cliOptions.showCommand ??
       configOptions.showCommand ??

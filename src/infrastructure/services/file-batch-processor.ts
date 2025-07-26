@@ -44,7 +44,7 @@ async function convertSingleFile(
   await writeTextFile(outputPath, formattedContent);
 
   // Delete source if requested
-  if (!options.keepSource) {
+  if (options.removeSource) {
     await deleteFile(filePath);
   }
 }

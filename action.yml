@@ -38,9 +38,9 @@ inputs:
     required: false
 
   # Behavior control
-  # --keep-source
-  keep-source:
-    description: "Keep original .mmd files (true/false)"
+  # --remove-source
+  remove-source:
+    description: "Remove original .mmd files after conversion (true/false)"
     required: false
     default: "false"
 
@@ -72,7 +72,7 @@ runs:
         [[ -n "${{ inputs.config }}"      ]] && args+=(--config "${{ inputs.config }}")
 
         # 3) Boolean values require string comparison
-        [[ "${{ inputs.keep-source }}"  == "true" ]] && args+=(--keep-source)
+        [[ "${{ inputs.remove-source }}"  == "true" ]] && args+=(--remove-source)
         [[ "${{ inputs.show-command }}" == "false" ]] && args+=(--no-show-command)
 
         # 4) Execute (always get latest CLI)

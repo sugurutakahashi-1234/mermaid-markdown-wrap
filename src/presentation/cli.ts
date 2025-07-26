@@ -35,8 +35,8 @@ program
   .option("-c, --config <file>", "config file path")
   // Behavior control
   .option(
-    "--keep-source",
-    "keep source .mmd/.mermaid files after conversion (default: deletes source)",
+    "--remove-source",
+    "remove source .mmd/.mermaid files after conversion (default: keeps source)",
     false,
   )
   .option(
@@ -99,6 +99,7 @@ Examples:
   # Configuration
   $ ${getPackageName()} init                         # Create a configuration file interactively
   $ ${getPackageName()} -c myconfig.yaml "*.mermaid" # Use specific config file
+  $ ${getPackageName()} "*.mmd" --remove-source      # Convert and remove source files
   $ ${getPackageName()} config-show                  # Show current configuration
   $ ${getPackageName()} config-show custom.yaml       # Show config from specific file
   $ ${getPackageName()} config-validate              # Validate config files
@@ -222,7 +223,7 @@ The init command will guide you through creating a configuration file by asking 
   - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
   - Output directory
   - Header/footer text
-  - Whether to keep source files
+  - Whether to remove source files
   - Whether to include generation command in output
 `,
   )

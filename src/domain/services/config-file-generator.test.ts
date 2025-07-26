@@ -11,7 +11,7 @@ describe("config-file-generator", () => {
     outDir: "docs",
     header: "<!-- AUTO-GENERATED -->",
     footer: "<!-- END -->",
-    keepSource: false,
+    removeSource: false,
     showCommand: true,
   };
 
@@ -83,7 +83,7 @@ describe("config-file-generator", () => {
     it("should generate YAML config", () => {
       const content = generateConfigFileContent(testConfig, "yaml");
       expect(content).toContain("outDir: docs");
-      expect(content).toContain("keepSource: false");
+      expect(content).toContain("removeSource: false");
       expect(content).toContain("showCommand: true");
     });
   });

@@ -39,8 +39,8 @@ mermaid-markdown-wrap "**/*.mmd"
 # Specify output directory
 mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
 
-# Keep source files after conversion
-mermaid-markdown-wrap diagram.mmd --keep-source
+# Remove source files after conversion
+mermaid-markdown-wrap diagram.mmd --remove-source
 ```
 
 ### Options
@@ -50,7 +50,7 @@ mermaid-markdown-wrap diagram.mmd --keep-source
 | `-o, --out-dir <dir>` | Output directory              | Same as input      |
 | `--header <text>`     | Text to prepend to output     | -                  |
 | `--footer <text>`     | Text to append to output      | -                  |
-| `--keep-source`       | Keep source files             | `false`            |
+| `--remove-source`     | Remove source files           | `false`            |
 | `--no-show-command`   | Hide command in output        | `false`            |
 | `-c, --config <file>` | Config file path              | Auto-search        |
 | `-h, --help`          | Show help                     | -                  |
@@ -102,7 +102,7 @@ This command will guide you through creating a configuration file by asking abou
 - Configuration file format (TypeScript, JavaScript, JSON, YAML, etc.)
 - Output directory
 - Header/footer text
-- Whether to keep source files
+- Whether to remove source files
 - Whether to show command in output
 
 ## Configuration
@@ -125,7 +125,7 @@ You can also specify a config file using the `-c` option.
 outDir: docs
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
-keepSource: false
+removeSource: false
 showCommand: true
 ```
 
@@ -163,7 +163,7 @@ showCommand: true
   "outDir": "docs",
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
-  "keepSource": false,
+  "removeSource": false,
   "showCommand": true
 }
 ```
@@ -180,7 +180,7 @@ module.exports = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
-  keepSource: false,
+  removeSource: false,
   showCommand: true,
 };
 ```
@@ -199,7 +199,7 @@ const config: Config = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
-  keepSource: false,
+  removeSource: false,
   showCommand: true,
 };
 
@@ -226,7 +226,7 @@ jobs:
         with:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
-          keep-source: true
+          remove-source: true
 ```
 
 ## How It Works

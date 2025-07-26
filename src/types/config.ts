@@ -16,7 +16,7 @@
  *   outDir: 'docs',
  *   header: '<!-- AUTO-GENERATED -->',
  *   footer: '<!-- END -->',
- *   keepSource: false,
+ *   removeSource: false,
  * };
  *
  * export default config;

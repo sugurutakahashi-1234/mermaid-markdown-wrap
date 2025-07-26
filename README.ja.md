@@ -2,7 +2,7 @@
 
 [English](README.md) | [日本語](README.ja.md)
 
-`.mmd`や`.mermaid`ファイル（Mermaidダイアグラム）を、元の内容を変更せずにMarkdownのコードブロックでラップするミニマルなCLIツールです。
+`.mmd`や`.mermaid`ファイル（Mermaidダイアグラム）を、MarkdownのコードブロックでラップするミニマルなCLIツールです。デフォルトでは元のファイルを保持します。
 
 ## Quick Start
 
@@ -39,8 +39,8 @@ mermaid-markdown-wrap "**/*.mmd"
 # 出力ディレクトリを指定
 mermaid-markdown-wrap "src/**/*.{mmd,mermaid}" --out-dir docs
 
-# 変換後もソースファイルを保持
-mermaid-markdown-wrap diagram.mmd --keep-source
+# 変換後にソースファイルを削除
+mermaid-markdown-wrap diagram.mmd --remove-source
 ```
 
 ### Options
@@ -50,7 +50,7 @@ mermaid-markdown-wrap diagram.mmd --keep-source
 | `-o, --out-dir <dir>` | 出力ディレクトリ              | 入力ファイルと同じ |
 | `--header <text>`     | 出力の先頭に追加するテキスト  | -                  |
 | `--footer <text>`     | 出力の末尾に追加するテキスト  | -                  |
-| `--keep-source`       | ソースファイルを保持          | `false`            |
+| `--remove-source`     | ソースファイルを削除          | `false`            |
 | `--no-show-command`   | 出力にコマンドを表示しない    | `false`            |
 | `-c, --config <file>` | 設定ファイルのパス            | 自動検索           |
 | `-h, --help`          | ヘルプを表示                  | -                  |
@@ -102,7 +102,7 @@ mermaid-markdown-wrap init
 - 設定ファイル形式（TypeScript、JavaScript、JSON、YAML など）
 - 出力ディレクトリ
 - ヘッダー/フッターテキスト
-- ソースファイルを保持するか
+- ソースファイルを削除するか
 - 出力にコマンドを表示するか
 
 ## Configuration
@@ -125,7 +125,7 @@ mermaid-markdown-wrap init
 outDir: docs
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
-keepSource: false
+removeSource: false
 showCommand: true
 ```
 
@@ -163,7 +163,7 @@ showCommand: true
   "outDir": "docs",
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->",
-  "keepSource": false,
+  "removeSource": false,
   "showCommand": true
 }
 ```
@@ -180,7 +180,7 @@ module.exports = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
-  keepSource: false,
+  removeSource: false,
   showCommand: true,
 };
 ```
@@ -199,7 +199,7 @@ const config: Config = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
-  keepSource: false,
+  removeSource: false,
   showCommand: true,
 };
 
@@ -226,7 +226,7 @@ jobs:
         with:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
-          keep-source: true
+          remove-source: true
 ```
 
 ## How It Works

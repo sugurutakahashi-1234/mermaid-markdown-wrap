@@ -114,29 +114,29 @@ try {
     throw new Error("Output file does not contain expected content");
   }
 
-  // Check that source file was deleted (default behavior)
-  if (existsSync(testMmdFile)) {
-    throw new Error("Source file should have been deleted by default");
+  // Check that source file was kept (default behavior)
+  if (!existsSync(testMmdFile)) {
+    throw new Error("Source file should have been kept by default");
   }
 
   console.log("  ✅ Conversion test passed");
 
-  // Test with --keep-source option
-  console.log("\n🧪 Testing --keep-source option...");
+  // Test with --remove-source option
+  console.log("\n🧪 Testing --remove-source option...");
   const testMmdFile2 = join(tempDir, "test2.mmd");
   writeFileSync(testMmdFile2, testMermaidContent);
 
-  execSync(`${packageName} ${testMmdFile2} --keep-source`, {
+  execSync(`${packageName} ${testMmdFile2} --remove-source`, {
     cwd: tempDir,
     stdio: "pipe",
   });
 
-  if (!existsSync(testMmdFile2)) {
+  if (existsSync(testMmdFile2)) {
     throw new Error(
-      "Source file should have been kept with --keep-source option",
+      "Source file should have been deleted with --remove-source option",
     );
   }
-  console.log("  ✅ --keep-source option works");
+  console.log("  ✅ --remove-source option works");
 
   console.log("\n✅ All tests passed!");
 } catch (error) {

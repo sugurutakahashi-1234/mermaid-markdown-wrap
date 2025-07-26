@@ -32,7 +32,7 @@ describe("CLI", () => {
 
     await writeFile(inputFile, "graph TD\n  A --> B");
 
-    const proc = spawn(["bun", cliPath, inputFile, "--keep-source"], {
+    const proc = spawn(["bun", cliPath, inputFile], {
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -65,7 +65,6 @@ describe("CLI", () => {
         "# Test Header",
         "--footer",
         "Test Footer",
-        "--keep-source",
       ],
       {
         cwd: testDir,
@@ -88,7 +87,7 @@ describe("CLI", () => {
 
     await writeFile(inputFile, "flowchart LR\n  Start --> End");
 
-    const proc = spawn(["bun", cliPath, inputFile, "--keep-source"], {
+    const proc = spawn(["bun", cliPath, inputFile], {
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -111,7 +110,7 @@ describe("CLI", () => {
     await writeFile(join(testDir, "a.mmd"), "graph TD");
     await writeFile(join(testDir, "b.mmd"), "graph LR");
 
-    const proc = spawn(["bun", cliPath, "*.mmd", "--keep-source"], {
+    const proc = spawn(["bun", cliPath, "*.mmd"], {
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -136,7 +135,7 @@ describe("CLI", () => {
     await writeFile(join(testDir, "flow.mermaid"), "flowchart TD");
     await writeFile(join(testDir, "seq.mermaid"), "sequenceDiagram");
 
-    const proc = spawn(["bun", cliPath, "*.mermaid", "--keep-source"], {
+    const proc = spawn(["bun", cliPath, "*.mermaid"], {
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -161,7 +160,7 @@ describe("CLI", () => {
     await writeFile(join(testDir, "diagram.mmd"), "graph TD");
     await writeFile(join(testDir, "flowchart.mermaid"), "flowchart LR");
 
-    const proc = spawn(["bun", cliPath, "*.{mmd,mermaid}", "--keep-source"], {
+    const proc = spawn(["bun", cliPath, "*.{mmd,mermaid}"], {
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -195,12 +194,12 @@ describe("CLI", () => {
 
     expect(proc.exitCode).toBe(0);
     expect(output).toContain("✅ Current configuration:");
-    expect(output).toContain('"keepSource"');
+    expect(output).toContain('"removeSource"');
 
     // Extract JSON from output (skip the first line with the message)
     const jsonPart = output.split("\n").slice(1).join("\n");
     const config = JSON.parse(jsonPart);
-    expect(config).toHaveProperty("keepSource");
+    expect(config).toHaveProperty("removeSource");
   });
 
   test("loads config from YAML file", async () => {
@@ -285,7 +284,7 @@ describe("CLI", () => {
   describe("config-validate subcommand", () => {
     test("validates valid config file", async () => {
       const configPath = join(testDir, "valid-config.yaml");
-      await writeFile(configPath, `header: "Test header"\nkeepSource: true`);
+      await writeFile(configPath, `header: "Test header"\nremoveSource: true`);
 
       const proc = spawn(["bun", cliPath, "config-validate", configPath], {
         cwd: testDir,
@@ -305,7 +304,7 @@ describe("CLI", () => {
       await writeFile(
         configPath,
         JSON.stringify({
-          keepSource: "yes", // Should be boolean
+          removeSource: "yes", // Should be boolean
           header: 123, // Should be string
         }),
       );
@@ -322,7 +321,7 @@ describe("CLI", () => {
       expect(proc.exitCode).toBe(1);
       expect(stderr).toContain("❌ Invalid config:");
       expect(stderr).toContain("header:");
-      expect(stderr).toContain("keepSource:");
+      expect(stderr).toContain("removeSource:");
     });
 
     test("validates config when no file is specified", async () => {

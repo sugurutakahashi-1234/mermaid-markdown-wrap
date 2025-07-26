@@ -41,14 +41,14 @@ describe("generateCommandInfo", () => {
     expect(result).toBe('mermaid-markdown-wrap "*.mmd" --config custom.yaml');
   });
 
-  it("should include keep-source flag", () => {
-    const options: CLIOptions = { keepSource: true };
+  it("should include remove-source flag", () => {
+    const options: CLIOptions = { removeSource: true };
     const result = generateCommandInfo("*.mmd", options);
-    expect(result).toBe('mermaid-markdown-wrap "*.mmd" --keep-source');
+    expect(result).toBe('mermaid-markdown-wrap "*.mmd" --remove-source');
   });
 
-  it("should not include keep-source when false", () => {
-    const options: CLIOptions = { keepSource: false };
+  it("should not include remove-source when false", () => {
+    const options: CLIOptions = { removeSource: false };
     const result = generateCommandInfo("*.mmd", options);
     expect(result).toBe('mermaid-markdown-wrap "*.mmd"');
   });
@@ -57,12 +57,12 @@ describe("generateCommandInfo", () => {
     const options: CLIOptions = {
       outDir: "output/",
       header: "# Diagrams",
-      keepSource: true,
+      removeSource: true,
       config: "my-config.json",
     };
     const result = generateCommandInfo("**/*.mermaid", options);
     expect(result).toBe(
-      'mermaid-markdown-wrap "**/*.mermaid" --out-dir output/ --header "# Diagrams" --config my-config.json --keep-source',
+      'mermaid-markdown-wrap "**/*.mermaid" --out-dir output/ --header "# Diagrams" --config my-config.json --remove-source',
     );
   });
 

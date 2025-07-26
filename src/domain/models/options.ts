@@ -7,7 +7,7 @@ export const ConfigOptionsSchema = v.object({
   outDir: v.optional(v.string()),
   header: v.optional(v.string()),
   footer: v.optional(v.string()),
-  keepSource: v.optional(v.boolean()),
+  removeSource: v.optional(v.boolean()),
   showCommand: v.optional(v.boolean()),
 });
 
@@ -32,7 +32,7 @@ export const CLIOptionsSchema = v.object({
 const OptionsSchema = v.object({
   header: v.string(),
   footer: v.string(),
-  keepSource: v.boolean(),
+  removeSource: v.boolean(),
   showCommand: v.boolean(),
   outDir: v.optional(v.string()),
   config: v.optional(v.string()),
@@ -47,10 +47,10 @@ export type Options = v.InferOutput<typeof OptionsSchema>;
  * Default options
  */
 export const DEFAULT_OPTIONS: Required<
-  Pick<Options, "header" | "footer" | "keepSource" | "showCommand">
+  Pick<Options, "header" | "footer" | "removeSource" | "showCommand">
 > = {
   header: "",
   footer: "",
-  keepSource: false,
+  removeSource: false,
   showCommand: true,
 } as const;

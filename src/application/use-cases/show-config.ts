@@ -16,7 +16,7 @@ export async function showConfigUseCase(
   const mergedOptions: ConfigOptions = {
     header: config.header ?? DEFAULT_OPTIONS.header,
     footer: config.footer ?? DEFAULT_OPTIONS.footer,
-    keepSource: config.keepSource ?? DEFAULT_OPTIONS.keepSource,
+    removeSource: config.removeSource ?? DEFAULT_OPTIONS.removeSource,
     showCommand: config.showCommand ?? DEFAULT_OPTIONS.showCommand,
     ...(config.outDir ? { outDir: config.outDir } : {}),
   };

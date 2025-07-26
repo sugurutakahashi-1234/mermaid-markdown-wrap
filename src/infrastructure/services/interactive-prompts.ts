@@ -89,13 +89,13 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
     process.exit(0);
   }
 
-  // Ask about keeping source files
-  const keepSource = await confirm({
-    message: "Keep original .mmd files after conversion?",
-    initialValue: DEFAULT_OPTIONS.keepSource,
+  // Ask about removing source files
+  const removeSource = await confirm({
+    message: "Remove original .mmd files after conversion?",
+    initialValue: DEFAULT_OPTIONS.removeSource,
   });
 
-  if (isCancel(keepSource)) {
+  if (isCancel(removeSource)) {
     cancel("Init cancelled");
     process.exit(0);
   }
@@ -124,8 +124,8 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
   if (footer !== DEFAULT_OPTIONS.footer) {
     config.footer = String(footer);
   }
-  if (keepSource !== DEFAULT_OPTIONS.keepSource) {
-    config.keepSource = Boolean(keepSource);
+  if (removeSource !== DEFAULT_OPTIONS.removeSource) {
+    config.removeSource = Boolean(removeSource);
   }
   if (showCommand !== DEFAULT_OPTIONS.showCommand) {
     config.showCommand = Boolean(showCommand);

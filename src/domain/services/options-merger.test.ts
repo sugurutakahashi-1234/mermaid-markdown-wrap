@@ -4,11 +4,11 @@ import { mergeOptions } from "../../domain/services/options-merger.js";
 describe("mergeOptions", () => {
   test("CLI options take precedence over config options", () => {
     const result = mergeOptions(
-      { keepSource: true },
-      { keepSource: false, header: "config header" },
+      { removeSource: true },
+      { removeSource: false, header: "config header" },
     );
 
-    expect(result.keepSource).toBe(true);
+    expect(result.removeSource).toBe(true);
     expect(result.header).toBe("config header"); // from config since not in CLI
   });
 
@@ -17,7 +17,7 @@ describe("mergeOptions", () => {
 
     expect(result.footer).toBe("custom");
     expect(result.header).toBe(""); // default
-    expect(result.keepSource).toBe(false); // default
+    expect(result.removeSource).toBe(false); // default
     expect(result.showCommand).toBe(true); // default
   });
 
@@ -26,7 +26,7 @@ describe("mergeOptions", () => {
 
     expect(result.header).toBe("");
     expect(result.footer).toBe("");
-    expect(result.keepSource).toBe(false);
+    expect(result.removeSource).toBe(false);
     expect(result.showCommand).toBe(true);
   });
 
