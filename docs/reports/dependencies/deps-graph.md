@@ -7,11 +7,12 @@ tsg --tsconfig tsconfig.build.json --LR --md docs/reports/dependencies/deps-grap
 ```mermaid
 flowchart LR
     subgraph src["src"]
+        src/config.ts["config.ts"]
         src/index.ts["index.ts"]
         subgraph src/domain["/domain"]
             subgraph src/domain/models["/models"]
-                src/domain/models/conversion.ts["conversion.ts"]
                 src/domain/models/options.ts["options.ts"]
+                src/domain/models/conversion.ts["conversion.ts"]
                 src/domain/models/errors.ts["errors.ts"]
             end
             subgraph src/domain/constants["/constants"]
@@ -47,9 +48,6 @@ flowchart LR
         subgraph src/presentation["/presentation"]
             src/presentation/cli.ts["cli.ts"]
         end
-        subgraph src/types["/types"]
-            src/types/config.ts["config.ts"]
-        end
     end
     subgraph node//modules["node_modules"]
         node//modules/valibot/dist/index.d.cts["valibot"]
@@ -61,6 +59,7 @@ flowchart LR
         node//modules/commander/typings/index.d.ts["commander"]
     end
     src/domain/models/options.ts-->node//modules/valibot/dist/index.d.cts
+    src/config.ts-->src/domain/models/options.ts
     src/domain/constants/package//info.ts-->package.json
     src/domain/services/command//info//generator.ts-->src/domain/constants/package//info.ts
     src/domain/services/command//info//generator.ts-->src/domain/models/options.ts
@@ -117,6 +116,5 @@ flowchart LR
     src/presentation/cli.ts-->src/domain/constants/package//info.ts
     src/presentation/cli.ts-->src/domain/models/errors.ts
     src/index.ts-->src/presentation/cli.ts
-    src/types/config.ts-->src/domain/models/options.ts
 ```
 

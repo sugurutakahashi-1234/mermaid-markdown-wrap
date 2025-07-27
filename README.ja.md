@@ -197,7 +197,7 @@ quiet: false
 ```javascript
 // .mermaid-markdown-wraprc.js
 
-/** @type {import('mermaid-markdown-wrap/config').Config} */
+/** @type {import('mermaid-markdown-wrap/config').ConfigOptions} */
 module.exports = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
@@ -217,9 +217,9 @@ TypeScript設定を使用する場合は、型定義を取得するためにパ�
 
 ```ts
 // mermaid-markdown-wrap.config.ts
-import type { Config } from 'mermaid-markdown-wrap/config';
+import { defineConfig } from 'mermaid-markdown-wrap/config';
 
-const config: Config = {
+export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->',
@@ -227,9 +227,7 @@ const config: Config = {
   hideCommand: false,
   logFormat: 'text',
   quiet: false,
-};
-
-export default config;
+});
 ```
 
 ## GitHub Actions

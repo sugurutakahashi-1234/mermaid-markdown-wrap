@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
  * Entry point for the mermaid-markdown-wrap CLI tool

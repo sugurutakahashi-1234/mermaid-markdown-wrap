@@ -100,11 +100,9 @@ export function generateConfigFileContent(
  */
 function generateTypeScriptConfig(jsonContent: string): string {
   const packageName = getPackageName();
-  return `import type { Config } from '${packageName}/config';
+  return `import { defineConfig } from '${packageName}/config';
 
-const config: Config = ${jsonContent};
-
-export default config;
+export default defineConfig(${jsonContent});
 `;
 }
 
@@ -113,7 +111,7 @@ export default config;
  */
 function generateJavaScriptConfig(jsonContent: string): string {
   const packageName = getPackageName();
-  return `/** @type {import('${packageName}/config').Config} */
+  return `/** @type {import('${packageName}/config').ConfigOptions} */
 module.exports = ${jsonContent};
 `;
 }
@@ -123,7 +121,7 @@ module.exports = ${jsonContent};
  */
 function generateCommonJSConfig(jsonContent: string): string {
   const packageName = getPackageName();
-  return `/** @type {import('${packageName}/config').Config} */
+  return `/** @type {import('${packageName}/config').ConfigOptions} */
 module.exports = ${jsonContent};
 `;
 }
@@ -133,7 +131,7 @@ module.exports = ${jsonContent};
  */
 function generateESMConfig(jsonContent: string): string {
   const packageName = getPackageName();
-  return `/** @type {import('${packageName}/config').Config} */
+  return `/** @type {import('${packageName}/config').ConfigOptions} */
 export default ${jsonContent};
 `;
 }

@@ -9,13 +9,11 @@ flowchart LR
     classDef dir fill:#0000,stroke:#999
     subgraph src["src"]
         src/domain["/domain"]:::dir
+        src/config.ts["config.ts"]
         src/infrastructure["/infrastructure"]:::dir
         src/application["/application"]:::dir
         src/presentation["/presentation"]:::dir
         src/index.ts["index.ts"]
-        subgraph src/types["/types"]
-            src/types/config.ts["config.ts"]
-        end
     end
     subgraph node//modules["node_modules"]
         node//modules/valibot/dist/index.d.cts["valibot"]
@@ -27,6 +25,7 @@ flowchart LR
         node//modules/commander/typings/index.d.ts["commander"]
     end
     src/domain-->node//modules/valibot/dist/index.d.cts
+    src/config.ts-->src/domain
     src/domain-->package.json
     src/infrastructure-->node//modules/globby/index.d.ts
     src/infrastructure-->src/domain
@@ -41,6 +40,5 @@ flowchart LR
     src/presentation-->src/application
     src/presentation-->src/domain
     src/index.ts-->src/presentation
-    src/types/config.ts-->src/domain
 ```
 

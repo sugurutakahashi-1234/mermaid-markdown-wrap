@@ -11,7 +11,8 @@
   "exports": {
     ".": "./dist/index.js",
     "./config": {
-      "types": "./dist/types/config.d.ts"
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
     }
   },
   "keywords": [
@@ -53,7 +54,7 @@
     "help:config-validate": "bun src/index.ts config-validate --help",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prebuild": "bun run schema:generate",
-    "build": "bun build src/index.ts --outdir dist --target node --minify --splitting && tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "dev": "bun run src/index.ts",
     "lint": "biome check --write .",
     "lint:unsafe": "biome check --write --unsafe .",

@@ -38,20 +38,19 @@ describe("config-file-generator", () => {
   });
 
   describe("generateConfigFileContent", () => {
-    it("should generate TypeScript config with proper type imports", () => {
+    it("should generate TypeScript config with defineConfig", () => {
       const content = generateConfigFileContent(testConfig, "ts");
       expect(content).toContain(
-        "import type { Config } from 'mermaid-markdown-wrap/config';",
+        "import { defineConfig } from 'mermaid-markdown-wrap/config';",
       );
-      expect(content).toContain("const config: Config =");
-      expect(content).toContain("export default config;");
+      expect(content).toContain("export default defineConfig(");
       expect(content).toContain('"outDir": "docs"');
     });
 
     it("should generate JavaScript config with JSDoc comments", () => {
       const content = generateConfigFileContent(testConfig, "js");
       expect(content).toContain(
-        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+        "/** @type {import('mermaid-markdown-wrap/config').ConfigOptions} */",
       );
       expect(content).toContain("module.exports =");
       expect(content).toContain('"outDir": "docs"');
@@ -60,7 +59,7 @@ describe("config-file-generator", () => {
     it("should generate CommonJS config", () => {
       const content = generateConfigFileContent(testConfig, "cjs");
       expect(content).toContain(
-        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+        "/** @type {import('mermaid-markdown-wrap/config').ConfigOptions} */",
       );
       expect(content).toContain("module.exports =");
     });
@@ -68,7 +67,7 @@ describe("config-file-generator", () => {
     it("should generate ESM config", () => {
       const content = generateConfigFileContent(testConfig, "mjs");
       expect(content).toContain(
-        "/** @type {import('mermaid-markdown-wrap/config').Config} */",
+        "/** @type {import('mermaid-markdown-wrap/config').ConfigOptions} */",
       );
       expect(content).toContain("export default");
     });
