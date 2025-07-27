@@ -102,7 +102,7 @@ runs:
         [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
         # Run with JSON output and save to file
-        npx --yes mermaid-markdown-wrap "${args[@]}" --log-format json > conversion-results.json
+        npx mermaid-markdown-wrap "${args[@]}" --log-format json > conversion-results.json
         
         # Display results
         cat conversion-results.json
