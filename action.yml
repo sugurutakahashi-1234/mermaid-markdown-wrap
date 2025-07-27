@@ -98,7 +98,28 @@ runs:
         npm view mermaid-markdown-wrap version || echo "Package not found in registry"
         echo ""
         echo "=== Testing npx execution ==="
-        npx mermaid-markdown-wrap --version || echo "npx execution failed"
+        npx mermaid-markdown-wrap --version 2>&1 || echo "npx execution failed with exit code: $?"
+        
+        echo ""
+        echo "=== Detailed npx test with verbose logging ==="
+        npx --loglevel verbose mermaid-markdown-wrap --version 2>&1 || true
+        
+        echo ""
+        echo "=== Testing with explicit registry ==="
+        npm_config_registry=https://registry.npmjs.org npx mermaid-markdown-wrap --version 2>&1 || true
+        
+        echo ""
+        echo "=== Manual package installation test ==="
+        npm install mermaid-markdown-wrap@latest 2>&1 || true
+        ls -la node_modules/.bin/ | grep mermaid || echo "No mermaid-markdown-wrap in .bin"
+        
+        echo ""
+        echo "=== Direct execution after install ==="
+        if [ -f "node_modules/.bin/mermaid-markdown-wrap" ]; then
+          ./node_modules/.bin/mermaid-markdown-wrap --version || echo "Direct execution failed"
+        else
+          echo "Binary not found in node_modules/.bin/"
+        fi
     
     - name: Run mermaid-markdown-wrap
       id: convert
