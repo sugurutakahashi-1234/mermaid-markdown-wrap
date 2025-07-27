@@ -144,7 +144,8 @@
       "Bash(mermaid-markdown-wrap:*)",
       "Bash(./dist/mmw:*)",
       "WebFetch(domain:api.github.com)",
-      "Bash(tar:*)"
+      "Bash(tar:*)",
+      "Bash(git cherry-pick:*)"
     ],
     "deny": []
   },
