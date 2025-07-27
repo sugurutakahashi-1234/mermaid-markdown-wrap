@@ -113,4 +113,27 @@ describe("formatMermaidAsMarkdown", () => {
       '# Diagram\n\n```bash\nmermaid-markdown-wrap "*.mmd"\n```\n\n```mermaid\ngraph TD\n```\n\n© 2024',
     );
   });
+
+  test("extracts content from existing mermaid code block", () => {
+    const content = "```mermaid\ngraph TD\n  A --> B\n```";
+    const options = createOptions();
+
+    const result = formatMermaidAsMarkdown(content, options);
+
+    expect(result).toBe("```mermaid\ngraph TD\n  A --> B\n```");
+  });
+
+  test("handles existing code block with header and footer", () => {
+    const content = "```mermaid\nsequenceDiagram\n  A->>B: Hello\n```";
+    const options = createOptions({
+      header: "## Sequence",
+      footer: "End of diagram",
+    });
+
+    const result = formatMermaidAsMarkdown(content, options);
+
+    expect(result).toBe(
+      "## Sequence\n\n```mermaid\nsequenceDiagram\n  A->>B: Hello\n```\n\nEnd of diagram",
+    );
+  });
 });

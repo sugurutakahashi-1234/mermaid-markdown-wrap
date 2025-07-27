@@ -7,6 +7,7 @@
  */
 
 import type { ProcessingOptions } from "../models/options.js";
+import { extractMermaidContent } from "./mermaid-content-extractor.js";
 
 /**
  * Format Mermaid content as a Markdown code block with optional header/footer and command info
@@ -20,6 +21,10 @@ export function formatMermaidAsMarkdown(
   commandInfo?: string,
 ): string {
   const parts: string[] = [];
+
+  // Extract content from existing mermaid code blocks if present
+  // This prevents double-wrapping of already formatted content
+  const contentToWrap = extractMermaidContent(mermaidContent);
 
   // Add header if provided
   if (options.header) {
@@ -35,9 +40,9 @@ export function formatMermaidAsMarkdown(
     parts.push(""); // Empty line after command block
   }
 
-  // Add mermaid code block
+  // Add mermaid code block with content to wrap
   parts.push("```mermaid");
-  parts.push(mermaidContent.trim());
+  parts.push(contentToWrap.trim());
   parts.push("```");
 
   // Add footer if provided
