@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v0.2.0...v1.0.0) (2025-07-27)
+
+
+### ✨ Features
+
+* add manual force version bump workflow ([#7](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/7)) ([5e66e53](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/5e66e53811ad8f6a5a7a24d13d7ace8c433b5c42))
+* add mermaid code block extraction to prevent double-wrapping ([#5](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/5)) ([83c6b76](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/83c6b7681ce89dd79481ee7692026f351a58c33e))
+
+
+### 🔧 Maintenance
+
+* bump version to 1.0.0 ([4eab485](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/4eab4858429439cd7450f2c89df8e3b7e49a7a4a))
+
 ## [0.2.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v0.1.0...v0.2.0) (2025-07-27)
 
 
