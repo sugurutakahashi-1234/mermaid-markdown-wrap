@@ -32,8 +32,6 @@ program
   // Content modification
   .option("--header <text>", "header text to prepend")
   .option("--footer <text>", "footer text to append")
-  // Configuration file settings
-  .option("-c, --config <file>", "config file path")
   // Behavior control
   .option(
     "--remove-source",
@@ -43,6 +41,8 @@ program
   .option("--hide-command", "hide the command used in output", false)
   .option("--log-format <format>", "log output format: text or json", "text")
   .option("--quiet", "suppress non-error output", false)
+  // Configuration file settings
+  .option("-c, --config <file>", "config file path")
   .action(async (globArg: string, cmdOptions: unknown) => {
     try {
       // Load configuration and combine with CLI options

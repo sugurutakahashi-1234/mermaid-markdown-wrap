@@ -141,7 +141,8 @@
       "WebFetch(domain:docs.renovatebot.com)",
       "WebFetch(domain:nodejs.org)",
       "WebFetch(domain:valibot.dev)",
-      "Bash(mermaid-markdown-wrap:*)"
+      "Bash(mermaid-markdown-wrap:*)",
+      "Bash(./dist/mmw:*)"
     ],
     "deny": []
   },

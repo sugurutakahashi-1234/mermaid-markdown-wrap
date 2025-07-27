@@ -213,6 +213,24 @@ jobs:
           remove-source: true
 ```
 
+### Action Inputs
+
+All CLI options are available, plus GitHub Actions-specific options:
+
+| Input | Description | Default |
+|-------|-------------|---------|
+| `input` | File path or glob pattern (required) | - |
+| `out-dir` | Output directory | Same as input |
+| `header` | Header text to prepend | - |
+| `footer` | Footer text to append | - |
+| `config` | Config file path | Auto-search |
+| `remove-source` | Remove source files after conversion | `false` |
+| `hide-command` | Hide command in output | `false` |
+| **`pr-comment-mode`** | Post diagrams as PR comments: `off`, `changed`, `all` | `off` |
+| **`pr-comment-header`** | Show header in PR comments | `true` |
+| **`pr-comment-details`** | Use collapsible details for PR comments | `false` |
+| **`github-token`** | GitHub token for PR comments | `${{ github.token }}` |
+
 <details>
 <summary>PR Comment Feature</summary>
 
@@ -250,26 +268,14 @@ jobs:
 
 </details>
 
-## Troubleshooting
-
-### Common Issues
-
-**"Command not found" after installation**
-- Ensure npm/yarn global bin directory is in your PATH
-- Try using `npx mermaid-markdown-wrap` instead
-
-**"EACCES" permission errors**
-- Use `npx` instead of global installation
-- Or fix npm permissions: [npm docs](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally)
-
-**Files not being found**
-- Use quotes around glob patterns: `"**/*.mmd"`
-- Check your shell's glob expansion settings
-
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
+We welcome contributions! For development setup, testing guidelines, and how to submit pull requests, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Contact
+
+If you have any questions or feedback, you can reach me on X/Twitter: [@ikuraikuraaaaaa](https://twitter.com/ikuraikuraaaaaa)
 
 ## License
 
-MIT
+MIT © [Suguru Takahashi](https://github.com/sugurutakahashi-1234)

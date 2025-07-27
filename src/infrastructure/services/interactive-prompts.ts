@@ -88,7 +88,7 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
         }),
       quiet: () =>
         confirm({
-          message: "Suppress non-error output?",
+          message: "Quiet mode (show errors only)?",
           initialValue: false,
         }),
     },

@@ -213,6 +213,24 @@ jobs:
           remove-source: true
 ```
 
+### Action Inputs
+
+すべてのCLIオプションに加え、GitHub Actions専用のオプションが利用可能：
+
+| Input | 説明 | デフォルト |
+|-------|------|-----------|
+| `input` | ファイルパスまたはグロブパターン（必須） | - |
+| `out-dir` | 出力ディレクトリ | 入力と同じ |
+| `header` | 先頭に追加するテキスト | - |
+| `footer` | 末尾に追加するテキスト | - |
+| `config` | 設定ファイルのパス | 自動検索 |
+| `remove-source` | 変換後にソースファイルを削除 | `false` |
+| `hide-command` | 出力にコマンドを表示しない | `false` |
+| **`pr-comment-mode`** | PRコメントとしてダイアグラムを投稿: `off`, `changed`, `all` | `off` |
+| **`pr-comment-header`** | PRコメントにヘッダーを表示 | `true` |
+| **`pr-comment-details`** | PRコメントを折りたたみ可能にする | `false` |
+| **`github-token`** | PRコメント用のGitHubトークン | `${{ github.token }}` |
+
 <details>
 <summary>PRコメント機能</summary>
 
@@ -250,26 +268,14 @@ jobs:
 
 </details>
 
-## Troubleshooting
-
-### よくある問題
-
-**インストール後に「コマンドが見つかりません」**
-- npm/yarnのグローバルbinディレクトリがPATHに含まれているか確認
-- `npx mermaid-markdown-wrap`を使用してみてください
-
-**「EACCES」権限エラー**
-- グローバルインストールの代わりに`npx`を使用
-- またはnpmの権限を修正：[npmドキュメント](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally)
-
-**ファイルが見つからない**
-- グロブパターンを引用符で囲む：`"**/*.mmd"`
-- シェルのグロブ展開設定を確認
-
 ## Contributing
 
-開発セットアップとガイドラインについては[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
+コントリビューションを歓迎します！開発環境のセットアップ、テストガイドライン、プルリクエストの提出方法については[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
+
+## Contact
+
+ご質問やフィードバックがある場合は、X/Twitterでご連絡ください: [@ikuraikuraaaaaa](https://twitter.com/ikuraikuraaaaaa)
 
 ## License
 
-MIT
+MIT © [Suguru Takahashi](https://github.com/sugurutakahashi-1234)

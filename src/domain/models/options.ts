@@ -43,10 +43,10 @@ export const RawCLIOptionsSchema = v.object({
   footer: v.optional(v.string()),
   removeSource: v.optional(v.boolean()),
   hideCommand: v.optional(v.boolean()),
-  // CLI-only options
-  config: v.optional(v.string()), // Path to configuration file
   logFormat: v.optional(v.picklist(OUTPUT_FORMATS, "Invalid log format")),
   quiet: v.optional(v.boolean()),
+  // CLI-only options
+  config: v.optional(v.string()), // Path to configuration file
 });
 
 /**
