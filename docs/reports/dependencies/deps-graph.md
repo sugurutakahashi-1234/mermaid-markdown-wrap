@@ -96,6 +96,7 @@ flowchart LR
     src/domain/services/options//combiner.ts-->src/domain/models/options.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
+    src/infrastructure/adapters/cosmiconfig.adapter.ts-->node//modules/valibot/dist/index.d.cts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->src/domain/constants/package//info.ts
     src/infrastructure/adapters/cosmiconfig.adapter.ts-->src/domain/models/options.ts
     src/application/use//cases/load//and//combine//config.ts-->src/domain/models/options.ts

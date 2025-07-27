@@ -35,6 +35,7 @@ flowchart LR
     src/infrastructure-->node//modules///clack/prompts/dist/index.d.ts
     src/infrastructure-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
+    src/infrastructure-->node//modules/valibot/dist/index.d.cts
     src/application-->node//modules/valibot/dist/index.d.cts
     src/presentation-->node//modules/commander/typings/index.d.ts
     src/presentation-->src/application

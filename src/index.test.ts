@@ -453,9 +453,7 @@ describe("CLI", () => {
       await proc.exited;
 
       expect(proc.exitCode).toBe(1);
-      expect(stderr).toContain("❌ Invalid config:");
-      expect(stderr).toContain("header:");
-      expect(stderr).toContain("removeSource:");
+      expect(stderr).toContain("Error loading config: Invalid configuration:");
     });
 
     test("validates config when no file is specified", async () => {
