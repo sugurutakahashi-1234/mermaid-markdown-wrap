@@ -20,6 +20,7 @@ flowchart LR
             end
             subgraph src/domain/services["/services"]
                 src/domain/services/command//info//generator.ts["command-info-generator.ts"]
+                src/domain/services/mermaid//content//extractor.ts["mermaid-content-extractor.ts"]
                 src/domain/services/mermaid//formatter.ts["mermaid-formatter.ts"]
                 src/domain/services/path//calculator.ts["path-calculator.ts"]
                 src/domain/services/config//file//generator.ts["config-file-generator.ts"]
@@ -64,6 +65,7 @@ flowchart LR
     src/domain/services/command//info//generator.ts-->src/domain/constants/package//info.ts
     src/domain/services/command//info//generator.ts-->src/domain/models/options.ts
     src/domain/services/mermaid//formatter.ts-->src/domain/models/options.ts
+    src/domain/services/mermaid//formatter.ts-->src/domain/services/mermaid//content//extractor.ts
     src/domain/services/path//calculator.ts-->src/domain/models/options.ts
     src/infrastructure/adapters/glob//search.adapter.ts-->node//modules/globby/index.d.ts
     src/infrastructure/services/file//batch//processor.ts-->src/domain/models/conversion.ts
