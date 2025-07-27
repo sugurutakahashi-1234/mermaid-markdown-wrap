@@ -3,27 +3,15 @@ name: Integration Test - GitHub Action
 on:
   push:
     branches: [main]
-    paths:
-      - 'action.yml'
-      - '.github/workflows/integration-test-action.yml'
-      - 'scripts/github-actions/**'
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - 'action.yml'
-      - '.github/workflows/integration-test-action.yml'
-      - 'scripts/github-actions/**'
   workflow_dispatch:
-    inputs:
-      action-ref:
-        description: 'Action reference (e.g., v1, main, or leave empty for local)'
-        required: false
-        default: ''
 
 jobs:
-  # NOTE: This workflow tests against the main branch version of the action.
-  # After the first release, we should also test against @v1 tag.
-  # For now, using @main ensures we're testing the latest code.
+  # NOTE: This workflow uses 'uses: ./' to test the action from the current repository
+  # This is the most reliable way to test the current code because:
+  # - It uses the code that's already checked out in the workflow
+  # - Works on any branch (main, feature branches, forks)
+  # - No need to worry about branch names or permissions
+  # Alternative 'uses: owner/repo@${{ github.ref_name }}' often fails due to GitHub's security restrictions
   
   # Test 1: Basic usage with minimal configuration
   test-basic:
@@ -39,7 +27,7 @@ jobs:
           echo "    A[Start] --> B[End]" >> test.mmd
       
       - name: Test basic conversion
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'test.mmd'
       
@@ -67,7 +55,7 @@ jobs:
           echo "    Bob-->>Alice: Hi!" >> sequence.mmd
       
       - name: Test with output directory
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'sequence.mmd'
           out-dir: './output'
@@ -97,7 +85,7 @@ jobs:
           echo "    Animal <|-- Dog" >> class.mmd
       
       - name: Test with header and footer
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'class.mmd'
           header: |
@@ -133,7 +121,7 @@ jobs:
           echo "flowchart LR; Start-->End" > test-dir/sub/diagram3.mmd
       
       - name: Test with glob pattern
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'test-dir/**/*.mmd'
       
@@ -173,7 +161,7 @@ jobs:
           EOF
       
       - name: Test with config file
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'test.mmd'
           config: 'config.json'
@@ -217,7 +205,7 @@ jobs:
           echo '    "Cats" : 85' >> temp-test/test.mmd
       
       - name: Test with remove-source
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'temp-test/test.mmd'
           remove-source: 'true'
@@ -251,7 +239,7 @@ jobs:
           echo "    Active --> [*]" >> state.mmd
       
       - name: Test with hide-command
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'state.mmd'
           out-dir: './hide-command-output'
@@ -284,7 +272,7 @@ jobs:
       - name: Test with non-existent file
         id: error-test
         continue-on-error: true
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        uses: ./
         with:
           input: 'non-existent-file.mmd'
       
