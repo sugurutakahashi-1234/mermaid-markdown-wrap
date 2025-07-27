@@ -28,6 +28,7 @@ const packageName = packageJson.name;
 let packageFile: string | null = null;
 let isInstalled = false;
 let tempDir: string | null = null;
+let npxTestDir: string | null = null;
 
 // Clean up any existing npm installation
 try {
@@ -138,6 +139,66 @@ try {
   }
   console.log("  ✅ --remove-source option works");
 
+  // Step 5: Test with npx (using globally installed package)
+  console.log("\n🧪 Testing npx execution...");
+
+  // Create a new temp directory for npx test
+  npxTestDir = mkdtempSync(join(tmpdir(), "npx-test-"));
+  const npxTestFile = join(npxTestDir, "npx-test.mmd");
+  writeFileSync(
+    npxTestFile,
+    `sequenceDiagram
+  Alice->>Bob: Hello via npx!`,
+  );
+
+  try {
+    // Test npx with globally installed package
+    console.log("  Testing npx with globally installed package...");
+    execSync(`npx ${packageName} ${npxTestFile}`, {
+      cwd: npxTestDir,
+      stdio: "pipe",
+    });
+
+    // Verify output
+    const npxOutputFile = join(npxTestDir, "npx-test.md");
+    if (!existsSync(npxOutputFile)) {
+      throw new Error("npx: Output file was not created");
+    }
+
+    const npxOutput = readFileSync(npxOutputFile, "utf-8");
+    if (
+      !npxOutput.includes("```mermaid") ||
+      !npxOutput.includes("sequenceDiagram")
+    ) {
+      throw new Error("npx: Output file does not contain expected content");
+    }
+
+    console.log("  ✅ npx execution works correctly");
+
+    // Test npx with package name after uninstalling global
+    console.log("  Testing npx without global install (cache test)...");
+    const npxTestFile2 = join(npxTestDir, "npx-test2.mmd");
+    writeFileSync(npxTestFile2, "graph TD\n  X-->Y");
+
+    // Uninstall global to test npx cache
+    execSync(`npm uninstall -g ${packageName}`, { stdio: "pipe" });
+    isInstalled = false;
+
+    // npx should still work from cache
+    execSync(`npx ${packageName} ${npxTestFile2} --quiet`, {
+      cwd: npxTestDir,
+      stdio: "pipe",
+    });
+
+    if (!existsSync(join(npxTestDir, "npx-test2.md"))) {
+      throw new Error("npx cache test: Output file was not created");
+    }
+
+    console.log("  ✅ npx cache execution works correctly");
+  } finally {
+    // Cleanup npx test directory will be done in the main cleanup section
+  }
+
   console.log("\n✅ All tests passed!");
 } catch (error) {
   console.error(
@@ -166,6 +227,11 @@ try {
   if (tempDir && existsSync(tempDir)) {
     rmSync(tempDir, { recursive: true });
     console.log("✅ Temporary directory removed");
+  }
+
+  if (npxTestDir && existsSync(npxTestDir)) {
+    rmSync(npxTestDir, { recursive: true });
+    console.log("✅ npx test directory removed");
   }
 }
 
