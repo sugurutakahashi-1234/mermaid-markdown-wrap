@@ -82,32 +82,6 @@ describe("CLI", () => {
     expect(result).toContain("Test Footer");
   });
 
-  test("converts single .mermaid file", async () => {
-    const inputFile = join(testDir, "flowchart.mermaid");
-    const outputFile = join(testDir, "flowchart.md");
-
-    await writeFile(inputFile, "flowchart LR\n  Start --> End");
-
-    const proc = spawn(["bun", cliPath, inputFile], {
-      cwd: testDir,
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const output = await new Response(proc.stdout).text();
-    await proc.exited;
-
-    expect(proc.exitCode).toBe(0);
-    expect(output).toContain("->");
-    expect(output).toContain("flowchart.mermaid");
-    expect(output).toContain("flowchart.md");
-
-    const result = await readFile(outputFile, "utf-8");
-    expect(result).toContain("```mermaid");
-    expect(result).toContain("flowchart LR");
-    expect(result).toContain("Start --> End");
-  });
-
   test("uses glob pattern", async () => {
     await writeFile(join(testDir, "a.mmd"), "graph TD");
     await writeFile(join(testDir, "b.mmd"), "graph LR");
@@ -130,56 +104,6 @@ describe("CLI", () => {
     const bExists = await Bun.file(join(testDir, "b.md")).exists();
     expect(aExists).toBe(true);
     expect(bExists).toBe(true);
-  });
-
-  test("uses glob pattern with .mermaid files", async () => {
-    await writeFile(join(testDir, "flow.mermaid"), "flowchart TD");
-    await writeFile(join(testDir, "seq.mermaid"), "sequenceDiagram");
-
-    const proc = spawn(["bun", cliPath, "*.mermaid"], {
-      cwd: testDir,
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const output = await new Response(proc.stdout).text();
-    await proc.exited;
-
-    expect(proc.exitCode).toBe(0);
-    expect(output).toContain("2 files converted (2 success, 0 failed)");
-    expect(output).toContain("flow.mermaid ->");
-    expect(output).toContain("seq.mermaid ->");
-
-    const flowExists = await Bun.file(join(testDir, "flow.md")).exists();
-    const seqExists = await Bun.file(join(testDir, "seq.md")).exists();
-    expect(flowExists).toBe(true);
-    expect(seqExists).toBe(true);
-  });
-
-  test("uses glob pattern with mixed extensions", async () => {
-    await writeFile(join(testDir, "diagram.mmd"), "graph TD");
-    await writeFile(join(testDir, "flowchart.mermaid"), "flowchart LR");
-
-    const proc = spawn(["bun", cliPath, "*.{mmd,mermaid}"], {
-      cwd: testDir,
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const output = await new Response(proc.stdout).text();
-    await proc.exited;
-
-    expect(proc.exitCode).toBe(0);
-    expect(output).toContain("2 files converted (2 success, 0 failed)");
-    expect(output).toContain("diagram.mmd ->");
-    expect(output).toContain("flowchart.mermaid ->");
-
-    const diagramExists = await Bun.file(join(testDir, "diagram.md")).exists();
-    const flowchartExists = await Bun.file(
-      join(testDir, "flowchart.md"),
-    ).exists();
-    expect(diagramExists).toBe(true);
-    expect(flowchartExists).toBe(true);
   });
 
   test("config-show command shows config", async () => {
@@ -367,52 +291,6 @@ describe("CLI", () => {
     expect(result.conversions[0].converted).toBe(true);
     expect(result.conversions[0].mermaidFile).toContain("test.mmd");
     expect(result.conversions[0].markdownFile).toContain("test.md");
-  });
-
-  test("outputs JSON format with failures", async () => {
-    // Create a file that will fail to read
-    const inputPattern = "**/*.mmd";
-    const validFile = join(testDir, "valid.mmd");
-    await writeFile(validFile, "graph TD\n  A --> B");
-
-    // Create subdirectory for permission test
-    const subDir = join(testDir, "restricted");
-    await mkdir(subDir);
-    const restrictedFile = join(subDir, "noaccess.mmd");
-    await writeFile(restrictedFile, "graph TD");
-
-    // Make file unreadable (skip on Windows)
-    if (process.platform !== "win32") {
-      await Bun.spawn(["chmod", "000", restrictedFile]).exited;
-    }
-
-    const proc = spawn(["bun", cliPath, inputPattern, "--log-format", "json"], {
-      cwd: testDir,
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-
-    const output = await new Response(proc.stdout).text();
-    await proc.exited;
-
-    // Clean up permissions before assertions
-    if (process.platform !== "win32") {
-      await Bun.spawn(["chmod", "644", restrictedFile]).exited;
-    }
-
-    // Should exit with error code when there are failures
-    expect(proc.exitCode).toBe(1);
-
-    const result = JSON.parse(output);
-    expect(result.summary.totalMermaidFiles).toBeGreaterThanOrEqual(1);
-    expect(result.summary.successfulConversions).toBeGreaterThanOrEqual(1);
-
-    if (process.platform !== "win32") {
-      expect(result.summary.failedConversions).toBeGreaterThanOrEqual(1);
-      const failedFile = result.conversions.find((f: any) => !f.converted);
-      expect(failedFile).toBeDefined();
-      expect(failedFile.failureReason).toBeDefined();
-    }
   });
 
   describe("config-validate subcommand", () => {

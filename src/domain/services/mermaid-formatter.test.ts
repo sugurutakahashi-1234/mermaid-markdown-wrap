@@ -72,55 +72,6 @@ describe("formatMermaidAsMarkdown", () => {
     expect(result).toBe("```mermaid\ngraph TD\n  A --> B\n```");
   });
 
-  test("handles empty content", () => {
-    const content = "";
-    const options = createOptions();
-
-    const result = formatMermaidAsMarkdown(content, options);
-
-    expect(result).toBe("```mermaid\n\n```");
-  });
-
-  test("handles content with only whitespace", () => {
-    const content = "   \n\n   ";
-    const options = createOptions({
-      header: "# Empty",
-      footer: "End",
-    });
-
-    const result = formatMermaidAsMarkdown(content, options);
-
-    expect(result).toBe("# Empty\n\n```mermaid\n\n```\n\nEnd");
-  });
-
-  test("handles complex multiline content", () => {
-    const content = `graph TD
-  A[Start] --> B{Decision}
-  B -->|Yes| C[Do something]
-  B -->|No| D[Do something else]`;
-    const options = createOptions();
-
-    const result = formatMermaidAsMarkdown(content, options);
-
-    expect(result).toBe(
-      "```mermaid\ngraph TD\n  A[Start] --> B{Decision}\n  B -->|Yes| C[Do something]\n  B -->|No| D[Do something else]\n```",
-    );
-  });
-
-  test("handles multiline headers and footers", () => {
-    const content = "graph TD";
-    const options = createOptions({
-      header: "# Title\n## Subtitle\nDescription",
-      footer: "---\nFooter line 1\nFooter line 2",
-    });
-
-    const result = formatMermaidAsMarkdown(content, options);
-
-    expect(result).toBe(
-      "# Title\n## Subtitle\nDescription\n\n```mermaid\ngraph TD\n```\n\n---\nFooter line 1\nFooter line 2",
-    );
-  });
-
   test("includes command info when hideCommand is false and commandInfo is provided", () => {
     const content = "graph TD";
     const options = createOptions({

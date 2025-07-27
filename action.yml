@@ -82,7 +82,7 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 'lts/*'
+        node-version: '20'
     
     - name: Run mermaid-markdown-wrap
       id: convert
