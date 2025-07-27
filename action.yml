@@ -1,5 +1,5 @@
 name: mermaid-markdown-wrap
-description: Wrap .mmd Mermaid files with ```mermaid``` code blocks in Markdown
+description: Convert plain .mmd Mermaid files to Markdown by wrapping them with mermaid code blocks
 author: Suguru Takahashi
 branding:
   icon: file-text

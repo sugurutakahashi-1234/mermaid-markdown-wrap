@@ -6,7 +6,7 @@
     "access": "public"
   },
   "bin": {
-    "mermaid-markdown-wrap": "./dist/index.js"
+    "mermaid-markdown-wrap": "./bin/mermaid-markdown-wrap.js"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -39,6 +39,7 @@
     "node": ">=20.0.0"
   },
   "files": [
+    "bin/",
     "dist/",
     "schema/",
     "scripts/npm-lifecycle/postinstall.js",

@@ -1,8 +1,14 @@
 # mermaid-markdown-wrap
 
 [![npm version](https://img.shields.io/npm/v/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
+[![npm downloads](https://img.shields.io/npm/dm/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/mermaid-markdown-wrap)](https://bundlephobia.com/package/mermaid-markdown-wrap)
+[![CI](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml)
+[![codecov](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap/graph/badge.svg?token=KPN7UZ7ATY)](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js Version](https://img.shields.io/node/v/mermaid-markdown-wrap.svg)](https://nodejs.org/)
+[![npm Release](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/cd-npm-release.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/cd-npm-release.yml)
+[![GitHub Release Date](https://img.shields.io/github/release-date/sugurutakahashi-1234/mermaid-markdown-wrap)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/pulls)
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -151,7 +157,7 @@ export default defineConfig({
 ### IntelliSenseサポート
 
 VS CodeでYAMLファイルの場合：
-```json
+```jsonc
 // .vscode/settings.json
 {
   "yaml.schemas": {
@@ -168,27 +174,27 @@ VS CodeでYAMLファイルの場合：
 
 ### Commands
 
-| コマンド | 説明 |
-|---------|------|
-| `mermaid-markdown-wrap <input>` | ファイルを変換（デフォルトコマンド） |
-| `mermaid-markdown-wrap init` | 対話的に設定ファイルを作成 |
-| `mermaid-markdown-wrap config-show [file]` | 現在の設定を表示 |
-| `mermaid-markdown-wrap config-validate [file]` | 設定ファイルを検証 |
+| コマンド                                       | 説明                                 |
+| ---------------------------------------------- | ------------------------------------ |
+| `mermaid-markdown-wrap <input>`                | ファイルを変換（デフォルトコマンド） |
+| `mermaid-markdown-wrap init`                   | 対話的に設定ファイルを作成           |
+| `mermaid-markdown-wrap config-show [file]`     | 現在の設定を表示                     |
+| `mermaid-markdown-wrap config-validate [file]` | 設定ファイルを検証                   |
 
 ### Options
 
-| オプション | 説明 | デフォルト |
-|-----------|------|-----------|
-| `-o, --out-dir <dir>` | 出力ディレクトリ | 入力と同じ |
-| `--header <text>` | 先頭に追加するテキスト | - |
-| `--footer <text>` | 末尾に追加するテキスト | - |
-| `--remove-source` | 変換後にソースファイルを削除 | `false` |
-| `--hide-command` | 出力にコマンドを表示しない | `false` |
-| `--log-format <format>` | 出力形式: `text` または `json` | `text` |
-| `--quiet` | エラー以外の出力を抑制 | `false` |
-| `-c, --config <file>` | 設定ファイルのパス | 自動検索 |
-| `-h, --help` | ヘルプを表示 | - |
-| `-v, --version` | バージョンを表示 | - |
+| オプション              | 説明                           | デフォルト |
+| ----------------------- | ------------------------------ | ---------- |
+| `-o, --out-dir <dir>`   | 出力ディレクトリ               | 入力と同じ |
+| `--header <text>`       | 先頭に追加するテキスト         | -          |
+| `--footer <text>`       | 末尾に追加するテキスト         | -          |
+| `--remove-source`       | 変換後にソースファイルを削除   | `false`    |
+| `--hide-command`        | 出力にコマンドを表示しない     | `false`    |
+| `--log-format <format>` | 出力形式: `text` または `json` | `text`     |
+| `--quiet`               | エラー以外の出力を抑制         | `false`    |
+| `-c, --config <file>`   | 設定ファイルのパス             | 自動検索   |
+| `-h, --help`            | ヘルプを表示                   | -          |
+| `-v, --version`         | バージョンを表示               | -          |
 
 ## GitHub Actions
 
@@ -217,19 +223,19 @@ jobs:
 
 すべてのCLIオプションに加え、GitHub Actions専用のオプションが利用可能：
 
-| Input | 説明 | デフォルト |
-|-------|------|-----------|
-| `input` | ファイルパスまたはグロブパターン（必須） | - |
-| `out-dir` | 出力ディレクトリ | 入力と同じ |
-| `header` | 先頭に追加するテキスト | - |
-| `footer` | 末尾に追加するテキスト | - |
-| `config` | 設定ファイルのパス | 自動検索 |
-| `remove-source` | 変換後にソースファイルを削除 | `false` |
-| `hide-command` | 出力にコマンドを表示しない | `false` |
-| **`pr-comment-mode`** | PRコメントとしてダイアグラムを投稿: `off`, `changed`, `all` | `off` |
-| **`pr-comment-header`** | PRコメントにヘッダーを表示 | `true` |
-| **`pr-comment-details`** | PRコメントを折りたたみ可能にする | `false` |
-| **`github-token`** | PRコメント用のGitHubトークン | `${{ github.token }}` |
+| Input                    | 説明                                                        | デフォルト            |
+| ------------------------ | ----------------------------------------------------------- | --------------------- |
+| `input`                  | ファイルパスまたはグロブパターン（必須）                    | -                     |
+| `out-dir`                | 出力ディレクトリ                                            | 入力と同じ            |
+| `header`                 | 先頭に追加するテキスト                                      | -                     |
+| `footer`                 | 末尾に追加するテキスト                                      | -                     |
+| `config`                 | 設定ファイルのパス                                          | 自動検索              |
+| `remove-source`          | 変換後にソースファイルを削除                                | `false`               |
+| `hide-command`           | 出力にコマンドを表示しない                                  | `false`               |
+| **`pr-comment-mode`**    | PRコメントとしてダイアグラムを投稿: `off`, `changed`, `all` | `off`                 |
+| **`pr-comment-header`**  | PRコメントにヘッダーを表示                                  | `true`                |
+| **`pr-comment-details`** | PRコメントを折りたたみ可能にする                            | `false`               |
+| **`github-token`**       | PRコメント用のGitHubトークン                                | `${{ github.token }}` |
 
 <details>
 <summary>PRコメント機能</summary>

@@ -126,7 +126,7 @@ hideCommand: false
 <details>
 <summary>JSON Configuration</summary>
 
-```json
+```jsonc
 // .mermaid-markdown-wraprc.json
 {
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
@@ -157,7 +157,7 @@ export default defineConfig({
 ### IntelliSense Support
 
 For YAML files with VS Code:
-```json
+```jsonc
 // .vscode/settings.json
 {
   "yaml.schemas": {
@@ -174,27 +174,27 @@ For YAML files with VS Code:
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `mermaid-markdown-wrap <input>` | Convert files (default command) |
-| `mermaid-markdown-wrap init` | Create configuration file interactively |
-| `mermaid-markdown-wrap config-show [file]` | Display current configuration |
-| `mermaid-markdown-wrap config-validate [file]` | Validate configuration file |
+| Command                                        | Description                             |
+| ---------------------------------------------- | --------------------------------------- |
+| `mermaid-markdown-wrap <input>`                | Convert files (default command)         |
+| `mermaid-markdown-wrap init`                   | Create configuration file interactively |
+| `mermaid-markdown-wrap config-show [file]`     | Display current configuration           |
+| `mermaid-markdown-wrap config-validate [file]` | Validate configuration file             |
 
 ### Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-o, --out-dir <dir>` | Output directory | Same as input |
-| `--header <text>` | Text to prepend | - |
-| `--footer <text>` | Text to append | - |
-| `--remove-source` | Remove source files after conversion | `false` |
-| `--hide-command` | Hide command in output | `false` |
-| `--log-format <format>` | Output format: `text` or `json` | `text` |
-| `--quiet` | Suppress non-error output | `false` |
-| `-c, --config <file>` | Config file path | Auto-search |
-| `-h, --help` | Show help | - |
-| `-v, --version` | Show version | - |
+| Option                  | Description                          | Default       |
+| ----------------------- | ------------------------------------ | ------------- |
+| `-o, --out-dir <dir>`   | Output directory                     | Same as input |
+| `--header <text>`       | Text to prepend                      | -             |
+| `--footer <text>`       | Text to append                       | -             |
+| `--remove-source`       | Remove source files after conversion | `false`       |
+| `--hide-command`        | Hide command in output               | `false`       |
+| `--log-format <format>` | Output format: `text` or `json`      | `text`        |
+| `--quiet`               | Suppress non-error output            | `false`       |
+| `-c, --config <file>`   | Config file path                     | Auto-search   |
+| `-h, --help`            | Show help                            | -             |
+| `-v, --version`         | Show version                         | -             |
 
 ## GitHub Actions
 
@@ -223,19 +223,19 @@ jobs:
 
 All CLI options are available, plus GitHub Actions-specific options:
 
-| Input | Description | Default |
-|-------|-------------|---------|
-| `input` | File path or glob pattern (required) | - |
-| `out-dir` | Output directory | Same as input |
-| `header` | Header text to prepend | - |
-| `footer` | Footer text to append | - |
-| `config` | Config file path | Auto-search |
-| `remove-source` | Remove source files after conversion | `false` |
-| `hide-command` | Hide command in output | `false` |
-| **`pr-comment-mode`** | Post diagrams as PR comments: `off`, `changed`, `all` | `off` |
-| **`pr-comment-header`** | Show header in PR comments | `true` |
-| **`pr-comment-details`** | Use collapsible details for PR comments | `false` |
-| **`github-token`** | GitHub token for PR comments | `${{ github.token }}` |
+| Input                    | Description                                           | Default               |
+| ------------------------ | ----------------------------------------------------- | --------------------- |
+| `input`                  | File path or glob pattern (required)                  | -                     |
+| `out-dir`                | Output directory                                      | Same as input         |
+| `header`                 | Header text to prepend                                | -                     |
+| `footer`                 | Footer text to append                                 | -                     |
+| `config`                 | Config file path                                      | Auto-search           |
+| `remove-source`          | Remove source files after conversion                  | `false`               |
+| `hide-command`           | Hide command in output                                | `false`               |
+| **`pr-comment-mode`**    | Post diagrams as PR comments: `off`, `changed`, `all` | `off`                 |
+| **`pr-comment-header`**  | Show header in PR comments                            | `true`                |
+| **`pr-comment-details`** | Use collapsible details for PR comments               | `false`               |
+| **`github-token`**       | GitHub token for PR comments                          | `${{ github.token }}` |
 
 <details>
 <summary>PR Comment Feature</summary>
