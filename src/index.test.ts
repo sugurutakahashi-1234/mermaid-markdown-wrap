@@ -3,6 +3,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawn } from "bun";
+import packageJson from "../package.json" with { type: "json" };
 
 let testDir: string;
 const cliPath = join(import.meta.dir, "index.ts");
@@ -201,7 +202,7 @@ describe("CLI", () => {
     await proc.exited;
 
     expect(proc.exitCode).toBe(0);
-    expect(output).toContain("0.1.0");
+    expect(output).toContain(packageJson.version);
   });
 
   test("shows output path in default mode", async () => {
