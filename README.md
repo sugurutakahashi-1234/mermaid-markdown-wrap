@@ -1,285 +1,281 @@
-# TypeScript テンプレート
+# mermaid-markdown-wrap
 
-厳格な型チェック、自動化されたワークフロー、ベストプラクティスが事前設定された、モダンなTypeScriptプロジェクトテンプレートです。
+[![npm version](https://img.shields.io/npm/v/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/mermaid-markdown-wrap.svg)](https://nodejs.org/)
 
-## 主な機能
+[English](README.md) | [日本語](README.ja.md)
 
-- **TypeScript** - 最も厳格な型チェックを有効化
-- **Bun** - 超高速なランタイムとパッケージマネージャー
-- **Biome** - 高速なリンターとフォーマッター
-- **GitHub Actions** - 6つの事前設定されたワークフロー
-- **自動リリース** - release-pleaseによるセマンティックバージョニング
-- **依存関係の自動更新** - Renovateによる自動化
-- **Git フック** - Huskyとcommitlintでコミットメッセージを標準化
-- **コードカバレッジ** - Codecov統合によるレポート
-- **デッドコード検出** - Knipを使用した未使用コードの検出
-- **ドキュメント生成** - 依存関係とコード品質の可視化
+Convert Mermaid diagram files (.mmd/.mermaid) to Markdown with proper code blocks. Keep your diagrams version-controlled and readable.
 
-## 必要な環境
+## What it does
 
-- Node.js v20以上
-- Bun（最新版）
+Transforms standalone Mermaid files into Markdown files with properly formatted code blocks:
 
-## はじめに
-
-1. **このテンプレートをクローンまたは使用**
-   ```bash
-   git clone https://github.com/yourusername/typescript-template.git
-   cd typescript-template
-   ```
-
-2. **依存関係をインストール**
-   ```bash
-   bun install
-   ```
-
-3. **CIパイプラインを実行して動作確認**
-   ```bash
-   bun run ci
-   ```
-
-## 利用可能なスクリプト
-
-### 開発用コマンド
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run build` | TypeScriptファイルをJavaScriptにビルド（`lib/`に出力） |
-| `bun run typecheck` | ビルドせずにTypeScriptの型チェックのみ実行 |
-| `bun run test` | Bunのテストランナーですべてのテストを実行 |
-| `bun run test:coverage` | カバレッジレポート付きでテストを実行 |
-| `bun run test:coverage:html` | HTMLカバレッジレポートを生成 |
-
-### コード品質コマンド
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run lint` | Biomeリンターを自動修正付きで実行 |
-| `bun run lint:check` | リントの問題をチェック（修正なし） |
-| `bun run format` | Biomeでコードをフォーマット |
-| `bun run format:check` | フォーマットの問題をチェック（修正なし） |
-| `bun run knip` | 未使用のエクスポート、依存関係、デッドコードを検出 |
-
-### CI/CDコマンド
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run ci` | 完全なCIパイプラインを実行: フォーマット → 型チェック → リント → ビルド → テスト → デッドコード検出 |
-| `bun run validate:codecov` | codecov.yml設定を検証 |
-| `bun run validate:renovate` | renovate.json5設定を検証 |
-| `bun run validate:branch` | 現在のブランチ名が規約に従っているかチェック |
-
-### 依存関係管理
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run deps:check` | 古い依存関係をチェック |
-| `bun run deps:update` | すべての依存関係を最新バージョンに更新 |
-| `bun run deps:size:prod` | 本番用依存関係のサイズを分析 |
-| `bun run deps:size:dev` | 開発専用依存関係のサイズを分析 |
-| `bun run deps:size:all` | すべてのnode_modulesパッケージサイズを表示 |
-
-### ドキュメント生成
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run update:docs` | すべてのドキュメントを更新（knipレポート + 依存関係グラフ） |
-| `bun run update:docs:knip` | 未使用コードレポートを生成 |
-| `bun run update:docs:deps-graph` | 依存関係グラフの可視化を生成 |
-
-### ユーティリティコマンド
-
-| コマンド | 説明 |
-|---------|------|
-| `bun run clean` | ビルド成果物とキャッシュを削除 |
-| `bun run clean:install` | クリーン後に依存関係を再インストール |
-| `bun run clean:build` | クリーン、再インストール、完全なCIを実行 |
-
-## プロジェクト構造
-
+**Before** (`diagram.mmd`):
 ```
-typescript-template/
-├── .github/
-│   ├── workflows/          # GitHub Actionsワークフロー
-│   └── pr-auto-assign-config.yml
-├── .claude/               # Claude Code設定
-├── .vscode/              # VSCode設定
-├── src/                  # ソースコード
-│   ├── calculator.ts     # 実装例
-│   ├── calculator.test.ts # テスト例
-│   ├── example.ts
-│   └── example.test.ts
-├── lib/                  # ビルド出力（gitignore対象）
-├── docs/
-│   └── reports/          # 自動生成レポート
-├── coverage/             # テストカバレッジ（gitignore対象）
-└── [設定ファイル群]
+graph TD
+  A[Start] --> B[Process]
+  B --> C[End]
 ```
 
-## 設定ファイル
+**After** (`diagram.md`):
+````markdown
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
 
-| ファイル | 用途 |
-|---------|------|
-| `tsconfig.json` | TypeScript設定（strictモード有効） |
-| `tsconfig.build.json` | TypeScriptビルド専用設定 |
-| `biome.jsonc` | Biomeリンター・フォーマッター設定 |
-| `commitlint.config.ts` | コンベンショナルコミットメッセージの強制 |
-| `renovate.json5` | 依存関係自動更新の設定 |
-| `knip.config.ts` | デッドコード検出の設定 |
-| `codecov.yml` | コードカバレッジレポートの設定 |
-| `bunfig.toml` | Bunランタイム設定 |
-| `release-please-config.json` | 自動リリース管理 |
+```mermaid
+graph TD
+  A[Start] --> B[Process]
+  B --> C[End]
+```
+````
 
-## GitHub Actions設定
+## Installation
 
-### 必要なシークレット
+**Requirements:** Node.js v20 or higher
 
-リポジトリ設定でこれらのシークレットを設定してください：
+```bash
+# Global installation (recommended)
+npm install -g mermaid-markdown-wrap
 
-1. **`CODECOV_TOKEN`**（プライベートリポジトリで必須）
-   - [codecov.io](https://codecov.io)でサインアップ
-   - リポジトリを追加
-   - リポジトリ設定からトークンをコピー
-   - リポジトリシークレットとして追加
+# Or use directly with npx
+npx mermaid-markdown-wrap diagram.mmd
 
-2. **`NPM_TOKEN`**（npm公開する場合必須）
-   - [npmjs.com](https://www.npmjs.com)で生成
-   - Access Tokens → Generate New Tokenへ
-   - "Automation"タイプを選択
-   - リポジトリシークレットとして追加
+# Alternative package managers
+yarn global add mermaid-markdown-wrap
+bun add -g mermaid-markdown-wrap
+```
 
-### ワークフローの概要
+## Quick Start
 
-1. **CI - プルリクエスト**（`ci-pull-request.yml`）
-   - トリガー: PR作成・更新時（ドラフトはスキップ）
-   - アクション: 型チェック、リント、ビルド、テスト、カバレッジアップロード
-   - 目的: マージ前のコード品質確保
+```bash
+# Convert a single file
+mermaid-markdown-wrap diagram.mmd
 
-2. **CI - mainへのプッシュ**（`ci-push-main.yml`）
-   - トリガー: mainブランチへのプッシュ時
-   - アクション: PRワークフローと同じ
-   - 目的: mainブランチの整合性確認
+# Convert all Mermaid files in a directory
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"
 
-3. **CD - NPMリリース**（`cd-npm-release.yml`）
-   - トリガー: mainブランチへのプッシュ時
-   - アクション: リリースPR作成、npmへの公開
-   - 目的: 自動バージョニングと公開
+# Generate a configuration file
+mermaid-markdown-wrap init
+```
 
-4. **PR自動アサイン**（`pr-auto-assign.yml`）
-   - トリガー: PR作成・再オープン時
-   - アクション: レビュアーとアサイン者を自動設定
-   - 目的: PRレビュープロセスの効率化
+## Usage
 
-5. **ブランチ名検証**（`validate-branch-name.yml`）
-   - トリガー: PR作成・更新時
-   - アクション: ブランチ命名規約のチェック
-   - 目的: 一貫性のあるブランチ名の強制
+### Common Use Cases
 
-6. **PRタイトル検証**（`validate-pr-title.yml`）
-   - トリガー: PR作成・編集時
-   - アクション: PRタイトル形式の検証
-   - 目的: 意味のあるPRタイトルの確保
+1. **Convert and organize diagrams**
+   ```bash
+   mermaid-markdown-wrap "src/**/*.mmd" --out-dir docs/diagrams
+   ```
 
-## TODO: セットアップチェックリスト
+2. **Add documentation headers**
+   ```bash
+   mermaid-markdown-wrap "*.mermaid" --header "# Architecture Diagrams"
+   ```
 
-このテンプレートを使用する際は、以下のタスクを完了してください：
+3. **Batch conversion with cleanup**
+   ```bash
+   mermaid-markdown-wrap "**/*.{mmd,mermaid}" --remove-source
+   ```
 
-- [ ] `package.json`を更新:
-  - [ ] `name`フィールドをプロジェクト名に変更
-  - [ ] `description`を更新
-  - [ ] `author`情報を更新
-  - [ ] `repository` URLを更新
-  - [ ] `bugs` URLを更新
-  - [ ] 該当する場合は`homepage`を更新
+4. **Use with configuration file**
+   ```bash
+   mermaid-markdown-wrap init  # Create config file
+   mermaid-markdown-wrap "*.mmd"  # Uses config automatically
+   ```
 
-- [ ] `LICENSE`ファイルを自分の名前/組織に更新
+## Configuration
 
-- [ ] GitHubリポジトリ設定を構成:
-  - [ ] `CODECOV_TOKEN`シークレットを追加（プライベートリポジトリの場合）
-  - [ ] `NPM_TOKEN`シークレットを追加（npmに公開する場合）
-  - [ ] `main`ブランチの保護ルールを有効化
+The tool automatically searches for configuration files in these locations:
+- `package.json` (`"mermaid-markdown-wrap"` property)
+- `.mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
+- `.config/mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
+- `mermaid-markdown-wrap.config.{js,ts}`
 
-- [ ] 設定ファイルを更新:
-  - [ ] `.github/pr-auto-assign-config.yml`のレビュアーを変更
-  - [ ] `renovate.json5`のリポジトリURLを更新
-  - [ ] 必要に応じて`tsconfig.json`を調整
+### Quick Configuration Setup
 
-- [ ] サンプルコードをクリーンアップ:
-  - [ ] `src/calculator.ts`とそのテストを削除
-  - [ ] `src/example.ts`とそのテストを削除
-  - [ ] 独自のソースファイルを追加
+```bash
+# Interactive configuration
+mermaid-markdown-wrap init
+```
 
-- [ ] ドキュメント:
-  - [ ] このREADMEをプロジェクト情報で更新
-  - [ ] `CONTRIBUTING.md`にコンテンツを追加
-  - [ ] `docs/`に初期ドキュメントを作成
+### Configuration Examples
 
-## OSSから非公開プロジェクトへの変換
+<details>
+<summary>YAML Configuration</summary>
 
-このテンプレートを非公開/プロプライエタリプロジェクトで使用する場合：
+```yaml
+# .mermaid-markdown-wraprc.yaml
+outDir: docs
+header: "<!-- AUTO-GENERATED -->"
+footer: "<!-- END -->"
+removeSource: false
+hideCommand: false
+```
 
-### 1. npm公開を削除
-`.github/workflows/cd-npm-release.yml`ファイルを削除またはコメントアウトして、自動npm リリースを無効化します。
+</details>
 
-### 2. package.jsonを更新
-`publishConfig`セクションを削除：
+<details>
+<summary>JSON Configuration</summary>
+
 ```json
-"publishConfig": {
-  "access": "public"
+// .mermaid-markdown-wraprc.json
+{
+  "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+  "outDir": "docs",
+  "header": "<!-- AUTO-GENERATED -->",
+  "removeSource": false
 }
 ```
 
-### 3. Codecovを設定
-プライベートリポジトリでは、`CODECOV_TOKEN`は必須です：
-- [codecov.io](https://codecov.io)にアクセス
-- プライベートリポジトリを追加
-- トークンをコピー
-- GitHubシークレットとして追加
+</details>
 
-### 4. ライセンスを更新
-MITライセンスをプロプライエタリライセンスに置き換えるか、LICENSEファイルを完全に削除します。
+<details>
+<summary>TypeScript Configuration</summary>
 
-### 5. Renovate設定を更新
-`renovate.json5`で、依存関係ダッシュボードフッターの公開リポジトリURLを削除または変更します。
+```ts
+// mermaid-markdown-wrap.config.ts
+import { defineConfig } from 'mermaid-markdown-wrap/config';
 
-### 6. GitHub Actionsをレビュー
-オープンソースプロジェクト特有のワークフローを削除または修正することを検討：
-- release-pleaseワークフローは内部プロジェクトでは不要かもしれません
-- 追加のセキュリティスキャンやデプロイメントワークフローを追加したい場合があります
+export default defineConfig({
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  removeSource: false
+});
+```
 
-## 開発の理念
+</details>
 
-このテンプレートは以下の原則に従っています：
+### IntelliSense Support
 
-- **型安全性第一**: 最も厳格なTypeScript設定を有効化
-- **高速フィードバック**: Bunによる高速CI/CDパイプライン
-- **すべてを自動化**: フォーマットからリリースまで
-- **デッドコードゼロ**: 未使用コードの継続的検出
-- **常に最新**: 依存関係の自動更新
-- **一貫性のあるコミット**: gitフックによる強制
+For YAML files with VS Code:
+```json
+// .vscode/settings.json
+{
+  "yaml.schemas": {
+    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
+      ".mermaid-markdown-wraprc",
+      ".mermaid-markdown-wraprc.yaml",
+      ".mermaid-markdown-wraprc.yml"
+    ]
+  }
+}
+```
 
-## トラブルシューティング
+## CLI Reference
 
-### よくある問題
+### Commands
 
-1. **Huskyフックが動作しない**
-   ```bash
-   bun run prepare
-   ```
+| Command | Description |
+|---------|-------------|
+| `mermaid-markdown-wrap <input>` | Convert files (default command) |
+| `mermaid-markdown-wrap init` | Create configuration file interactively |
+| `mermaid-markdown-wrap config-show [file]` | Display current configuration |
+| `mermaid-markdown-wrap config-validate [file]` | Validate configuration file |
 
-2. **依存関係更新後の型エラー**
-   ```bash
-   bun run clean:build
-   ```
+### Options
 
-3. **カバレッジレポートが生成されない**
-   - テストが存在し、合格していることを確認
-   - `bunfig.toml`のカバレッジ設定をチェック
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-o, --out-dir <dir>` | Output directory | Same as input |
+| `--header <text>` | Text to prepend | - |
+| `--footer <text>` | Text to append | - |
+| `--remove-source` | Remove source files after conversion | `false` |
+| `--hide-command` | Hide command in output | `false` |
+| `--log-format <format>` | Output format: `text` or `json` | `text` |
+| `--quiet` | Suppress non-error output | `false` |
+| `-c, --config <file>` | Config file path | Auto-search |
+| `-h, --help` | Show help | - |
+| `-v, --version` | Show version | - |
 
-## コントリビューション
+## GitHub Actions
 
-ガイドラインは[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
+Use this tool in your CI/CD pipelines:
 
-## ライセンス
+```yaml
+name: Convert Mermaid Diagrams
+on:
+  push:
+    paths: ["**/*.mmd", "**/*.mermaid"]
 
-このテンプレートはMITライセンスです。詳細は[LICENSE](LICENSE)を参照してください。
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+        with:
+          input: "**/*.{mmd,mermaid}"
+          out-dir: docs
+          remove-source: true
+```
+
+### Action Inputs
+
+All CLI options are available, plus GitHub Actions-specific options:
+
+| Input | Description | Default |
+|-------|-------------|---------|
+| `input` | File path or glob pattern (required) | - |
+| `out-dir` | Output directory | Same as input |
+| `header` | Header text to prepend | - |
+| `footer` | Footer text to append | - |
+| `config` | Config file path | Auto-search |
+| `remove-source` | Remove source files after conversion | `false` |
+| `hide-command` | Hide command in output | `false` |
+| **`pr-comment-mode`** | Post diagrams as PR comments: `off`, `changed`, `all` | `off` |
+| **`pr-comment-header`** | Show header in PR comments | `true` |
+| **`pr-comment-details`** | Use collapsible details for PR comments | `false` |
+| **`github-token`** | GitHub token for PR comments | `${{ github.token }}` |
+
+<details>
+<summary>PR Comment Feature</summary>
+
+### Automatic PR Comments
+
+Post converted diagrams as comments on pull requests:
+
+```yaml
+name: Convert and Comment
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+        with:
+          input: "**/*.{mmd,mermaid}"
+          pr-comment-mode: changed  # 'off', 'changed', or 'all'
+          pr-comment-header: true
+          pr-comment-details: false
+```
+
+**Comment Modes:**
+- `off`: No comments (default)
+- `changed`: Only files changed in the PR
+- `all`: All converted files
+
+</details>
+
+## Contributing
+
+We welcome contributions! For development setup, testing guidelines, and how to submit pull requests, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Contact
+
+If you have any questions or feedback, you can reach me on X/Twitter: [@ikuraikuraaaaaa](https://twitter.com/ikuraikuraaaaaa)
+
+## License
+
+MIT © [Suguru Takahashi](https://github.com/sugurutakahashi-1234)
