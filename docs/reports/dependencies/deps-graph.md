@@ -105,7 +105,6 @@ flowchart LR
     src/application/use//cases/load//and//combine//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
     src/application/use//cases/show//config.ts-->src/domain/models/options.ts
     src/application/use//cases/show//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
-    src/application/use//cases/validate//config.ts-->node//modules/valibot/dist/index.d.cts
     src/application/use//cases/validate//config.ts-->src/domain/models/options.ts
     src/application/use//cases/validate//config.ts-->src/infrastructure/adapters/cosmiconfig.adapter.ts
     src/presentation/cli.ts-->node//modules/commander/typings/index.d.ts

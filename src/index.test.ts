@@ -453,7 +453,8 @@ describe("CLI", () => {
       await proc.exited;
 
       expect(proc.exitCode).toBe(1);
-      expect(stderr).toContain("Error loading config: Invalid configuration:");
+      expect(stderr).toContain("❌ Invalid config:");
+      expect(stderr).toContain("root: Invalid configuration:");
     });
 
     test("validates config when no file is specified", async () => {
@@ -489,7 +490,8 @@ describe("CLI", () => {
 
       // Should fail when specified config file is not found
       expect(proc.exitCode).toBe(1);
-      expect(stderr).toContain("Error loading config:");
+      expect(stderr).toContain("❌ Invalid config:");
+      expect(stderr).toContain("ENOENT: no such file or directory");
     });
   });
 });
