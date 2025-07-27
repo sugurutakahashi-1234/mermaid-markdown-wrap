@@ -1,142 +1,110 @@
 # mermaid-markdown-wrap
 
+[![npm version](https://img.shields.io/npm/v/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/mermaid-markdown-wrap.svg)](https://nodejs.org/)
+
 [English](README.md) | [日本語](README.ja.md)
 
-`.mmd`や`.mermaid`ファイル（Mermaidダイアグラム）を、MarkdownのコードブロックでラップするミニマルなCLIツールです。デフォルトでは元のファイルを保持します。
+Mermaidダイアグラムファイル（.mmd/.mermaid）を適切なコードブロックを含むMarkdownに変換します。ダイアグラムをバージョン管理し、読みやすく保ちます。
+
+## What it does
+
+スタンドアロンのMermaidファイルを、適切にフォーマットされたコードブロックを含むMarkdownファイルに変換：
+
+**変換前** (`diagram.mmd`):
+```
+graph TD
+  A[Start] --> B[Process]
+  B --> C[End]
+```
+
+**変換後** (`diagram.md`):
+````markdown
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
+
+```mermaid
+graph TD
+  A[Start] --> B[Process]
+  B --> C[End]
+```
+````
+
+## Installation
+
+**必要要件:** Node.js v20以上
+
+```bash
+# グローバルインストール（推奨）
+npm install -g mermaid-markdown-wrap
+
+# または npx で直接使用
+npx mermaid-markdown-wrap diagram.mmd
+
+# 他のパッケージマネージャー
+yarn global add mermaid-markdown-wrap
+bun add -g mermaid-markdown-wrap
+```
 
 ## Quick Start
 
 ```bash
-# グローバルインストール
-npm install -g mermaid-markdown-wrap
-
-# 設定ファイルを作成（オプション）
-mermaid-markdown-wrap init
-
-# MermaidファイルをMarkdownに変換
+# 単一ファイルを変換
 mermaid-markdown-wrap diagram.mmd
+
+# ディレクトリ内の全Mermaidファイルを変換
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"
+
+# 設定ファイルを生成
+mermaid-markdown-wrap init
 ```
-
-## Features
-
-- ✅ `.mmd`と`.mermaid`ファイルを適切なコードブロックでMarkdownに変換
-- ✅ グロブパターンによるバッチ処理
-- ✅ 柔軟な設定（YAML、JSON、JavaScript、TypeScript）
-- ✅ GitHub Actionsサポート
-- ✅ コマンド検証と設定確認ツール
 
 ## Usage
 
-### Basic Examples
+### よくある使用例
 
-```bash
-# 単一ファイルの変換
-mermaid-markdown-wrap diagram.mmd
-mermaid-markdown-wrap flowchart.mermaid
+1. **ダイアグラムの変換と整理**
+   ```bash
+   mermaid-markdown-wrap "src/**/*.mmd" --out-dir docs/diagrams
+   ```
 
-# 複数ファイルの変換
-mermaid-markdown-wrap "*.mmd"                      # 現在のディレクトリの全ての.mmdファイル
-mermaid-markdown-wrap "*.mermaid"                  # 全ての.mermaidファイル
-mermaid-markdown-wrap "**/*.{mmd,mermaid}"         # 再帰的に全てのMermaidファイル
+2. **ドキュメントヘッダーの追加**
+   ```bash
+   mermaid-markdown-wrap "*.mermaid" --header "# アーキテクチャ図"
+   ```
 
-# 出力ディレクトリを指定
-mermaid-markdown-wrap "src/**/*.mmd" -o dist/      # 出力ディレクトリを指定して変換
+3. **バッチ変換とクリーンアップ**
+   ```bash
+   mermaid-markdown-wrap "**/*.{mmd,mermaid}" --remove-source
+   ```
 
-# ヘッダー/フッターを追加
-mermaid-markdown-wrap "*.mermaid" --header "# Docs"
-
-# 変換後にソースファイルを削除
-mermaid-markdown-wrap diagram.mmd --remove-source
-
-# 設定
-mermaid-markdown-wrap init                         # 対話的に設定ファイルを作成
-mermaid-markdown-wrap -c myconfig.yaml "*.mermaid" # 特定の設定ファイルを使用
-mermaid-markdown-wrap config-show                  # 現在の設定を表示
-mermaid-markdown-wrap config-show custom.yaml      # 特定のファイルから設定を表示
-mermaid-markdown-wrap config-validate              # 設定ファイルを検証
-mermaid-markdown-wrap config-validate custom.json  # 特定のファイルを検証
-```
-
-### Options
-
-| オプション            | 説明                                    | デフォルト         |
-| --------------------- | --------------------------------------- | ------------------ |
-| `-o, --out-dir <dir>` | 出力ディレクトリ                        | 入力ファイルと同じ |
-| `--header <text>`     | 出力の先頭に追加するテキスト            | -                  |
-| `--footer <text>`     | 出力の末尾に追加するテキスト            | -                  |
-| `--remove-source`     | ソースファイルを削除                    | `false`            |
-| `--hide-command`      | 出力にコマンドを非表示にする            | `false`            |
-| `--log-format <format>`| ログ出力形式: text または json         | `text`             |
-| `--quiet`             | エラー以外の出力を抑制                  | `false`            |
-| `-c, --config <file>` | 設定ファイルのパス                      | 自動検索           |
-| `-h, --help`          | ヘルプを表示                            | -                  |
-| `-v, --version`       | バージョンを表示                        | -                  |
-
-## Commands
-
-### Convert（デフォルト）
-
-```bash
-mermaid-markdown-wrap <input> [options]
-```
-
-MermaidファイルをMarkdownに変換します。サブコマンドを指定しない場合のデフォルトコマンドです。
-
-### Config Show
-
-現在の設定を表示:
-
-```bash
-# 自動検出された設定を表示
-mermaid-markdown-wrap config-show
-
-# 特定の設定ファイルを表示
-mermaid-markdown-wrap config-show myconfig.yaml
-```
-
-### Config Validate
-
-設定ファイルのエラーをチェック:
-
-```bash
-# 自動検出された設定を検証
-mermaid-markdown-wrap config-validate
-
-# 特定の設定ファイルを検証
-mermaid-markdown-wrap config-validate myconfig.json
-```
-
-### Init
-
-設定ファイルを対話的に作成:
-
-```bash
-mermaid-markdown-wrap init
-```
-
-このコマンドは、以下の項目について順番に質問しながら設定ファイルを作成します:
-- 設定ファイル形式（TypeScript、JavaScript、JSON、YAML など）
-- 出力ディレクトリ
-- ヘッダー/フッターテキスト
-- ソースファイルを削除するか
-- 出力にコマンドを非表示にするか
-- ログ出力形式（text/json）
-- エラー以外の出力を抑制するか
+4. **設定ファイルを使用**
+   ```bash
+   mermaid-markdown-wrap init  # 設定ファイルを作成
+   mermaid-markdown-wrap "*.mmd"  # 自動的に設定を使用
+   ```
 
 ## Configuration
 
-ツールは以下の場所から自動的に設定ファイルを検索します（[cosmiconfig](https://github.com/cosmiconfig/cosmiconfig)を使用）：
-
+ツールは以下の場所から自動的に設定ファイルを検索します：
 - `package.json` (`"mermaid-markdown-wrap"`プロパティ)
-- `.mermaid-markdown-wraprc` （拡張子なし）
-- `.mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
-- `.config/mermaid-markdown-wraprc` （拡張子なし）
-- `.config/mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
-- `mermaid-markdown-wrap.config.{js,ts,mjs,cjs}`
+- `.mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
+- `.config/mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
+- `mermaid-markdown-wrap.config.{js,ts}`
 
-`-c`オプションで設定ファイルを指定することも可能です。
+### 設定の簡単セットアップ
 
-### YAML設定
+```bash
+# 対話的な設定
+mermaid-markdown-wrap init
+```
+
+### 設定例
+
+<details>
+<summary>YAML設定</summary>
 
 ```yaml
 # .mermaid-markdown-wraprc.yaml
@@ -145,36 +113,12 @@ header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
 removeSource: false
 hideCommand: false
-logFormat: text
-quiet: false
 ```
 
-> **ヒント**: YAMLファイルでIntelliSenseを有効にする方法：
-> 
-> **オプション1 - VS Code設定** ([YAML拡張機能](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)を使用)：
-> ```json
-> // .vscode/settings.json
-> {
->   "yaml.schemas": {
->     "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
->       ".mermaid-markdown-wraprc",
->       ".mermaid-markdown-wraprc.yaml",
->       ".mermaid-markdown-wraprc.yml",
->       ".config/mermaid-markdown-wraprc",
->       ".config/mermaid-markdown-wraprc.yaml",
->       ".config/mermaid-markdown-wraprc.yml"
->     ]
->   }
-> }
-> ```
-> 
-> **オプション2 - YAMLコメント** (一部のエディタでサポート)：
-> ```yaml
-> # yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
-> outDir: docs
-> ```
+</details>
 
-### JSON設定（スキーマ付き）
+<details>
+<summary>JSON設定</summary>
 
 ```json
 // .mermaid-markdown-wraprc.json
@@ -182,38 +126,14 @@ quiet: false
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
   "header": "<!-- AUTO-GENERATED -->",
-  "footer": "<!-- END -->",
-  "removeSource": false,
-  "hideCommand": false,
-  "logFormat": "text",
-  "quiet": false
+  "removeSource": false
 }
 ```
 
-`$schema`プロパティにより、対応エディタでIntelliSense、検証、ホバードキュメントが有効になります。
+</details>
 
-### JavaScript設定
-
-```javascript
-// .mermaid-markdown-wraprc.js
-
-/** @type {import('mermaid-markdown-wrap/config').ConfigOptions} */
-module.exports = {
-  outDir: 'docs',
-  header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
-  removeSource: false,
-  hideCommand: false,
-  logFormat: 'text',
-  quiet: false,
-};
-```
-
-`@type`コメントによりJavaScriptファイルでもIntelliSenseが有効になります。
-
-### TypeScript設定
-
-TypeScript設定を使用する場合は、型定義を取得するためにパッケージをローカルにインストールしてください:
+<details>
+<summary>TypeScript設定</summary>
 
 ```ts
 // mermaid-markdown-wrap.config.ts
@@ -222,17 +142,57 @@ import { defineConfig } from 'mermaid-markdown-wrap/config';
 export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
-  removeSource: false,
-  hideCommand: false,
-  logFormat: 'text',
-  quiet: false,
+  removeSource: false
 });
 ```
 
+</details>
+
+### IntelliSenseサポート
+
+VS CodeでYAMLファイルの場合：
+```json
+// .vscode/settings.json
+{
+  "yaml.schemas": {
+    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
+      ".mermaid-markdown-wraprc",
+      ".mermaid-markdown-wraprc.yaml",
+      ".mermaid-markdown-wraprc.yml"
+    ]
+  }
+}
+```
+
+## CLI Reference
+
+### Commands
+
+| コマンド | 説明 |
+|---------|------|
+| `mermaid-markdown-wrap <input>` | ファイルを変換（デフォルトコマンド） |
+| `mermaid-markdown-wrap init` | 対話的に設定ファイルを作成 |
+| `mermaid-markdown-wrap config-show [file]` | 現在の設定を表示 |
+| `mermaid-markdown-wrap config-validate [file]` | 設定ファイルを検証 |
+
+### Options
+
+| オプション | 説明 | デフォルト |
+|-----------|------|-----------|
+| `-o, --out-dir <dir>` | 出力ディレクトリ | 入力と同じ |
+| `--header <text>` | 先頭に追加するテキスト | - |
+| `--footer <text>` | 末尾に追加するテキスト | - |
+| `--remove-source` | 変換後にソースファイルを削除 | `false` |
+| `--hide-command` | 出力にコマンドを表示しない | `false` |
+| `--log-format <format>` | 出力形式: `text` または `json` | `text` |
+| `--quiet` | エラー以外の出力を抑制 | `false` |
+| `-c, --config <file>` | 設定ファイルのパス | 自動検索 |
+| `-h, --help` | ヘルプを表示 | - |
+| `-v, --version` | バージョンを表示 | - |
+
 ## GitHub Actions
 
-CI/CDパイプラインでこのツールを使用:
+CI/CDパイプラインでこのツールを使用：
 
 ```yaml
 name: Convert Mermaid Diagrams
@@ -253,9 +213,12 @@ jobs:
           remove-source: true
 ```
 
-### PR Comment Feature
+<details>
+<summary>PRコメント機能</summary>
 
-生成されたマークダウンファイルを自動的にPRコメントとして投稿:
+### 自動PRコメント
+
+変換されたダイアグラムをプルリクエストのコメントとして投稿：
 
 ```yaml
 name: Convert and Comment
@@ -268,65 +231,44 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write  # コメント投稿に必要
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       
       - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
         with:
           input: "**/*.{mmd,mermaid}"
-          out-dir: docs
-          pr-comment-mode: changed  # オプション: 'off', 'changed', 'all'
+          pr-comment-mode: changed  # 'off', 'changed', または 'all'
+          pr-comment-header: true
+          pr-comment-details: false
 ```
 
-#### PR Comment Options
+**コメントモード:**
+- `off`: コメントなし（デフォルト）
+- `changed`: PRで変更されたファイルのみ
+- `all`: 変換された全ファイル
 
-| オプション | 説明 | デフォルト |
-|--------|-------------|---------|
-| `pr-comment-mode` | コメント投稿モード: `'off'`, `'changed'`, `'all'` | `'off'` |
-| `pr-comment-header` | PRコメントにヘッダーを表示 | `'true'` |
-| `pr-comment-details` | PRコメントに折りたたみ可能なdetailsタグを使用 | `'false'` |
-| `github-token` | PRコメント用のGitHubトークン | `${{ github.token }}` |
+</details>
 
-**PRコメントモード:**
-- `off` (デフォルト): PRコメントなし
-- `changed`: PRで変更されたファイルのみコメント
-- `all`: この実行で生成された全ファイルをコメント
+## Troubleshooting
 
-**全PRオプションを使用した例:**
-```yaml
-- uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
-  with:
-    input: "**/*.{mmd,mermaid}"
-    pr-comment-mode: all
-    pr-comment-header: false      # ヘッダーを非表示
-    pr-comment-details: true      # コンテンツをdetailsタグで折りたたむ
-    github-token: ${{ secrets.GITHUB_TOKEN }}  # カスタムトークン（オプション）
-```
+### よくある問題
 
-**注意:** `pull_request`と`pull_request_target`イベントの両方で動作します。`pull_request_target`を使用する場合は、信頼できないPRコードをチェックアウトしないよう注意してください。
+**インストール後に「コマンドが見つかりません」**
+- npm/yarnのグローバルbinディレクトリがPATHに含まれているか確認
+- `npx mermaid-markdown-wrap`を使用してみてください
 
-## How It Works
+**「EACCES」権限エラー**
+- グローバルインストールの代わりに`npx`を使用
+- またはnpmの権限を修正：[npmドキュメント](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally)
 
-**入力** (`diagram.mmd`):
-```
-graph TD
-  A[Start] --> B[Process]
-  B --> C[End]
-```
+**ファイルが見つからない**
+- グロブパターンを引用符で囲む：`"**/*.mmd"`
+- シェルのグロブ展開設定を確認
 
-**出力** (`diagram.md`):
-````markdown
-```bash
-mermaid-markdown-wrap diagram.mmd
-```
+## Contributing
 
-```mermaid
-graph TD
-  A[Start] --> B[Process]
-  B --> C[End]
-```
-````
+開発セットアップとガイドラインについては[CONTRIBUTING.md](CONTRIBUTING.md)を参照してください。
 
 ## License
 
