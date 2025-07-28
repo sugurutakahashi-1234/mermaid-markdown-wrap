@@ -124,6 +124,22 @@ removeSource: false
 hideCommand: false
 ```
 
+### IntelliSenseサポート
+
+VS CodeでYAMLファイルの場合：
+```jsonc
+// .vscode/settings.json
+{
+  "yaml.schemas": {
+    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
+      ".mermaid-markdown-wraprc",
+      ".mermaid-markdown-wraprc.yaml",
+      ".mermaid-markdown-wraprc.yml"
+    ]
+  }
+}
+```
+
 </details>
 
 <details>
@@ -137,6 +153,49 @@ hideCommand: false
   "header": "<!-- AUTO-GENERATED -->",
   "removeSource": false
 }
+```
+
+</details>
+
+<details>
+<summary>JavaScript設定</summary>
+
+#### CommonJS (.js/.cjs)
+```js
+// .mermaid-markdown-wraprc.js または .mermaid-markdown-wraprc.cjs
+module.exports = {
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->',
+  removeSource: false,
+  hideCommand: false
+};
+```
+
+#### ES Modules (.mjs)
+```js
+// mermaid-markdown-wrap.config.mjs
+export default {
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->',
+  removeSource: false,
+  hideCommand: false
+};
+```
+
+#### defineConfigヘルパーを使用
+```js
+// mermaid-markdown-wrap.config.js
+const { defineConfig } = require('mermaid-markdown-wrap/config');
+
+module.exports = defineConfig({
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->',
+  removeSource: false,
+  hideCommand: false
+});
 ```
 
 </details>
@@ -156,22 +215,6 @@ export default defineConfig({
 ```
 
 </details>
-
-### IntelliSenseサポート
-
-VS CodeでYAMLファイルの場合：
-```jsonc
-// .vscode/settings.json
-{
-  "yaml.schemas": {
-    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
-      ".mermaid-markdown-wraprc",
-      ".mermaid-markdown-wraprc.yaml",
-      ".mermaid-markdown-wraprc.yml"
-    ]
-  }
-}
-```
 
 ## CLI Reference
 
