@@ -220,14 +220,8 @@ export default defineConfig({
 
 ### Commands
 
-| コマンド                                       | 説明                                 |
-| ---------------------------------------------- | ------------------------------------ |
-| `mermaid-markdown-wrap <input>`                | ファイルを変換（デフォルトコマンド） |
-| `mermaid-markdown-wrap init`                   | 対話的に設定ファイルを作成           |
-| `mermaid-markdown-wrap config-show [file]`     | 現在の設定を表示                     |
-| `mermaid-markdown-wrap config-validate [file]` | 設定ファイルを検証                   |
-
-### Options
+#### `mermaid-markdown-wrap <input>` (デフォルト)
+Mermaidファイルをマークダウンに変換します。
 
 | オプション              | 説明                           | デフォルト |
 | ----------------------- | ------------------------------ | ---------- |
@@ -241,6 +235,28 @@ export default defineConfig({
 | `-c, --config <file>`   | 設定ファイルのパス             | 自動検索   |
 | `-h, --help`            | ヘルプを表示                   | -          |
 | `-v, --version`         | バージョンを表示               | -          |
+
+#### `mermaid-markdown-wrap init`
+対話的に設定ファイルを作成します。
+
+| オプション     | 説明                                             | デフォルト |
+| -------------- | ------------------------------------------------ | ---------- |
+| `-y, --yes`    | プロンプトをスキップしてデフォルト設定を使用     | `false`    |
+| `-h, --help`   | ヘルプを表示                                     | -          |
+
+#### `mermaid-markdown-wrap config-show [configFile]`
+現在の設定を表示します。オプションで設定ファイルのパスを引数として受け取ります。
+
+| オプション    | 説明         | デフォルト |
+| ------------- | ------------ | ---------- |
+| `-h, --help`  | ヘルプを表示 | -          |
+
+#### `mermaid-markdown-wrap config-validate [configFile]`
+設定ファイルを検証します。オプションで設定ファイルのパスを引数として受け取ります。
+
+| オプション    | 説明         | デフォルト |
+| ------------- | ------------ | ---------- |
+| `-h, --help`  | ヘルプを表示 | -          |
 
 ## GitHub Actions
 

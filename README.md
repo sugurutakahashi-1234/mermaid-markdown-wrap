@@ -220,14 +220,8 @@ export default defineConfig({
 
 ### Commands
 
-| Command                                        | Description                             |
-| ---------------------------------------------- | --------------------------------------- |
-| `mermaid-markdown-wrap <input>`                | Convert files (default command)         |
-| `mermaid-markdown-wrap init`                   | Create configuration file interactively |
-| `mermaid-markdown-wrap config-show [file]`     | Display current configuration           |
-| `mermaid-markdown-wrap config-validate [file]` | Validate configuration file             |
-
-### Options
+#### `mermaid-markdown-wrap <input>` (default)
+Convert Mermaid files to Markdown.
 
 | Option                  | Description                          | Default       |
 | ----------------------- | ------------------------------------ | ------------- |
@@ -241,6 +235,28 @@ export default defineConfig({
 | `-c, --config <file>`   | Config file path                     | Auto-search   |
 | `-h, --help`            | Show help                            | -             |
 | `-v, --version`         | Show version                         | -             |
+
+#### `mermaid-markdown-wrap init`
+Create configuration file interactively.
+
+| Option         | Description                                      | Default |
+| -------------- | ------------------------------------------------ | ------- |
+| `-y, --yes`    | Skip prompts and use default settings            | `false` |
+| `-h, --help`   | Show help                                        | -       |
+
+#### `mermaid-markdown-wrap config-show [configFile]`
+Display current configuration. Takes an optional config file path argument.
+
+| Option        | Description    | Default |
+| ------------- | -------------- | ------- |
+| `-h, --help`  | Show help      | -       |
+
+#### `mermaid-markdown-wrap config-validate [configFile]`
+Validate configuration file. Takes an optional config file path argument.
+
+| Option        | Description    | Default |
+| ------------- | -------------- | ------- |
+| `-h, --help`  | Show help      | -       |
 
 ## GitHub Actions
 

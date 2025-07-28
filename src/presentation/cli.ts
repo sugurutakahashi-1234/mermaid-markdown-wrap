@@ -240,11 +240,14 @@ The config-validate command will:
 program
   .command("init")
   .description("Interactive wizard to create a configuration file")
+  .option("-y, --yes", "skip prompts and use default settings", false)
   .addHelpText(
     "after",
     `
 Examples:
   $ ${getPackageName()} init                              # Start interactive configuration
+  $ ${getPackageName()} init --yes                        # Create config with default settings
+  $ ${getPackageName()} init -y                           # Create config with default settings (shorthand)
 
 The init command will guide you through creating a configuration file by asking about:
   - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
@@ -252,11 +255,13 @@ The init command will guide you through creating a configuration file by asking 
   - Header/footer text
   - Whether to remove source files
   - Whether to include generation command in output
+
+With --yes option, it will create a TypeScript config file with all default values.
 `,
   )
-  .action(async () => {
+  .action(async (options: { yes: boolean }) => {
     try {
-      await initConfigUseCase();
+      await initConfigUseCase(options.yes);
     } catch (error) {
       if (error instanceof UserCancelledError) {
         process.exit(0);

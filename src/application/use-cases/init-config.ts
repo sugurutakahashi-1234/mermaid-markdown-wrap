@@ -6,7 +6,9 @@
  */
 
 import { getPackageName } from "../../domain/constants/package-info.js";
+import type { ConfigOptions } from "../../domain/models/options.js";
 import {
+  type ConfigFormat,
   generateConfigFileContent,
   generateConfigFileName,
 } from "../../domain/services/config-file-generator.js";
@@ -20,10 +22,24 @@ import {
 
 /**
  * Initialize configuration file through interactive prompts
+ * @param skipPrompts - Skip interactive prompts and use default settings
  */
-export async function initConfigUseCase(): Promise<void> {
-  // Run interactive prompts to gather configuration
-  const { config, format } = await runInteractivePrompts();
+export async function initConfigUseCase(
+  skipPrompts: boolean = false,
+): Promise<void> {
+  let config: ConfigOptions;
+  let format: ConfigFormat;
+
+  if (skipPrompts) {
+    // Use default settings when skipPrompts is true
+    config = {}; // Empty config means all defaults
+    format = "ts"; // Default to TypeScript format
+  } else {
+    // Run interactive prompts to gather configuration
+    const promptResult = await runInteractivePrompts();
+    config = promptResult.config;
+    format = promptResult.format;
+  }
 
   // Generate file name and content
   const fileName = generateConfigFileName(format);
@@ -39,7 +55,7 @@ export async function initConfigUseCase(): Promise<void> {
     // File doesn't exist, proceed with creation
   }
 
-  if (fileExists) {
+  if (fileExists && !skipPrompts) {
     const overwrite = await confirmOverwrite(fileName);
     if (!overwrite) {
       return; // User chose not to overwrite
@@ -47,13 +63,23 @@ export async function initConfigUseCase(): Promise<void> {
   }
 
   // Show spinner while creating file
-  const spinnerInstance = showSpinner(`Creating ${fileName}`);
+  const spinnerInstance = skipPrompts
+    ? null
+    : showSpinner(`Creating ${fileName}`);
 
   try {
     await fileSystemAdapter.writeFile(filePath, content);
-    spinnerInstance.stop(`✔ Created ${fileName}`);
+    if (spinnerInstance) {
+      spinnerInstance.stop(`✔ Created ${fileName}`);
+    } else {
+      console.log(`✔ Created ${fileName}`);
+    }
   } catch (error) {
-    spinnerInstance.stopWithError(`✗ Failed to create ${fileName}`);
+    if (spinnerInstance) {
+      spinnerInstance.stopWithError(`✗ Failed to create ${fileName}`);
+    } else {
+      console.error(`✗ Failed to create ${fileName}`);
+    }
 
     // Provide more specific error message for permission errors
     if (error instanceof Error && error.message.includes("EACCES")) {
@@ -66,6 +92,11 @@ export async function initConfigUseCase(): Promise<void> {
 
   // Show next steps
   const packageName = getPackageName();
-  showOutro(`Next steps:
+  if (skipPrompts) {
+    console.log(`Next steps:
   npx ${packageName} "src/**/*.mmd"`);
+  } else {
+    showOutro(`Next steps:
+  npx ${packageName} "src/**/*.mmd"`);
+  }
 }
