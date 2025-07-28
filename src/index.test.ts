@@ -418,6 +418,11 @@ describe("CLI", () => {
       expect(initProc.exitCode).toBe(0);
       expect(initOutput).toContain("✔ Created .mermaid-markdown-wraprc.json");
 
+      // Verify the config file was actually created
+      const configPath = join(testDir, ".mermaid-markdown-wraprc.json");
+      const configExists = await Bun.file(configPath).exists();
+      expect(configExists).toBe(true);
+
       // Step 3: Run config-show (no arguments)
       const showProc = spawn(["bun", cliPath, "config-show"], {
         cwd: testDir,
