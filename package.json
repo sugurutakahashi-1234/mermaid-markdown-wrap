@@ -65,6 +65,7 @@
     "test": "bun test",
     "test:quiet": "bun test > /dev/null 2>&1 && echo '✅ All tests passed' || echo '❌ Tests failed - run \"bun run test\" for details'",
     "test:e2e": "bun scripts/testing/e2e-npm-package.ts",
+    "test:act": "act -W .github/workflows/test-local.yml",
     "test:coverage": "bun test --coverage",
     "test:coverage:html": "bun test --coverage && bunx @lcov-viewer/cli lcov coverage/lcov.info -o coverage/html",
     "generate:schema": "bun scripts/development/generate-schema.ts && biome format --write schema/config.schema.json",

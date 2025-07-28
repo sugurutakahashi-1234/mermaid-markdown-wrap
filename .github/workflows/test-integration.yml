@@ -1,0 +1,486 @@
+name: Integration Test - Main Branch
+
+# This workflow is similar to test-local.yml but uses the published action from main branch
+# Usage: Run manually from the GitHub Actions tab
+#
+# To run specific job:
+# Use the GitHub Actions UI to run this workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Basic usage - Verify basic mermaid wrapping functionality
+  test-basic:
+    runs-on: ubuntu-latest
+    name: Test Basic Usage
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test file
+        run: |
+          echo "graph TD" > test.mmd
+          echo "    A[Start] --> B[End]" >> test.mmd
+      
+      - name: Test basic conversion
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'test.mmd'
+      
+      - name: Verify output
+        run: |
+          # Check file exists
+          if [ ! -f "test.md" ]; then
+            echo "❌ Error: test.md was not created"
+            exit 1
+          fi
+          
+          # Verify mermaid code block exists
+          if ! grep -q '```mermaid' test.md; then
+            echo "❌ Error: Mermaid code block not found"
+            exit 1
+          fi
+          
+          # Verify content is preserved
+          if ! grep -q 'graph TD' test.md; then
+            echo "❌ Error: Original content not preserved"
+            exit 1
+          fi
+          
+          # Verify closing block
+          if ! grep -q '```$' test.md; then
+            echo "❌ Error: Closing code block not found"
+            exit 1
+          fi
+          
+          echo "✅ Basic conversion successful - all checks passed"
+          echo "📄 Generated content:"
+          cat test.md
+
+  # Glob pattern - Verify multiple file processing with glob patterns
+  test-glob-pattern:
+    runs-on: ubuntu-latest
+    name: Test Glob Pattern
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files in different directories
+        run: |
+          # Create directory structure
+          mkdir -p docs/diagrams
+          mkdir -p src/charts
+          
+          # Create multiple .mmd files
+          echo "graph TD" > docs/diagram1.mmd
+          echo "A-->B" >> docs/diagram1.mmd
+          
+          echo "graph TD" > docs/diagrams/sequence.mmd
+          echo "A-->B" >> docs/diagrams/sequence.mmd
+          
+          echo "graph TD" > src/flow.mmd
+          echo "A-->B" >> src/flow.mmd
+          
+          echo "graph TD" > src/charts/pie.mmd
+          echo "A-->B" >> src/charts/pie.mmd
+          
+          # Create a .mermaid file to test both extensions
+          echo "graph TD" > state.mermaid
+          echo "A-->B" >> state.mermaid
+      
+      - name: Test glob pattern conversion
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: '**/*.{mmd,mermaid}'
+      
+      - name: Verify all files were converted
+        run: |
+          # Expected conversions
+          expected_files=(
+            "docs/diagram1.md"
+            "docs/diagrams/sequence.md"
+            "src/flow.md"
+            "src/charts/pie.md"
+            "state.md"
+          )
+          
+          # Check each expected file
+          for file in "${expected_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Error: $file was not created"
+              exit 1
+            fi
+            echo "✅ Found: $file"
+          done
+          
+          # Verify mermaid blocks in each file
+          for file in "${expected_files[@]}"; do
+            if ! grep -q '```mermaid' "$file"; then
+              echo "❌ Error: Mermaid block not found in $file"
+              exit 1
+            fi
+          done
+          
+          # Count total conversions
+          total_md=$(find . -name "*.md" -type f | wc -l)
+          echo "📊 Total .md files created: $total_md"
+          
+          echo "✅ Glob pattern test successful - all files converted"
+
+  # Output directory - Verify --out-dir option works correctly
+  test-output-dir:
+    runs-on: ubuntu-latest
+    name: Test Output Directory
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test file
+        run: |
+          echo "graph TD" > sequence.mmd
+          echo "A-->B" >> sequence.mmd
+      
+      - name: Test with output directory
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'sequence.mmd'
+          out-dir: './output'
+      
+      - name: Verify output
+        run: |
+          # Check directory was created
+          if [ ! -d "output" ]; then
+            echo "❌ Error: output directory was not created"
+            exit 1
+          fi
+          
+          # Check file exists in correct location
+          if [ ! -f "output/sequence.md" ]; then
+            echo "❌ Error: output/sequence.md was not created"
+            exit 1
+          fi
+          
+          # Verify source file still exists (not moved)
+          if [ ! -f "sequence.mmd" ]; then
+            echo "❌ Error: Source file was incorrectly removed"
+            exit 1
+          fi
+          
+          # Verify content
+          if ! grep -q '```mermaid' output/sequence.md; then
+            echo "❌ Error: Mermaid block not found in output"
+            exit 1
+          fi
+          
+          if ! grep -q 'graph TD' output/sequence.md; then
+            echo "❌ Error: Content not preserved in output"
+            exit 1
+          fi
+          
+          echo "✅ Output directory test successful - file created in correct location"
+          echo "📁 Directory structure:"
+          ls -la output/
+
+  # Header and footer - Verify header/footer content is added correctly
+  test-header-footer:
+    runs-on: ubuntu-latest
+    name: Test Header and Footer
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test file
+        run: |
+          echo "graph TD" > class.mmd
+          echo "A-->B" >> class.mmd
+      
+      - name: Test with header and footer
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'class.mmd'
+          header: |
+            # Class Diagram
+            This diagram shows the class hierarchy.
+          footer: |
+            ---
+            Generated by GitHub Actions
+      
+      - name: Verify output
+        run: |
+          # Check file exists
+          if [ ! -f "class.md" ]; then
+            echo "❌ Error: class.md was not created"
+            exit 1
+          fi
+          
+          # Verify header content at the beginning
+          if ! head -n 2 class.md | grep -q "# Class Diagram"; then
+            echo "❌ Error: Header not found at beginning of file"
+            exit 1
+          fi
+          
+          if ! head -n 3 class.md | grep -q "This diagram shows the class hierarchy"; then
+            echo "❌ Error: Header description not found"
+            exit 1
+          fi
+          
+          # Verify mermaid block exists
+          if ! grep -q '```mermaid' class.md; then
+            echo "❌ Error: Mermaid code block not found"
+            exit 1
+          fi
+          
+          # Verify footer content at the end
+          if ! tail -n 2 class.md | grep -q "Generated by GitHub Actions"; then
+            echo "❌ Error: Footer not found at end of file"
+            exit 1
+          fi
+          
+          if ! tail -n 3 class.md | grep -q "^---$"; then
+            echo "❌ Error: Footer separator not found"
+            exit 1
+          fi
+          
+          echo "✅ Header/footer test successful - content correctly positioned"
+          echo "📄 Generated file structure:"
+          echo "--- START OF FILE ---"
+          head -n 5 class.md
+          echo "... (middle content) ..."
+          tail -n 5 class.md
+          echo "--- END OF FILE ---"
+
+  # Remove source - Verify --remove-source option deletes original files
+  test-remove-source:
+    runs-on: ubuntu-latest
+    name: Test Remove Source Option
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > remove1.mmd
+          echo "A-->B" >> remove1.mmd
+          
+          echo "graph TD" > remove2.mmd
+          echo "A-->B" >> remove2.mmd
+          echo "Original files created"
+          ls -la *.mmd
+      
+      - name: Test with remove-source option
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'remove*.mmd'
+          remove-source: 'true'
+      
+      - name: Verify behavior
+        run: |
+          # Check .md files were created
+          if [ ! -f "remove1.md" ]; then
+            echo "❌ Error: remove1.md was not created"
+            exit 1
+          fi
+          
+          if [ ! -f "remove2.md" ]; then
+            echo "❌ Error: remove2.md was not created"
+            exit 1
+          fi
+          
+          # Check source files were removed
+          if [ -f "remove1.mmd" ]; then
+            echo "❌ Error: remove1.mmd should have been deleted"
+            exit 1
+          fi
+          
+          if [ -f "remove2.mmd" ]; then
+            echo "❌ Error: remove2.mmd should have been deleted"
+            exit 1
+          fi
+          
+          # Verify content was preserved in .md files
+          if ! grep -q 'graph TD' remove1.md; then
+            echo "❌ Error: Content not preserved in remove1.md"
+            exit 1
+          fi
+          
+          echo "✅ Remove source test successful - source files deleted after conversion"
+          echo "📄 Remaining files:"
+          ls -la *.md
+
+  # Hide command - Verify --hide-command option removes command from output
+  test-hide-command:
+    runs-on: ubuntu-latest
+    name: Test Hide Command Option
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > hide-test.mmd
+          echo "A-->B" >> hide-test.mmd
+      
+      - name: Test WITHOUT hide-command (default)
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'hide-test.mmd'
+      
+      - name: Verify default behavior (command shown)
+        run: |
+          if ! grep -q 'bash' hide-test.md || ! grep -q 'mermaid-markdown-wrap' hide-test.md; then
+            echo "❌ Error: Command should be visible by default"
+            exit 1
+          fi
+          echo "✅ Default: Command is visible"
+          rm hide-test.md
+      
+      - name: Test WITH hide-command
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'hide-test.mmd'
+          hide-command: 'true'
+      
+      - name: Verify hide-command behavior
+        run: |
+          if grep -q 'bash' hide-test.md || grep -q 'mermaid-markdown-wrap' hide-test.md; then
+            echo "❌ Error: Command should be hidden when hide-command is true"
+            exit 1
+          fi
+          echo "✅ Hide command successful - no command in output"
+
+  # Config file - Verify --config option loads settings from file
+  test-config-file:
+    runs-on: ubuntu-latest
+    name: Test Config File Option
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test config file
+        run: |
+          cat > test-config.yml << 'EOF'
+          header: |
+            # From Config File
+            This header comes from the config file.
+          footer: |
+            ---
+            Footer from config file
+          EOF
+          
+          echo "graph TD" > config-test.mmd
+          echo "A-->B" >> config-test.mmd
+      
+      - name: Test with config file
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'config-test.mmd'
+          config: './test-config.yml'
+      
+      - name: Verify config file was applied
+        run: |
+          # Check file exists
+          if [ ! -f "config-test.md" ]; then
+            echo "❌ Error: config-test.md was not created"
+            exit 1
+          fi
+          
+          # Verify header from config
+          if ! grep -q "# From Config File" config-test.md; then
+            echo "❌ Error: Header from config file not found"
+            exit 1
+          fi
+          
+          if ! grep -q "This header comes from the config file" config-test.md; then
+            echo "❌ Error: Header content from config file not found"
+            exit 1
+          fi
+          
+          # Verify footer from config
+          if ! grep -q "Footer from config file" config-test.md; then
+            echo "❌ Error: Footer from config file not found"
+            exit 1
+          fi
+          
+          echo "✅ Config file test successful - settings loaded and applied"
+
+  # Error handling - Verify proper error handling for invalid inputs
+  test-error-handling:
+    runs-on: ubuntu-latest
+    name: Test Error Handling
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Test with non-existent file
+        id: error-test
+        continue-on-error: true
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
+        with:
+          input: 'non-existent-file.mmd'
+      
+      - name: Verify error handling
+        run: |
+          # Verify the action failed
+          if [ "${{ steps.error-test.outcome }}" != "failure" ]; then
+            echo "❌ Error: Action should have failed for non-existent file"
+            exit 1
+          fi
+          
+          # Check if conversion-results.json was created (for error reporting)
+          if [ -f "conversion-results.json" ]; then
+            echo "📊 Error report generated:"
+            cat conversion-results.json
+          fi
+          
+          echo "✅ Error handling test successful - action correctly failed for invalid input"
+
+  # Summary job - Display test results summary
+  summary:
+    runs-on: ubuntu-latest
+    name: Test Summary
+    needs: [
+      # input (required) - Basic usage and glob pattern
+      test-basic,          # Single file input
+      test-glob-pattern,   # Glob pattern input
+      # out-dir
+      test-output-dir,
+      # header
+      # footer
+      test-header-footer,  # Tests both header and footer
+      # remove-source
+      test-remove-source,
+      # hide-command
+      test-hide-command,
+      # config
+      test-config-file,
+      # Error handling (last)
+      test-error-handling
+    ]
+    if: always()
+    steps:
+      - name: All tests passed
+        if: success()
+        run: |
+          echo ""
+          echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
+          echo "✅                                                    ✅"
+          echo "✅          🎉 ALL TESTS PASSED! 🎉                   ✅"
+          echo "✅                                                    ✅"
+          echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
+          echo ""
+        
+      - name: Some tests failed
+        if: failure()
+        run: |
+          echo ""
+          echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
+          echo "❌                                                    ❌"
+          echo "❌         💥 SOME TESTS FAILED 💥                    ❌"
+          echo "❌                                                    ❌"
+          echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
+          echo ""
+          echo "Failed tests:"
+          echo '${{ toJson(needs) }}' | jq -r 'to_entries[] | select(.value.result != "success") | "  🔴 \(.key): \(.value.result)"'
+          echo ""
+          exit 1

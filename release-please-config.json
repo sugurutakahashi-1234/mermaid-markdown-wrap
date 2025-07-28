@@ -26,6 +26,20 @@
         { "type": "build", "section": "📦 Build System" },
         { "type": "ci", "section": "👷 CI/CD" },
         { "type": "chore", "section": "🔧 Maintenance" }
+      ],
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "README.md"
+        },
+        {
+          "type": "generic",
+          "path": "README.ja.md"
+        },
+        {
+          "type": "generic",
+          "path": ".github/workflows/test-e2e.yml"
+        }
       ]
     }
   }

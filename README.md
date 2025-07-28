@@ -202,6 +202,7 @@ For YAML files with VS Code:
 
 Use this tool in your CI/CD pipelines:
 
+<!-- x-release-please-start-version -->
 ```yaml
 name: Convert Mermaid Diagrams
 on:
@@ -214,12 +215,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
           remove-source: true
 ```
+<!-- x-release-please-end -->
 
 ### Action Inputs
 
@@ -246,6 +248,7 @@ All CLI options are available, plus GitHub Actions-specific options:
 
 Post converted diagrams as comments on pull requests:
 
+<!-- x-release-please-start-version -->
 ```yaml
 name: Convert and Comment
 on:
@@ -261,13 +264,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           pr-comment-mode: changed  # 'off', 'changed', or 'all'
           pr-comment-header: true
           pr-comment-details: false
 ```
+<!-- x-release-please-end -->
 
 **Comment Modes:**
 - `off`: No comments (default)

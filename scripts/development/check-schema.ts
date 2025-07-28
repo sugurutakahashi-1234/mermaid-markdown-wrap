@@ -25,14 +25,14 @@ try {
 
   // Run generate-schema.ts and check if the content changes
   const { $ } = await import("bun");
-  await $`bun run schema:generate`;
+  await $`bun run generate:schema`;
 
   // Read the schema again
   const newSchemaContent = await readFile(schemaPath, "utf-8");
 
   if (schemaContent !== newSchemaContent) {
     console.error(
-      "❌ Schema is out of date. Please run 'bun run schema:generate'",
+      "❌ Schema is out of date. Please run 'bun run generate:schema'",
     );
     process.exit(1);
   }
