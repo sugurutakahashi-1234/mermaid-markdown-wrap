@@ -28,6 +28,11 @@ graph TD
   B --> C[End]
 ```
 
+**実行:**
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
+
 **変換後** (`diagram.md`):
 ````markdown
 ```bash
@@ -49,25 +54,24 @@ graph TD
 # グローバルインストール（推奨）
 npm install -g mermaid-markdown-wrap
 
+# プロジェクト固有のインストール（開発依存関係として）
+npm install --save-dev mermaid-markdown-wrap
+
 # または npx で直接使用
 npx mermaid-markdown-wrap diagram.mmd
-
-# 他のパッケージマネージャー
-yarn global add mermaid-markdown-wrap
-bun add -g mermaid-markdown-wrap
 ```
+
+**他のパッケージマネージャー:** yarn、bun、pnpmでも利用可能です
 
 ## Quick Start
 
 ```bash
-# 単一ファイルを変換
-mermaid-markdown-wrap diagram.mmd
-
-# ディレクトリ内の全Mermaidファイルを変換
-mermaid-markdown-wrap "**/*.{mmd,mermaid}"
-
-# 設定ファイルを生成
+# 設定ファイルを生成（任意だが推奨、-y または --yes でプロンプトをスキップ）
 mermaid-markdown-wrap init
+
+# ファイルを変換（単一ファイルまたはグロブパターン）
+mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"
 ```
 
 ## Usage
@@ -89,19 +93,15 @@ mermaid-markdown-wrap init
    mermaid-markdown-wrap "**/*.{mmd,mermaid}" --remove-source
    ```
 
-4. **設定ファイルを使用**
-   ```bash
-   mermaid-markdown-wrap init  # 設定ファイルを作成
-   mermaid-markdown-wrap "*.mmd"  # 自動的に設定を使用
-   ```
-
 ## Configuration
 
-ツールは以下の場所から自動的に設定ファイルを検索します：
+ツールは以下の場所から自動的に設定ファイルを検索します（[cosmiconfig](https://github.com/cosmiconfig/cosmiconfig#searchplaces)を使用）：
 - `package.json` (`"mermaid-markdown-wrap"`プロパティ)
-- `.mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
-- `.config/mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
-- `mermaid-markdown-wrap.config.{js,ts}`
+- `.mermaid-markdown-wraprc` (拡張子なし)
+- `.mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `.config/mermaid-markdown-wraprc` (拡張子なし)
+- `.config/mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `mermaid-markdown-wrap.config.{js,ts,mjs,cjs}`
 
 ### 設定の簡単セットアップ
 
@@ -120,8 +120,6 @@ mermaid-markdown-wrap init
 outDir: docs
 header: "<!-- AUTO-GENERATED -->"
 footer: "<!-- END -->"
-removeSource: false
-hideCommand: false
 ```
 
 ### IntelliSenseサポート
@@ -151,7 +149,7 @@ VS CodeでYAMLファイルの場合：
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
   "header": "<!-- AUTO-GENERATED -->",
-  "removeSource": false
+  "footer": "<!-- END -->"
 }
 ```
 
@@ -166,9 +164,7 @@ VS CodeでYAMLファイルの場合：
 module.exports = {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
-  removeSource: false,
-  hideCommand: false
+  footer: '<!-- END -->'
 };
 ```
 
@@ -178,9 +174,7 @@ module.exports = {
 export default {
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
-  removeSource: false,
-  hideCommand: false
+  footer: '<!-- END -->'
 };
 ```
 
@@ -192,9 +186,7 @@ const { defineConfig } = require('mermaid-markdown-wrap/config');
 module.exports = defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->',
-  removeSource: false,
-  hideCommand: false
+  footer: '<!-- END -->'
 });
 ```
 
@@ -210,7 +202,7 @@ import { defineConfig } from 'mermaid-markdown-wrap/config';
 export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  removeSource: false
+  footer: '<!-- END -->'
 });
 ```
 
@@ -229,7 +221,7 @@ Mermaidファイルをマークダウンに変換します。
 | `--header <text>`       | 先頭に追加するテキスト         | -          |
 | `--footer <text>`       | 末尾に追加するテキスト         | -          |
 | `--remove-source`       | 変換後にソースファイルを削除   | `false`    |
-| `--hide-command`        | 出力にコマンドを表示しない     | `false`    |
+| `--hide-command`        | 出力ファイルに生成コマンドを表示しない | `false`    |
 | `--log-format <format>` | 出力形式: `text` または `json` | `text`     |
 | `--quiet`               | エラー以外の出力を抑制         | `false`    |
 | `-c, --config <file>`   | 設定ファイルのパス             | 自動検索   |
@@ -299,10 +291,7 @@ jobs:
 | **`pr-comment-mode`**    | PRコメントとしてダイアグラムを投稿: `off`, `changed`, `all` | `off`                 |
 | **`pr-comment-header`**  | PRコメントにヘッダーを表示                                  | `true`                |
 | **`pr-comment-details`** | PRコメントを折りたたみ可能にする                            | `false`               |
-| **`github-token`**       | PRコメント用のGitHubトークン                                | `${{ github.token }}` |
-
-<details>
-<summary>PRコメント機能</summary>
+| **`github-token`**       | PRコメント用のGitHubトークン（通常はデフォルトで問題なし；特別な権限が必要な場合のみ上書き） | `${{ github.token }}` |
 
 ### 自動PRコメント
 
@@ -337,6 +326,22 @@ jobs:
 - `off`: コメントなし（デフォルト）
 - `changed`: PRで変更されたファイルのみ
 - `all`: 変換された全ファイル
+
+**PRコメントの例:**
+
+<details>
+<summary>コメント例を表示</summary>
+
+> ### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: `diagram.md`
+> 
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
+
+```mermaid
+graph LR
+    A[開始] --> B[終了]
+```
 
 </details>
 

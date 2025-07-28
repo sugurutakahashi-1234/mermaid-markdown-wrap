@@ -33,7 +33,7 @@ export async function initConfigUseCase(
   if (skipPrompts) {
     // Use default settings when skipPrompts is true
     config = {}; // Empty config means all defaults
-    format = "ts"; // Default to TypeScript format
+    format = "json"; // Default to JSON format
   } else {
     // Run interactive prompts to gather configuration
     const promptResult = await runInteractivePrompts();

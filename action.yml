@@ -199,7 +199,7 @@ runs:
               
               // Add header if enabled
               if (showHeader) {
-                body += `### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: \`${filename}\`\n\n`;
+                body += `> ### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: \`${filename}\`\n> \n`;
               }
               
               // Add content with or without details

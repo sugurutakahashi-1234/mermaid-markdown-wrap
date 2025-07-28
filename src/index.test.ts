@@ -373,4 +373,31 @@ describe("CLI", () => {
       expect(stderr).toContain("ENOENT: no such file or directory");
     });
   });
+
+  describe("init subcommand", () => {
+    test("init -y creates JSON config with empty object", async () => {
+      const proc = spawn(["bun", cliPath, "init", "-y"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+      expect(output).toContain("✔ Created .mermaid-markdown-wraprc.json");
+      expect(output).toContain("Next steps:");
+
+      // Check that the config file was created
+      const configPath = join(testDir, ".mermaid-markdown-wraprc.json");
+      const exists = await Bun.file(configPath).exists();
+      expect(exists).toBe(true);
+
+      // Check that the content is an empty object
+      const content = await readFile(configPath, "utf-8");
+      const parsed = JSON.parse(content);
+      expect(parsed).toEqual({});
+    });
+  });
 });
