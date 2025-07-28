@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.0.0...v1.1.0) (2025-07-28)
+
+
+### ✨ Features
+
+* reorganize CI workflows and enhance test coverage ([#12](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/12)) ([9277e4e](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/9277e4e799c9d92ee5650f5f9dc9d196ce0b0d1d))
+
+
+### 🐛 Bug Fixes
+
+* remove --yes flag from npx command in GitHub Action ([#8](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/8)) ([42e495f](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/42e495fc4bcc6f77be444fd146788b7ba8ef5f8e))
+
+
+### 🔧 Maintenance
+
+* add debug information for GitHub Action npx issue ([#10](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/10)) ([68296bb](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/68296bb65955f77cc7ff2eca8ceda4996c85ab44))
+* enhance debug output for npx execution failure ([#11](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/11)) ([de0f911](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/de0f9110b2e1754fb7b43425547f79530956804b))
+
 ## [1.0.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v0.2.0...v1.0.0) (2025-07-27)
 
 
