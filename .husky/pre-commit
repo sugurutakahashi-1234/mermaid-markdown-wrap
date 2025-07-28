@@ -21,6 +21,12 @@ if git diff --cached --name-only | grep -q "^renovate.json5$"; then
   bun run validate:renovate
 fi
 
+# Validate action.yml if changed
+if git diff --cached --name-only | grep -q "^action.yml$"; then
+  echo "🧪 Testing GitHub Action with Act CLI..."
+  bun run test:action-local
+fi
+
 # Auto-update dependency graph
 if git diff --cached --name-only | grep -qE "^src/.*\.ts$"; then
   bun run update:docs

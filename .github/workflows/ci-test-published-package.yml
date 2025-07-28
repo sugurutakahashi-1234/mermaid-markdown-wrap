@@ -1,8 +1,11 @@
-name: E2E Test - Published Package
+name: Published Tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths:
+      - '.release-please-manifest.json'
   workflow_dispatch:
 
 jobs:

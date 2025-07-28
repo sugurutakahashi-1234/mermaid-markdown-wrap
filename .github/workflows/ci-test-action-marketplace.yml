@@ -1,12 +1,13 @@
-name: Local Test - Act CLI
+name: ci-test-action-marketplace
 
-# This workflow is designed to be run locally with Act CLI
-# Usage: act -W .github/workflows/test-local.yml
-#
-# To run specific job:
-# act -j test-basic -W .github/workflows/test-local.yml
+# NOTE: When updating this file, also update the local version:
+# .github/workflows/local-test-action-marketplace.yml
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.release-please-manifest.json'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +25,7 @@ jobs:
           echo "    A[Start] --> B[End]" >> test.mmd
       
       - name: Test basic conversion
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'test.mmd'
       
@@ -90,7 +91,7 @@ jobs:
           echo "A-->B" >> state.mermaid
       
       - name: Test glob pattern conversion
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: '**/*.{mmd,mermaid}'
       
@@ -142,7 +143,7 @@ jobs:
           echo "A-->B" >> sequence.mmd
       
       - name: Test with output directory
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'sequence.mmd'
           out-dir: './output'
@@ -196,7 +197,7 @@ jobs:
           echo "A-->B" >> class.mmd
       
       - name: Test with header and footer
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'class.mmd'
           header: |
@@ -269,7 +270,7 @@ jobs:
           ls -la *.mmd
       
       - name: Test with remove-source option
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'remove*.mmd'
           remove-source: 'true'
@@ -322,7 +323,7 @@ jobs:
           echo "A-->B" >> hide-test.mmd
       
       - name: Test WITHOUT hide-command (default)
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'hide-test.mmd'
       
@@ -336,7 +337,7 @@ jobs:
           rm hide-test.md
       
       - name: Test WITH hide-command
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'hide-test.mmd'
           hide-command: 'true'
@@ -372,7 +373,7 @@ jobs:
           echo "A-->B" >> config-test.mmd
       
       - name: Test with config file
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'config-test.mmd'
           config: './test-config.yml'
@@ -415,7 +416,7 @@ jobs:
       - name: Test with non-existent file
         id: error-test
         continue-on-error: true
-        uses: ./
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'non-existent-file.mmd'
       
