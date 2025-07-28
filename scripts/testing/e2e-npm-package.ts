@@ -139,6 +139,87 @@ try {
   }
   console.log("  ✅ --remove-source option works");
 
+  // Test subcommands workflow
+  console.log("\n🧪 Testing subcommands workflow...");
+  const configTestDir = mkdtempSync(join(tmpdir(), "config-test-"));
+
+  try {
+    // Test init command
+    console.log("  Testing init -y command...");
+    execSync(`${packageName} init -y`, {
+      cwd: configTestDir,
+      stdio: "pipe",
+    });
+
+    const configFile = join(configTestDir, ".mermaid-markdown-wraprc.json");
+    if (!existsSync(configFile)) {
+      throw new Error("Config file was not created by init command");
+    }
+
+    const configContent = JSON.parse(readFileSync(configFile, "utf-8"));
+    if (typeof configContent !== "object") {
+      throw new Error("Config file should contain a valid JSON object");
+    }
+    console.log("  ✅ init -y command works");
+
+    // Test config-show command
+    console.log("  Testing config-show command...");
+    const showOutput = execSync(`${packageName} config-show`, {
+      cwd: configTestDir,
+      encoding: "utf-8",
+    });
+
+    if (!showOutput.includes("✅ Current configuration:")) {
+      throw new Error("config-show output is missing expected message");
+    }
+
+    // Parse the JSON output (skip first line)
+    const jsonPart = showOutput.split("\n").slice(1).join("\n");
+    const shownConfig = JSON.parse(jsonPart);
+    if (!("removeSource" in shownConfig)) {
+      throw new Error("config-show output should include default values");
+    }
+    console.log("  ✅ config-show command works");
+
+    // Test config-validate command
+    console.log("  Testing config-validate command...");
+    const validateOutput = execSync(`${packageName} config-validate`, {
+      cwd: configTestDir,
+      encoding: "utf-8",
+    });
+
+    if (!validateOutput.includes("✅ Config looks good!")) {
+      throw new Error("config-validate should report valid config");
+    }
+    console.log("  ✅ config-validate command works");
+
+    // Test conversion with config
+    console.log("  Testing conversion with config...");
+    const configMmdFile = join(configTestDir, "config-test.mmd");
+    writeFileSync(configMmdFile, "graph TD\n  Config --> Test");
+
+    execSync(`${packageName} ${configMmdFile}`, {
+      cwd: configTestDir,
+      stdio: "pipe",
+    });
+
+    const configMdFile = join(configTestDir, "config-test.md");
+    if (!existsSync(configMdFile)) {
+      throw new Error("Conversion with config should create output file");
+    }
+    console.log("  ✅ Conversion with config works");
+
+    // Clean up config test directory
+    rmSync(configTestDir, { recursive: true });
+    console.log("  ✅ Subcommands workflow test passed");
+  } catch (error) {
+    // Clean up on error
+    if (existsSync(configTestDir)) {
+      rmSync(configTestDir, { recursive: true });
+    }
+    throw error;
+  }
+
   // Step 5: Test with npx (using globally installed package)
   console.log("\n🧪 Testing npx execution...");
 
