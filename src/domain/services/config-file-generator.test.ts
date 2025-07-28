@@ -105,7 +105,21 @@ describe("config-file-generator", () => {
     test("generates correct JSON content", () => {
       const content = generateConfigFileContent(sampleConfig, "json");
       const parsed = JSON.parse(content);
-      expect(parsed).toEqual(sampleConfig);
+
+      // Check that $schema property is added
+      expect(parsed).toHaveProperty("$schema");
+      expect(parsed.$schema).toBe(
+        "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+      );
+
+      // Check that all config properties are preserved
+      expect(parsed.outDir).toBe(sampleConfig.outDir);
+      expect(parsed.header).toBe(sampleConfig.header);
+      expect(parsed.footer).toBe(sampleConfig.footer);
+      expect(parsed.removeSource).toBe(sampleConfig.removeSource);
+      expect(parsed.hideCommand).toBe(sampleConfig.hideCommand);
+      expect(parsed.logFormat).toBe(sampleConfig.logFormat);
+      expect(parsed.quiet).toBe(sampleConfig.quiet);
     });
 
     test("generates correct YAML content", () => {

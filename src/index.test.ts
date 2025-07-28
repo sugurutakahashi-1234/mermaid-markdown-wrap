@@ -394,10 +394,13 @@ describe("CLI", () => {
       const exists = await Bun.file(configPath).exists();
       expect(exists).toBe(true);
 
-      // Check that the content is an empty object
+      // Check that the content is an object with $schema
       const content = await readFile(configPath, "utf-8");
       const parsed = JSON.parse(content);
-      expect(parsed).toEqual({});
+      expect(parsed).toHaveProperty("$schema");
+      expect(parsed.$schema).toBe(
+        "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+      );
     });
 
     test("integration: init -y, config-show, config-validate, and convert", async () => {

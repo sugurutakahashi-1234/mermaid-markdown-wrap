@@ -85,8 +85,15 @@ export function generateConfigFileContent(
       return generateCommonJSConfig(jsonContent);
     case "mjs":
       return generateESMConfig(jsonContent);
-    case "json":
-      return jsonContent;
+    case "json": {
+      // Add $schema property for JSON format
+      const configWithSchema = {
+        $schema:
+          "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+        ...config,
+      };
+      return JSON.stringify(configWithSchema, null, 2);
+    }
     case "yaml":
       return toYAML(config);
     default:

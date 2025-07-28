@@ -160,6 +160,13 @@ try {
     if (typeof configContent !== "object") {
       throw new Error("Config file should contain a valid JSON object");
     }
+    if (
+      !configContent.$schema ||
+      configContent.$schema !==
+        "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json"
+    ) {
+      throw new Error("Config file should contain correct $schema property");
+    }
     console.log("  ✅ init -y command works");
 
     // Test config-show command
