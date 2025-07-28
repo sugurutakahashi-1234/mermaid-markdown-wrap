@@ -113,34 +113,6 @@ mermaid-markdown-wrap init
 ### 設定例
 
 <details>
-<summary>YAML設定</summary>
-
-```yaml
-# .mermaid-markdown-wraprc.yaml
-outDir: docs
-header: "<!-- AUTO-GENERATED -->"
-footer: "<!-- END -->"
-```
-
-### IntelliSenseサポート
-
-VS CodeでYAMLファイルの場合：
-```jsonc
-// .vscode/settings.json
-{
-  "yaml.schemas": {
-    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
-      ".mermaid-markdown-wraprc",
-      ".mermaid-markdown-wraprc.yaml",
-      ".mermaid-markdown-wraprc.yml"
-    ]
-  }
-}
-```
-
-</details>
-
-<details>
 <summary>JSON設定</summary>
 
 ```jsonc
@@ -151,6 +123,19 @@ VS CodeでYAMLファイルの場合：
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->"
 }
+```
+
+</details>
+
+<details>
+<summary>YAML設定</summary>
+
+```yaml
+# .mermaid-markdown-wraprc.yaml
+# yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
+outDir: docs
+header: "<!-- AUTO-GENERATED -->"
+footer: "<!-- END -->"
 ```
 
 </details>

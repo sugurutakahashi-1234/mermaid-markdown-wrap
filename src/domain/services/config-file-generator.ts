@@ -94,8 +94,18 @@ export function generateConfigFileContent(
       };
       return JSON.stringify(configWithSchema, null, 2);
     }
-    case "yaml":
-      return toYAML(config);
+    case "yaml": {
+      // Add yaml-language-server comment for schema support
+      const schemaComment = `# yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json\n`;
+
+      // For empty config, return just the comment without "{}"
+      if (Object.keys(config).length === 0) {
+        return schemaComment;
+      }
+
+      const yamlContent = toYAML(config);
+      return schemaComment + yamlContent;
+    }
     default:
       // This should never happen due to TypeScript, but satisfy exhaustiveness check
       throw new Error(`Unsupported format: ${format}`);

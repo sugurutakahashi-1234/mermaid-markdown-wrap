@@ -113,34 +113,6 @@ mermaid-markdown-wrap init
 ### Configuration Examples
 
 <details>
-<summary>YAML Configuration</summary>
-
-```yaml
-# .mermaid-markdown-wraprc.yaml
-outDir: docs
-header: "<!-- AUTO-GENERATED -->"
-footer: "<!-- END -->"
-```
-
-### IntelliSense Support
-
-For YAML files with VS Code:
-```jsonc
-// .vscode/settings.json
-{
-  "yaml.schemas": {
-    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
-      ".mermaid-markdown-wraprc",
-      ".mermaid-markdown-wraprc.yaml",
-      ".mermaid-markdown-wraprc.yml"
-    ]
-  }
-}
-```
-
-</details>
-
-<details>
 <summary>JSON Configuration</summary>
 
 ```jsonc
@@ -151,6 +123,19 @@ For YAML files with VS Code:
   "header": "<!-- AUTO-GENERATED -->",
   "footer": "<!-- END -->"
 }
+```
+
+</details>
+
+<details>
+<summary>YAML Configuration</summary>
+
+```yaml
+# .mermaid-markdown-wraprc.yaml
+# yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
+outDir: docs
+header: "<!-- AUTO-GENERATED -->"
+footer: "<!-- END -->"
 ```
 
 </details>
