@@ -143,7 +143,7 @@ For YAML files with VS Code:
 <details>
 <summary>JSON Configuration</summary>
 
-```json
+```jsonc
 // .mermaid-markdown-wraprc.json
 {
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
@@ -215,18 +215,18 @@ export default defineConfig({
 #### `mermaid-markdown-wrap <input>` (default)
 Convert Mermaid files to Markdown.
 
-| Option                  | Description                          | Default       |
-| ----------------------- | ------------------------------------ | ------------- |
-| `-o, --out-dir <dir>`   | Output directory                     | Same as input |
-| `--header <text>`       | Text to prepend                      | -             |
-| `--footer <text>`       | Text to append                       | -             |
-| `--remove-source`       | Remove source files after conversion | `false`       |
+| Option                  | Description                             | Default       |
+| ----------------------- | --------------------------------------- | ------------- |
+| `-o, --out-dir <dir>`   | Output directory                        | Same as input |
+| `--header <text>`       | Text to prepend                         | -             |
+| `--footer <text>`       | Text to append                          | -             |
+| `--remove-source`       | Remove source files after conversion    | `false`       |
 | `--hide-command`        | Hide generation command in output files | `false`       |
-| `--log-format <format>` | Output format: `text` or `json`      | `text`        |
-| `--quiet`               | Suppress non-error output            | `false`       |
-| `-c, --config <file>`   | Config file path                     | Auto-search   |
-| `-h, --help`            | Show help                            | -             |
-| `-v, --version`         | Show version                         | -             |
+| `--log-format <format>` | Output format: `text` or `json`         | `text`        |
+| `--quiet`               | Suppress non-error output               | `false`       |
+| `-c, --config <file>`   | Config file path                        | Auto-search   |
+| `-h, --help`            | Show help                               | -             |
+| `-v, --version`         | Show version                            | -             |
 
 #### `mermaid-markdown-wrap init`
 Create configuration file interactively.
