@@ -70,19 +70,21 @@ program
           result.conversions.forEach((conversion) => {
             if (conversion.converted) {
               console.log(
-                `${conversion.mermaidFile} -> ${conversion.markdownFile}`,
+                `✅ ${conversion.mermaidFile} -> ${conversion.markdownFile}`,
               );
             } else {
               console.error(
-                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+                `❌ ${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
               );
             }
           });
 
           // Display summary for multiple files
           if (result.summary.totalMermaidFiles > 1) {
+            const summaryIcon =
+              result.summary.failedConversions > 0 ? "⚠️" : "✅";
             console.log(
-              `\n${result.summary.totalMermaidFiles} files converted (${result.summary.successfulConversions} success, ${result.summary.failedConversions} failed)`,
+              `\n${summaryIcon} ${result.summary.totalMermaidFiles} files converted (${result.summary.successfulConversions} success, ${result.summary.failedConversions} failed)`,
             );
           }
         } else {
@@ -90,7 +92,7 @@ program
           result.conversions.forEach((conversion) => {
             if (!conversion.converted) {
               console.error(
-                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+                `❌ ${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
               );
             }
           });
@@ -104,7 +106,7 @@ program
         process.exit(0);
       }
       const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error: ${message}`);
+      console.error(`❌ Error: ${message}`);
       process.exit(1);
     }
   })
@@ -179,7 +181,7 @@ The config-show command will:
       console.log(JSON.stringify(mergedOptions, null, 2));
     } catch (error) {
       console.error(
-        "Error loading config:",
+        "❌ Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
@@ -227,7 +229,7 @@ The config-validate command will:
     } catch (error) {
       // Handle file reading or other errors
       console.error(
-        "Error loading config:",
+        "❌ Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
@@ -260,7 +262,7 @@ The init command will guide you through creating a configuration file by asking 
         process.exit(0);
       }
       const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error: ${message}`);
+      console.error(`❌ Error: ${message}`);
       process.exit(1);
     }
   });

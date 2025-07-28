@@ -410,14 +410,14 @@ jobs:
   # Error handling - Verify proper error handling for invalid inputs
   test-error-handling:
     runs-on: ubuntu-latest
-    name: Test Error Handling
+    name: Test Error Handling (Expected Failure)
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Test with non-existent file
         id: error-test
-        continue-on-error: true
+        continue-on-error: true  # Allow this step to fail without failing the workflow
         uses: ./
         with:
           input: 'non-existent-file.mmd'
