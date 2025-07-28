@@ -16,6 +16,7 @@ jobs:
   # Basic usage - Verify basic mermaid wrapping functionality
   test-basic:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Basic Usage
     steps:
       - name: Checkout code
@@ -64,6 +65,7 @@ jobs:
   # Glob pattern - Verify multiple file processing with glob patterns
   test-glob-pattern:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Glob Pattern
     steps:
       - name: Checkout code
@@ -134,6 +136,7 @@ jobs:
   # Output directory - Verify --out-dir option works correctly
   test-output-dir:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Output Directory
     steps:
       - name: Checkout code
@@ -188,6 +191,7 @@ jobs:
   # Header and footer - Verify header/footer content is added correctly
   test-header-footer:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Header and Footer
     steps:
       - name: Checkout code
@@ -256,6 +260,7 @@ jobs:
   # Remove source - Verify --remove-source option deletes original files
   test-remove-source:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Remove Source Option
     steps:
       - name: Checkout code
@@ -314,6 +319,7 @@ jobs:
   # Hide command - Verify --hide-command option removes command from output
   test-hide-command:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Hide Command Option
     steps:
       - name: Checkout code
@@ -355,6 +361,7 @@ jobs:
   # Config file - Verify --config option loads settings from file
   test-config-file:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Config File Option
     steps:
       - name: Checkout code
@@ -410,6 +417,7 @@ jobs:
   # Error handling - Verify proper error handling for invalid inputs
   test-error-handling:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Error Handling (Expected Failure)
     steps:
       - name: Checkout code
@@ -441,6 +449,7 @@ jobs:
   # Summary job - Display test results summary
   summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test Summary
     needs: [
       # input (required) - Basic usage and glob pattern

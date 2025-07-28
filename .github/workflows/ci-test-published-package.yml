@@ -12,6 +12,7 @@ jobs:
   # Test the latest published version with npx
   test-npx:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test NPX Execution
     steps:
       - name: Create test file
@@ -42,6 +43,7 @@ jobs:
   # Test the GitHub Action from marketplace
   test-github-action:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test GitHub Action Marketplace
     steps:
       - name: Create test file
@@ -71,6 +73,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node: [20, 22, 24]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
     name: Test on ${{ matrix.os }} / Node ${{ matrix.node }}
     steps:
       - name: Setup Node.js
@@ -98,6 +101,7 @@ jobs:
   # Summary job
   e2e-test-summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [
       test-npx,
       test-github-action,
