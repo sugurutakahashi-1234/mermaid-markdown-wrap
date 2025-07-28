@@ -145,7 +145,8 @@
       "Bash(./dist/mmw:*)",
       "WebFetch(domain:api.github.com)",
       "Bash(tar:*)",
-      "Bash(git cherry-pick:*)"
+      "Bash(git cherry-pick:*)",
+      "Bash(act:*)"
     ],
     "deny": []
   },

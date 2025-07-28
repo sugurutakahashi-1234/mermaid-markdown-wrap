@@ -31,12 +31,6 @@ inputs:
     description: "Footer text to append"
     required: false
 
-  # Configuration file settings
-  # -c, --config
-  config:
-    description: "Config file path"
-    required: false
-
   # Behavior control
   # --remove-source
   remove-source:
@@ -48,8 +42,13 @@ inputs:
     description: "Hide the command used in the output (default: false)"
     required: false
 
+  # Configuration file settings
+  # -c, --config
+  config:
+    description: "Config file path"
+    required: false
+
   # GitHub Actions specific options
-  # --pr-comment-mode
   pr-comment-mode:
     description: "PR comment mode: 'off' (no comments), 'changed' (only for changed source files), or 'all' (all files generated in this run)"
     required: false
@@ -61,6 +60,7 @@ inputs:
     required: false
     default: "true"
   
+  # Use collapsible details in PR comments
   pr-comment-details:
     description: "Use collapsible details for PR comments (true/false)"
     required: false
@@ -78,48 +78,17 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # Node.js is required for the runner script
+    # Setup Node.js (required for github-script action)
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
     
-    - name: Debug npm/npx environment
-      shell: bash
-      run: |
-        echo "=== Debug Information ==="
-        echo "Node version: $(node --version)"
-        echo "npm version: $(npm --version)"
-        echo "npx version: $(npx --version)"
-        echo "Which npx: $(which npx)"
-        echo "npm registry: $(npm config get registry)"
-        echo ""
-        echo "=== Checking package availability ==="
-        npm view mermaid-markdown-wrap version || echo "Package not found in registry"
-        echo ""
-        echo "=== Testing npx execution ==="
-        npx mermaid-markdown-wrap --version 2>&1 || echo "npx execution failed with exit code: $?"
-        
-        echo ""
-        echo "=== Detailed npx test with verbose logging ==="
-        npx --loglevel verbose mermaid-markdown-wrap --version 2>&1 || true
-        
-        echo ""
-        echo "=== Testing with explicit registry ==="
-        npm_config_registry=https://registry.npmjs.org npx mermaid-markdown-wrap --version 2>&1 || true
-        
-        echo ""
-        echo "=== Manual package installation test ==="
-        npm install mermaid-markdown-wrap@latest 2>&1 || true
-        ls -la node_modules/.bin/ | grep mermaid || echo "No mermaid-markdown-wrap in .bin"
-        
-        echo ""
-        echo "=== Direct execution after install ==="
-        if [ -f "node_modules/.bin/mermaid-markdown-wrap" ]; then
-          ./node_modules/.bin/mermaid-markdown-wrap --version || echo "Direct execution failed"
-        else
-          echo "Binary not found in node_modules/.bin/"
-        fi
+    # Setup Bun for faster package execution
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
     
     - name: Run mermaid-markdown-wrap
       id: convert
@@ -139,7 +108,7 @@ runs:
         [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
         # Run with JSON output and save to file
-        npx mermaid-markdown-wrap "${args[@]}" --log-format json > conversion-results.json
+        bunx mermaid-markdown-wrap@latest "${args[@]}" --log-format json > conversion-results.json
         
         # Display results
         cat conversion-results.json

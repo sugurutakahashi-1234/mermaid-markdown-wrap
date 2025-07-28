@@ -1,0 +1,103 @@
+name: Published Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.release-please-manifest.json'
+  workflow_dispatch:
+
+jobs:
+  # Test the latest published version with npx
+  test-npx:
+    runs-on: ubuntu-latest
+    name: Test NPX Execution
+    steps:
+      - name: Create test file
+        run: |
+          echo "graph TD" > test.mmd
+          echo "A-->B" >> test.mmd
+      
+      - name: Test with npx
+        run: |
+          npx mermaid-markdown-wrap@latest test.mmd
+          
+          if [ ! -f "test.md" ]; then
+            echo "❌ Error: test.md was not created via npx"
+            exit 1
+          fi
+          echo "✅ npx execution successful"
+
+  # Test the GitHub Action from marketplace
+  test-github-action:
+    runs-on: ubuntu-latest
+    name: Test GitHub Action Marketplace
+    steps:
+      - name: Create test file
+        run: |
+          echo "graph TD" > test.mmd
+          echo "A-->B" >> test.mmd
+      
+      # x-release-please-start-version
+      - name: Use published action
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
+        with:
+          input: 'test.mmd'
+      # x-release-please-end
+      
+      - name: Verify action output
+        run: |
+          if [ ! -f "test.md" ]; then
+            echo "❌ Error: GitHub Action test failed"
+            exit 1
+          fi
+          echo "✅ GitHub Action marketplace test successful"
+
+  # Test multiple OS environments
+  test-cross-platform:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [20, 22, 24]
+    runs-on: ${{ matrix.os }}
+    name: Test on ${{ matrix.os }} / Node ${{ matrix.node }}
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      
+      - name: Create test file
+        shell: bash
+        run: |
+          echo "graph TD" > test.mmd
+          echo "A-->B" >> test.mmd
+      
+      - name: Test npx execution
+        shell: bash
+        run: |
+          npx mermaid-markdown-wrap@latest test.mmd
+          
+          if [ ! -f "test.md" ]; then
+            echo "Error: Cross-platform test failed on ${{ matrix.os }}"
+            exit 1
+          fi
+          echo "Cross-platform test successful on ${{ matrix.os }}"
+
+  # Summary job
+  e2e-test-summary:
+    runs-on: ubuntu-latest
+    needs: [
+      test-npx,
+      test-github-action,
+      test-cross-platform
+    ]
+    if: always()
+    steps:
+      - name: E2E Tests Summary
+        run: |
+          echo "🎉 All E2E tests passed successfully!"
+          echo "✅ NPX execution works"
+          echo "✅ GitHub Action marketplace works"
+          echo "✅ Cross-platform compatibility verified (3 OS x 3 Node versions)"

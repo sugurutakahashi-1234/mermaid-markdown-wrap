@@ -3,7 +3,8 @@
 [![npm version](https://img.shields.io/npm/v/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
 [![npm downloads](https://img.shields.io/npm/dm/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/mermaid-markdown-wrap)](https://bundlephobia.com/package/mermaid-markdown-wrap)
-[![CI](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml)
+[![Build](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml)
+[![Published Tests](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-test-published-package.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-test-published-package.yml)
 [![codecov](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap/graph/badge.svg?token=KPN7UZ7ATY)](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm Release](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/cd-npm-release.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/cd-npm-release.yml)
@@ -202,6 +203,7 @@ For YAML files with VS Code:
 
 Use this tool in your CI/CD pipelines:
 
+<!-- x-release-please-start-version -->
 ```yaml
 name: Convert Mermaid Diagrams
 on:
@@ -214,12 +216,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
           remove-source: true
 ```
+<!-- x-release-please-end -->
 
 ### Action Inputs
 
@@ -246,6 +249,7 @@ All CLI options are available, plus GitHub Actions-specific options:
 
 Post converted diagrams as comments on pull requests:
 
+<!-- x-release-please-start-version -->
 ```yaml
 name: Convert and Comment
 on:
@@ -261,13 +265,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           pr-comment-mode: changed  # 'off', 'changed', or 'all'
           pr-comment-header: true
           pr-comment-details: false
 ```
+<!-- x-release-please-end -->
 
 **Comment Modes:**
 - `off`: No comments (default)
