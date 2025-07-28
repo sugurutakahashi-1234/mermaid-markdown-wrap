@@ -399,5 +399,82 @@ describe("CLI", () => {
       const parsed = JSON.parse(content);
       expect(parsed).toEqual({});
     });
+
+    test("integration: init -y, config-show, config-validate, and convert", async () => {
+      // Step 1: Create a mermaid file
+      const mermaidFile = join(testDir, "test.mmd");
+      await writeFile(mermaidFile, "graph TD\n  A[Start] --> B[End]");
+
+      // Step 2: Run init -y to create config
+      const initProc = spawn(["bun", cliPath, "init", "-y"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const initOutput = await new Response(initProc.stdout).text();
+      await initProc.exited;
+
+      expect(initProc.exitCode).toBe(0);
+      expect(initOutput).toContain("✔ Created .mermaid-markdown-wraprc.json");
+
+      // Step 3: Run config-show (no arguments)
+      const showProc = spawn(["bun", cliPath, "config-show"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const showOutput = await new Response(showProc.stdout).text();
+      await showProc.exited;
+
+      expect(showProc.exitCode).toBe(0);
+      expect(showOutput).toContain("✅ Current configuration:");
+
+      // Extract and verify config
+      const jsonPart = showOutput.split("\n").slice(1).join("\n");
+      const shownConfig = JSON.parse(jsonPart);
+      expect(shownConfig).toHaveProperty("removeSource", false);
+      expect(shownConfig).toHaveProperty("hideCommand", false);
+
+      // Step 4: Run config-validate (no arguments)
+      const validateProc = spawn(["bun", cliPath, "config-validate"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const validateOutput = await new Response(validateProc.stdout).text();
+      await validateProc.exited;
+
+      expect(validateProc.exitCode).toBe(0);
+      expect(validateOutput).toContain("✅ Config looks good!");
+
+      // Step 5: Convert using the config (just specify the file)
+      const convertProc = spawn(["bun", cliPath, "test.mmd"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const convertOutput = await new Response(convertProc.stdout).text();
+      await convertProc.exited;
+
+      expect(convertProc.exitCode).toBe(0);
+      expect(convertOutput).toContain("test.mmd -> test.md");
+
+      // Verify the output file was created
+      const outputFile = join(testDir, "test.md");
+      const outputExists = await Bun.file(outputFile).exists();
+      expect(outputExists).toBe(true);
+
+      // Check the content
+      const outputContent = await readFile(outputFile, "utf-8");
+      expect(outputContent).toContain("```bash");
+      expect(outputContent).toContain("mermaid-markdown-wrap test.mmd");
+      expect(outputContent).toContain("```mermaid");
+      expect(outputContent).toContain("graph TD");
+      expect(outputContent).toContain("A[Start] --> B[End]");
+    });
   });
 });

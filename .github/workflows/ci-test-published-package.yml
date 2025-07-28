@@ -21,13 +21,23 @@ jobs:
       
       - name: Test with npx
         run: |
+          # Test init -y
+          npx mermaid-markdown-wrap@latest init -y
+          
+          # Test config-show
+          npx mermaid-markdown-wrap@latest config-show
+          
+          # Test config-validate
+          npx mermaid-markdown-wrap@latest config-validate
+          
+          # Test conversion
           npx mermaid-markdown-wrap@latest test.mmd
           
           if [ ! -f "test.md" ]; then
-            echo "❌ Error: test.md was not created via npx"
+            echo "❌ Error: test.md was not created"
             exit 1
           fi
-          echo "✅ npx execution successful"
+          echo "✅ All subcommands work correctly"
 
   # Test the GitHub Action from marketplace
   test-github-action:
