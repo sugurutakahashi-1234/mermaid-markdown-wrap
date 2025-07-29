@@ -16,6 +16,11 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - '.release-please-manifest.json'
+  push:
+    branches:
+      - main
+    paths:
+      - '.release-please-manifest.json'
   workflow_dispatch:
 
 jobs:
