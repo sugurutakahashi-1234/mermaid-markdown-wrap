@@ -4,7 +4,7 @@ name: test-action-marketplace
 # Usage: bun run test:action-local
 #
 # To run specific job:
-# act -j test-basic -W .github/workflows-local/test-action-marketplace.yml
+# act -j test-basic -W .github/workflows/local-test-action-marketplace.yml
 #
 # NOTE: This is the local version of:
 # .github/workflows/ci-test-action-marketplace.yml

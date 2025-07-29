@@ -1,7 +1,7 @@
 name: ci-test-action-marketplace
 
 # NOTE: When updating this file, also update the local version:
-# .github/workflows-local/test-action-marketplace.yml
+# .github/workflows/local-test-action-marketplace.yml
 
 on:
   pull_request:
