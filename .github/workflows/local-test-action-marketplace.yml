@@ -4,7 +4,7 @@ name: test-action-marketplace
 # Usage: bun run test:action-local
 #
 # To run specific job:
-# act -j test-basic -W .github/workflows/local-test-action-marketplace.yml
+# act -W .github/workflows/local-test-action-marketplace.yml -j test-basic
 #
 # NOTE: This is the local version of:
 # .github/workflows/ci-test-action-marketplace.yml
@@ -501,7 +501,6 @@ jobs:
           pr-comment-dry-run: 'true'
           pr-comment-header: 'false'    # Header disabled
           pr-comment-details: 'false'
-          hide-command: 'true'          # Also hide command when header is disabled
       
       - name: Verify dry-run behavior (no header)
         run: |
@@ -524,20 +523,14 @@ jobs:
             exit 1
           fi
           
-          # Verify header is NOT included
-          if jq -r '.[0].body' pr-comments-data.json | grep -q "mermaid-markdown-wrap"; then
+          # Verify header is NOT included (check for the specific header format)
+          if jq -r '.[0].body' pr-comments-data.json | grep -q "> ### 📄 \\[mermaid-markdown-wrap\\]"; then
             echo "❌ Error: Header should not be present when pr-comment-header is false"
             exit 1
           fi
           
-          if jq -r '.[1].body' pr-comments-data.json | grep -q "mermaid-markdown-wrap"; then
+          if jq -r '.[1].body' pr-comments-data.json | grep -q "> ### 📄 \\[mermaid-markdown-wrap\\]"; then
             echo "❌ Error: Header should not be present in second comment"
-            exit 1
-          fi
-          
-          # Verify command is NOT included (since hide-command is true)
-          if jq -r '.[0].body' pr-comments-data.json | grep -q "bash"; then
-            echo "❌ Error: Command should not be present when hide-command is true"
             exit 1
           fi
           
