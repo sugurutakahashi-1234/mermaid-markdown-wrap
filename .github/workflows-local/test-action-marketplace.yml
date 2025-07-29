@@ -1,12 +1,12 @@
-name: local-test-action-marketplace
+name: test-action-marketplace
 
 # This workflow is designed to be run locally with Act CLI
-# Usage: act -W .github/workflows/local-test-action-marketplace.yml
+# Usage: bun run test:action-local
 #
 # To run specific job:
-# act -j test-basic -W .github/workflows/local-test-action-marketplace.yml
+# act -j test-basic -W .github/workflows-local/test-action-marketplace.yml
 #
-# NOTE: When updating this file, also update the CI version:
+# NOTE: This is the local version of:
 # .github/workflows/ci-test-action-marketplace.yml
 
 on:
@@ -414,6 +414,248 @@ jobs:
           
           echo "✅ Config file test successful - settings loaded and applied"
 
+  # PR comment dry-run (default) - Verify dry-run mode for PR comments with default settings
+  test-pr-comment-dry-run-default:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Test PR Comment Dry-Run Mode (Default)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > pr-test1.mmd
+          echo "A-->B" >> pr-test1.mmd
+          
+          echo "graph TD" > pr-test2.mmd
+          echo "C-->D" >> pr-test2.mmd
+      
+      - name: Test with PR comment dry-run
+        uses: ./
+        with:
+          input: 'pr-test*.mmd'
+          pr-comment-mode: 'all'
+          pr-comment-dry-run: 'true'
+          pr-comment-header: 'true'
+          pr-comment-details: 'false'
+      
+      - name: Verify dry-run behavior
+        run: |
+          # Check that .md files were created
+          if [ ! -f "pr-test1.md" ] || [ ! -f "pr-test2.md" ]; then
+            echo "❌ Error: Markdown files were not created"
+            exit 1
+          fi
+          
+          # Check that pr-comments-data.json was created (even in dry-run)
+          if [ ! -f "pr-comments-data.json" ]; then
+            echo "❌ Error: pr-comments-data.json was not created"
+            exit 1
+          fi
+          
+          # Verify comment data structure
+          COMMENT_COUNT=$(jq '. | length' pr-comments-data.json)
+          if [ "$COMMENT_COUNT" -ne 2 ]; then
+            echo "❌ Error: Expected 2 comments, found $COMMENT_COUNT"
+            exit 1
+          fi
+          
+          # Verify comment contains expected content
+          if ! jq -r '.[0].body' pr-comments-data.json | grep -q "pr-test1.md"; then
+            echo "❌ Error: First comment doesn't contain expected filename"
+            exit 1
+          fi
+          
+          if ! jq -r '.[1].body' pr-comments-data.json | grep -q "pr-test2.md"; then
+            echo "❌ Error: Second comment doesn't contain expected filename"
+            exit 1
+          fi
+          
+          echo "✅ Dry-run test successful - conversion completed and comments prepared without posting"
+          echo "📊 Comment data structure:"
+          jq -r '.[] | "File: \(.filename)"' pr-comments-data.json
+
+  # PR comment dry-run (no header) - Verify dry-run mode with header disabled
+  test-pr-comment-dry-run-no-header:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Test PR Comment Dry-Run Mode (No Header)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > pr-test1.mmd
+          echo "A-->B" >> pr-test1.mmd
+          
+          echo "graph TD" > pr-test2.mmd
+          echo "C-->D" >> pr-test2.mmd
+      
+      - name: Test with PR comment dry-run (no header)
+        uses: ./
+        with:
+          input: 'pr-test*.mmd'
+          pr-comment-mode: 'all'
+          pr-comment-dry-run: 'true'
+          pr-comment-header: 'false'    # Header disabled
+          pr-comment-details: 'false'
+          hide-command: 'true'          # Also hide command when header is disabled
+      
+      - name: Verify dry-run behavior (no header)
+        run: |
+          # Check that .md files were created
+          if [ ! -f "pr-test1.md" ] || [ ! -f "pr-test2.md" ]; then
+            echo "❌ Error: Markdown files were not created"
+            exit 1
+          fi
+          
+          # Check that pr-comments-data.json was created
+          if [ ! -f "pr-comments-data.json" ]; then
+            echo "❌ Error: pr-comments-data.json was not created"
+            exit 1
+          fi
+          
+          # Verify comment count
+          COMMENT_COUNT=$(jq '. | length' pr-comments-data.json)
+          if [ "$COMMENT_COUNT" -ne 2 ]; then
+            echo "❌ Error: Expected 2 comments, found $COMMENT_COUNT"
+            exit 1
+          fi
+          
+          # Verify header is NOT included
+          if jq -r '.[0].body' pr-comments-data.json | grep -q "mermaid-markdown-wrap"; then
+            echo "❌ Error: Header should not be present when pr-comment-header is false"
+            exit 1
+          fi
+          
+          if jq -r '.[1].body' pr-comments-data.json | grep -q "mermaid-markdown-wrap"; then
+            echo "❌ Error: Header should not be present in second comment"
+            exit 1
+          fi
+          
+          # Verify command is NOT included (since hide-command is true)
+          if jq -r '.[0].body' pr-comments-data.json | grep -q "bash"; then
+            echo "❌ Error: Command should not be present when hide-command is true"
+            exit 1
+          fi
+          
+          echo "✅ No-header test successful - comments prepared without headers"
+          echo "📊 Comment data structure:"
+          jq -r '.[] | "File: \(.filename)"' pr-comments-data.json
+
+  # PR comment dry-run (with details) - Verify dry-run mode with collapsible details
+  test-pr-comment-dry-run-with-details:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Test PR Comment Dry-Run Mode (With Details)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > pr-test1.mmd
+          echo "A-->B" >> pr-test1.mmd
+          
+          echo "graph TD" > pr-test2.mmd
+          echo "C-->D" >> pr-test2.mmd
+      
+      - name: Test with PR comment dry-run (with details)
+        uses: ./
+        with:
+          input: 'pr-test*.mmd'
+          pr-comment-mode: 'all'
+          pr-comment-dry-run: 'true'
+          pr-comment-header: 'true'
+          pr-comment-details: 'true'     # Collapsible details enabled
+      
+      - name: Verify dry-run behavior (with details)
+        run: |
+          # Check that .md files were created
+          if [ ! -f "pr-test1.md" ] || [ ! -f "pr-test2.md" ]; then
+            echo "❌ Error: Markdown files were not created"
+            exit 1
+          fi
+          
+          # Check that pr-comments-data.json was created
+          if [ ! -f "pr-comments-data.json" ]; then
+            echo "❌ Error: pr-comments-data.json was not created"
+            exit 1
+          fi
+          
+          # Verify comment count
+          COMMENT_COUNT=$(jq '. | length' pr-comments-data.json)
+          if [ "$COMMENT_COUNT" -ne 2 ]; then
+            echo "❌ Error: Expected 2 comments, found $COMMENT_COUNT"
+            exit 1
+          fi
+          
+          # Verify details tags are included
+          if ! jq -r '.[0].body' pr-comments-data.json | grep -q "<details>"; then
+            echo "❌ Error: <details> tag should be present when pr-comment-details is true"
+            exit 1
+          fi
+          
+          if ! jq -r '.[0].body' pr-comments-data.json | grep -q "<summary>"; then
+            echo "❌ Error: <summary> tag should be present when pr-comment-details is true"
+            exit 1
+          fi
+          
+          if ! jq -r '.[1].body' pr-comments-data.json | grep -q "<details>"; then
+            echo "❌ Error: <details> tag should be present in second comment"
+            exit 1
+          fi
+          
+          echo "✅ Details test successful - comments prepared with collapsible sections"
+          echo "📊 Comment data structure:"
+          jq -r '.[] | "File: \(.filename)"' pr-comments-data.json
+
+  # NOTE: "changed" mode is not tested because it requires actual GitHub API calls
+  # to determine which files have changed in the PR. This mode is primarily used
+  # in real GitHub Actions environments where the PR context is available.
+  
+  # PR comment dry-run (mode off) - Verify behavior when comment mode is off
+  test-pr-comment-dry-run-mode-off:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Test PR Comment Dry-Run Mode (Mode Off)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Create test files
+        run: |
+          echo "graph TD" > pr-test1.mmd
+          echo "A-->B" >> pr-test1.mmd
+          
+          echo "graph TD" > pr-test2.mmd
+          echo "C-->D" >> pr-test2.mmd
+      
+      - name: Test with PR comment mode off
+        uses: ./
+        with:
+          input: 'pr-test*.mmd'
+          pr-comment-mode: 'off'         # Comment functionality disabled
+          pr-comment-dry-run: 'true'
+      
+      - name: Verify behavior (mode off)
+        run: |
+          # Check that .md files were created (conversion should still work)
+          if [ ! -f "pr-test1.md" ] || [ ! -f "pr-test2.md" ]; then
+            echo "❌ Error: Markdown files were not created"
+            exit 1
+          fi
+          
+          # Check that pr-comments-data.json was NOT created
+          if [ -f "pr-comments-data.json" ]; then
+            echo "❌ Error: pr-comments-data.json should not be created when pr-comment-mode is off"
+            exit 1
+          fi
+          
+          echo "✅ Mode-off test successful - conversion completed without comment preparation"
+
   # Error handling - Verify proper error handling for invalid inputs
   test-error-handling:
     runs-on: ubuntu-latest
@@ -466,6 +708,11 @@ jobs:
       test-hide-command,
       # config
       test-config-file,
+      # pr-comment-dry-run - Multiple test cases
+      test-pr-comment-dry-run-default,     # Default settings (header=true, details=false)
+      test-pr-comment-dry-run-no-header,   # Header disabled
+      test-pr-comment-dry-run-with-details, # Collapsible details enabled
+      test-pr-comment-dry-run-mode-off,    # Comment mode disabled
       # Error handling (last)
       test-error-handling
     ]

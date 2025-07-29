@@ -66,6 +66,13 @@ inputs:
     required: false
     default: "false"
   
+  # Dry-run mode for PR comments
+  # This allows testing PR comment functionality locally with act without making actual API calls
+  pr-comment-dry-run:
+    description: "Dry-run mode for PR comments - show what would be posted without actually posting (true/false)"
+    required: false
+    default: "false"
+  
   # GitHub token input
   github-token:
     description: "GitHub token for PR comments (defaults to github.token)"
@@ -113,111 +120,124 @@ runs:
         # Display results
         cat conversion-results.json
         
+        # Set outputs for next steps
+        echo "exit_code=$?" >> $GITHUB_OUTPUT
+        echo "has_conversions=$(jq -r 'if .conversions | length > 0 then "true" else "false" end' conversion-results.json)" >> $GITHUB_OUTPUT
+        echo "conversion_count=$(jq -r '.conversions | length' conversion-results.json)" >> $GITHUB_OUTPUT
+        
         # Check exit status
         FAILED=$(jq -r '.summary.failedConversions' conversion-results.json)
         if [[ "$FAILED" -gt 0 ]]; then
-          echo "exit_code=1" >> $GITHUB_OUTPUT
           exit 1
-        else
-          echo "exit_code=0" >> $GITHUB_OUTPUT
         fi
     
-    # PR comment posting using github-script
+    # PR comment preparation step
+    # Split from posting step to enable dry-run testing and better separation of concerns
+    - name: Prepare PR comments
+      id: prepare-comments
+      if: |
+        steps.convert.outputs.has_conversions == 'true' &&
+        inputs.pr-comment-mode != 'off' && 
+        (github.event_name == 'pull_request' || 
+         github.event_name == 'pull_request_target' || 
+         inputs.pr-comment-dry-run == 'true')
+      shell: bash
+      run: |
+        # Read conversion results
+        RESULTS=$(cat conversion-results.json)
+        
+        # Get PR number from environment
+        PR_NUMBER="${{ github.event.pull_request.number }}"
+        if [[ -z "$PR_NUMBER" ]]; then
+          PR_NUMBER="${{ github.event.issue.number }}"
+        fi
+        
+        # For local testing with act, use a dummy PR number
+        # This enables testing without actual PR context
+        if [[ -z "$PR_NUMBER" ]]; then
+          echo "No PR number found in GitHub context (running locally with act?), using dummy PR #999"
+          PR_NUMBER="999"
+        fi
+        
+        # Prepare comment data
+        echo "[]" > pr-comments-data.json
+        
+        # Filter files based on mode
+        MODE="${{ inputs.pr-comment-mode }}"
+        echo "PR comment mode: $MODE"
+        
+        # Process conversions and prepare comment data
+        if [[ "$MODE" == "all" ]]; then
+          # All successfully converted files
+          jq -r '.conversions[] | select(.converted == true) | @json' conversion-results.json | while read -r conversion; do
+            MARKDOWN_FILE=$(echo "$conversion" | jq -r '.markdownFile')
+            FILENAME=$(basename "$MARKDOWN_FILE")
+            
+            # Read file content
+            if [[ -f "$MARKDOWN_FILE" ]]; then
+              CONTENT=$(cat "$MARKDOWN_FILE")
+              
+              # Build comment body
+              BODY=""
+              if [[ "${{ inputs.pr-comment-header }}" != "false" ]]; then
+                BODY+="> ### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: \`$FILENAME\`\n> \n"
+              fi
+              
+              if [[ "${{ inputs.pr-comment-details }}" == "true" ]]; then
+                BODY+="<details>\n<summary>Click to expand</summary>\n\n\`\`\`markdown\n$CONTENT\n\`\`\`\n\n</details>"
+              else
+                BODY+="\`\`\`markdown\n$CONTENT\n\`\`\`"
+              fi
+              
+              # Add to comments data
+              jq --arg pr "$PR_NUMBER" --arg body "$BODY" --arg file "$FILENAME" \
+                '. += [{"prNumber": ($pr | tonumber), "body": $body, "filename": $file}]' \
+                pr-comments-data.json > pr-comments-data.tmp && mv pr-comments-data.tmp pr-comments-data.json
+            fi
+          done
+        fi
+        
+        # Check if we have comments to post
+        COMMENT_COUNT=$(jq '. | length' pr-comments-data.json)
+        echo "Prepared $COMMENT_COUNT comments"
+        
+        # Output comment count for use in next step's condition
+        echo "comment_count=$COMMENT_COUNT" >> $GITHUB_OUTPUT
+    
+    # PR comment posting step - only handles actual API calls
+    # Conditions are explicit: has comments, not dry-run, not mode off, and proper event type
     - name: Post PR comments
       if: |
-        inputs.pr-comment-mode != 'off' && 
-        (github.event_name == 'pull_request' || github.event_name == 'pull_request_target')
+        steps.prepare-comments.outputs.comment_count > 0 &&
+        inputs.pr-comment-dry-run == 'false' &&
+        (github.event_name == 'pull_request' || 
+         github.event_name == 'pull_request_target')
       uses: actions/github-script@v7
       with:
         github-token: ${{ inputs.github-token }}
         script: |
           const fs = require('fs');
-          const path = require('path');
           
-          // Read conversion results
-          const resultsJson = fs.readFileSync('conversion-results.json', 'utf8');
-          const results = JSON.parse(resultsJson);
+          // Read prepared comment data
+          const commentsDataJson = fs.readFileSync('pr-comments-data.json', 'utf8');
+          const commentsData = JSON.parse(commentsDataJson);
           
-          // Get PR number (works for both pull_request and pull_request_target)
-          const prNumber = context.payload.pull_request?.number || context.issue.number;
-          if (!prNumber) {
-            console.log('No PR number found, skipping comments');
-            return;
-          }
+          console.log(`Posting ${commentsData.length} comments to PR...`);
           
-          // Filter files based on mode
-          let filesToComment = [];
-          const mode = '${{ inputs.pr-comment-mode }}';
-          
-          if (mode === 'all') {
-            // Comment on all successfully converted files in this run
-            filesToComment = results.conversions.filter(c => c.converted);
-            console.log(`PR comment mode: all - will comment on ${filesToComment.length} converted files`);
-            
-          } else if (mode === 'changed') {
-            // Only comment on files that were changed in this PR
+          // Post each comment
+          for (const comment of commentsData) {
             try {
-              const { data: files } = await github.rest.pulls.listFiles({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber
-              });
-              
-              const changedMermaidFiles = files
-                .filter(f => f.filename.endsWith('.mmd') || f.filename.endsWith('.mermaid'))
-                .map(f => f.filename);
-              
-              // Filter to only include changed source files that were successfully converted
-              const allConverted = results.conversions.filter(c => c.converted);
-              filesToComment = allConverted.filter(c => 
-                changedMermaidFiles.includes(c.mermaidFile)
-              );
-              
-              console.log(`PR comment mode: changed - found ${changedMermaidFiles.length} changed source files, ${filesToComment.length} were converted`);
-            } catch (e) {
-              console.error('Failed to get changed files from GitHub API:', e.message);
-              console.error('Falling back to commenting on all converted files');
-              filesToComment = results.conversions.filter(c => c.converted);
-            }
-            
-          } else {
-            // This should not happen due to the if condition in the step, but just in case
-            throw new Error(`Invalid pr-comment-mode: ${mode}. Expected 'all' or 'changed'.`);
-          }
-          
-          // Post comments for each converted file
-          for (const conversion of filesToComment) {
-            try {
-              const content = fs.readFileSync(conversion.markdownFile, 'utf8');
-              const filename = path.basename(conversion.markdownFile);
-              
-              // Build comment body based on options
-              const useDetails = '${{ inputs.pr-comment-details }}' === 'true';
-              const showHeader = '${{ inputs.pr-comment-header }}' !== 'false';
-              
-              let body = '';
-              
-              // Add header if enabled
-              if (showHeader) {
-                body += `> ### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: \`${filename}\`\n> \n`;
-              }
-              
-              // Add content with or without details
-              if (useDetails) {
-                body += `<details>\n<summary>Click to expand</summary>\n\n\`\`\`markdown\n${content}\n\`\`\`\n\n</details>`;
-              } else {
-                body += `\`\`\`markdown\n${content}\n\`\`\``;
-              }
-              
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: prNumber,
-                body: body
+                issue_number: comment.prNumber,
+                body: comment.body
               });
               
-              console.log(`✓ Posted comment for: ${filename}`);
+              console.log(`✓ Posted comment for: ${comment.filename}`);
             } catch (e) {
-              console.error(`Failed to post comment for ${conversion.markdownFile}:`, e.message);
+              console.error(`Failed to post comment for ${comment.filename}:`, e.message);
             }
           }
+          
+          console.log('All comments posted successfully');
