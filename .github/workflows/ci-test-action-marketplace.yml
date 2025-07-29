@@ -16,12 +16,13 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - '.release-please-manifest.json'
-  push:
-    branches:
-      - main
-    paths:
-      - '.release-please-manifest.json'
   workflow_dispatch:
+  workflow_run:
+    # Triggered when npm Release workflow completes
+    # Note: This requires the workflow name to match exactly with the 'name' field in cd-npm-release.yml
+    workflows: ["npm Release"]
+    types:
+      - completed
 
 jobs:
   # Basic usage - Verify basic mermaid wrapping functionality

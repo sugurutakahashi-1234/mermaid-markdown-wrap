@@ -1,12 +1,13 @@
 name: Published Tests
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.release-please-manifest.json'
   workflow_dispatch:
+  workflow_run:
+    # Triggered when npm Release workflow completes
+    # Note: This requires the workflow name to match exactly with the 'name' field in cd-npm-release.yml
+    workflows: ["npm Release"]
+    types:
+      - completed
 
 jobs:
   # Test the latest published version with npx
