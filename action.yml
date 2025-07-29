@@ -101,7 +101,7 @@ runs:
       id: convert
       shell: bash
       run: |
-        # Build CLI arguments
+        # Build CLI arguments from inputs
         args=("${{ inputs.input }}")
         
         # Add optional arguments
@@ -114,20 +114,22 @@ runs:
         [[ "${{ inputs.remove-source }}" == "true" ]] && args+=(--remove-source)
         [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
-        # Run with JSON output and save to file
-        bunx mermaid-markdown-wrap@latest "${args[@]}" --log-format json > conversion-results.json
+        # Run with JSON output and exit on failure
+        if ! bunx mermaid-markdown-wrap@latest "${args[@]}" --log-format json > conversion-results.json; then
+          echo "Error: mermaid-markdown-wrap command failed"
+          exit 1
+        fi
         
         # Display results
         cat conversion-results.json
         
         # Set outputs for next steps
-        echo "exit_code=$?" >> $GITHUB_OUTPUT
-        echo "has_conversions=$(jq -r 'if .conversions | length > 0 then "true" else "false" end' conversion-results.json)" >> $GITHUB_OUTPUT
         echo "conversion_count=$(jq -r '.conversions | length' conversion-results.json)" >> $GITHUB_OUTPUT
         
-        # Check exit status
-        FAILED=$(jq -r '.summary.failedConversions' conversion-results.json)
+        # Check for conversion failures in the results
+        FAILED=$(jq -r '.summary.failedConversions // 0' conversion-results.json)
         if [[ "$FAILED" -gt 0 ]]; then
+          echo "Error: $FAILED conversions failed"
           exit 1
         fi
     
@@ -136,21 +138,15 @@ runs:
     - name: Prepare PR comments
       id: prepare-comments
       if: |
-        steps.convert.outputs.has_conversions == 'true' &&
+        steps.convert.outputs.conversion_count > 0 &&
         inputs.pr-comment-mode != 'off' && 
         (github.event_name == 'pull_request' || 
          github.event_name == 'pull_request_target' || 
          inputs.pr-comment-dry-run == 'true')
       shell: bash
       run: |
-        # Read conversion results
-        RESULTS=$(cat conversion-results.json)
-        
         # Get PR number from environment
         PR_NUMBER="${{ github.event.pull_request.number }}"
-        if [[ -z "$PR_NUMBER" ]]; then
-          PR_NUMBER="${{ github.event.issue.number }}"
-        fi
         
         # For local testing with act, use a dummy PR number
         # This enables testing without actual PR context
@@ -163,11 +159,10 @@ runs:
         echo "[]" > pr-comments-data.json
         
         # Filter files based on mode
-        MODE="${{ inputs.pr-comment-mode }}"
-        echo "PR comment mode: $MODE"
+        echo "PR comment mode: ${{ inputs.pr-comment-mode }}"
         
         # Process conversions and prepare comment data
-        if [[ "$MODE" == "all" ]]; then
+        if [[ "${{ inputs.pr-comment-mode }}" == "all" ]]; then
           # All successfully converted files
           jq -r '.conversions[] | select(.converted == true) | @json' conversion-results.json | while read -r conversion; do
             MARKDOWN_FILE=$(echo "$conversion" | jq -r '.markdownFile')
@@ -195,21 +190,29 @@ runs:
                 pr-comments-data.json > pr-comments-data.tmp && mv pr-comments-data.tmp pr-comments-data.json
             fi
           done
+        elif [[ "${{ inputs.pr-comment-mode }}" == "changed" ]]; then
+          # TODO: 'changed' mode is not yet implemented
+          # This mode will only process markdown files that have changed from their previous version
+          # Implementation requires CLI tool to provide a 'changed' flag in conversion-results.json
+          echo "Warning: 'changed' mode is not yet implemented, no comments will be generated"
+          # Future implementation will be similar to 'all' mode but with additional filtering:
+          # jq -r '.conversions[] | select(.converted == true and .changed == true) | @json' conversion-results.json | while read -r conversion; do
+          #   # ... (same comment generation logic as 'all' mode)
+          # done
         fi
         
         # Check if we have comments to post
-        COMMENT_COUNT=$(jq '. | length' pr-comments-data.json)
-        echo "Prepared $COMMENT_COUNT comments"
+        echo "Prepared $(jq '. | length' pr-comments-data.json) comments"
         
         # Output comment count for use in next step's condition
-        echo "comment_count=$COMMENT_COUNT" >> $GITHUB_OUTPUT
+        echo "comment_count=$(jq '. | length' pr-comments-data.json)" >> $GITHUB_OUTPUT
     
     # PR comment posting step - only handles actual API calls
     # Conditions are explicit: has comments, not dry-run, not mode off, and proper event type
     - name: Post PR comments
       if: |
         steps.prepare-comments.outputs.comment_count > 0 &&
-        inputs.pr-comment-dry-run == 'false' &&
+        inputs.pr-comment-dry-run != 'true' &&
         (github.event_name == 'pull_request' || 
          github.event_name == 'pull_request_target')
       uses: actions/github-script@v7
@@ -219,8 +222,7 @@ runs:
           const fs = require('fs');
           
           // Read prepared comment data
-          const commentsDataJson = fs.readFileSync('pr-comments-data.json', 'utf8');
-          const commentsData = JSON.parse(commentsDataJson);
+          const commentsData = JSON.parse(fs.readFileSync('pr-comments-data.json', 'utf8'));
           
           console.log(`Posting ${commentsData.length} comments to PR...`);
           

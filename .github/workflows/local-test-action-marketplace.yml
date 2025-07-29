@@ -1,7 +1,7 @@
 name: test-action-marketplace
 
 # This workflow is designed to be run locally with Act CLI
-# Usage: bun run test:action-local
+# Usage: bun run test:action-marketplace
 #
 # To run specific job:
 # act -W .github/workflows/local-test-action-marketplace.yml -j test-basic
