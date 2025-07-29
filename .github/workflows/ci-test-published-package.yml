@@ -54,7 +54,7 @@ jobs:
       
       # x-release-please-start-version
       - name: Use published action
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.0.0
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.2.0
         with:
           input: 'test.mmd'
       # x-release-please-end
