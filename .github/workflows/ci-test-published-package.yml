@@ -12,6 +12,7 @@ jobs:
   # Test the latest published version with npx
   test-npx:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test NPX Execution
     steps:
       - name: Create test file
@@ -21,17 +22,28 @@ jobs:
       
       - name: Test with npx
         run: |
+          # Test init -y
+          npx mermaid-markdown-wrap@latest init -y
+          
+          # Test config-show
+          npx mermaid-markdown-wrap@latest config-show
+          
+          # Test config-validate
+          npx mermaid-markdown-wrap@latest config-validate
+          
+          # Test conversion
           npx mermaid-markdown-wrap@latest test.mmd
           
           if [ ! -f "test.md" ]; then
-            echo "❌ Error: test.md was not created via npx"
+            echo "❌ Error: test.md was not created"
             exit 1
           fi
-          echo "✅ npx execution successful"
+          echo "✅ All subcommands work correctly"
 
   # Test the GitHub Action from marketplace
   test-github-action:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     name: Test GitHub Action Marketplace
     steps:
       - name: Create test file
@@ -61,6 +73,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node: [20, 22, 24]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
     name: Test on ${{ matrix.os }} / Node ${{ matrix.node }}
     steps:
       - name: Setup Node.js
@@ -88,6 +101,7 @@ jobs:
   # Summary job
   e2e-test-summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [
       test-npx,
       test-github-action,

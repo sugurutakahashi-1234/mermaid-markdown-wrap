@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
 [![npm downloads](https://img.shields.io/npm/dm/mermaid-markdown-wrap.svg)](https://www.npmjs.com/package/mermaid-markdown-wrap)
-[![npm bundle size](https://img.shields.io/bundlephobia/min/mermaid-markdown-wrap)](https://bundlephobia.com/package/mermaid-markdown-wrap)
+[![install size](https://packagephobia.com/badge?p=mermaid-markdown-wrap)](https://packagephobia.com/result?p=mermaid-markdown-wrap)
 [![Build](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-push-main.yml)
 [![Published Tests](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-test-published-package.yml/badge.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/actions/workflows/ci-test-published-package.yml)
 [![codecov](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap/graph/badge.svg?token=KPN7UZ7ATY)](https://codecov.io/gh/sugurutakahashi-1234/mermaid-markdown-wrap)
@@ -28,6 +28,11 @@ graph TD
   B --> C[End]
 ```
 
+**Run:**
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
+
 **After** (`diagram.md`):
 ````markdown
 ```bash
@@ -49,25 +54,24 @@ graph TD
 # Global installation (recommended)
 npm install -g mermaid-markdown-wrap
 
+# Project-specific installation (as dev dependency)
+npm install --save-dev mermaid-markdown-wrap
+
 # Or use directly with npx
 npx mermaid-markdown-wrap diagram.mmd
-
-# Alternative package managers
-yarn global add mermaid-markdown-wrap
-bun add -g mermaid-markdown-wrap
 ```
+
+**Alternative package managers:** Also compatible with yarn, bun, and pnpm
 
 ## Quick Start
 
 ```bash
-# Convert a single file
-mermaid-markdown-wrap diagram.mmd
-
-# Convert all Mermaid files in a directory
-mermaid-markdown-wrap "**/*.{mmd,mermaid}"
-
-# Generate a configuration file
+# Generate a configuration file (optional but recommended, use -y or --yes to skip prompts)
 mermaid-markdown-wrap init
+
+# Convert files (single file or glob pattern)
+mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap "**/*.{mmd,mermaid}"
 ```
 
 ## Usage
@@ -89,19 +93,15 @@ mermaid-markdown-wrap init
    mermaid-markdown-wrap "**/*.{mmd,mermaid}" --remove-source
    ```
 
-4. **Use with configuration file**
-   ```bash
-   mermaid-markdown-wrap init  # Create config file
-   mermaid-markdown-wrap "*.mmd"  # Uses config automatically
-   ```
-
 ## Configuration
 
-The tool automatically searches for configuration files in these locations:
+The tool automatically searches for configuration files in these locations (powered by [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig#searchplaces)):
 - `package.json` (`"mermaid-markdown-wrap"` property)
-- `.mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
-- `.config/mermaid-markdown-wraprc{.json,.yaml,.yml,.js,.ts}`
-- `mermaid-markdown-wrap.config.{js,ts}`
+- `.mermaid-markdown-wraprc` (no extension)
+- `.mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `.config/mermaid-markdown-wraprc` (no extension)
+- `.config/mermaid-markdown-wraprc.{json,yaml,yml,js,ts,mjs,cjs}`
+- `mermaid-markdown-wrap.config.{js,ts,mjs,cjs}`
 
 ### Quick Configuration Setup
 
@@ -113,20 +113,6 @@ mermaid-markdown-wrap init
 ### Configuration Examples
 
 <details>
-<summary>YAML Configuration</summary>
-
-```yaml
-# .mermaid-markdown-wraprc.yaml
-outDir: docs
-header: "<!-- AUTO-GENERATED -->"
-footer: "<!-- END -->"
-removeSource: false
-hideCommand: false
-```
-
-</details>
-
-<details>
 <summary>JSON Configuration</summary>
 
 ```jsonc
@@ -135,8 +121,58 @@ hideCommand: false
   "$schema": "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
   "outDir": "docs",
   "header": "<!-- AUTO-GENERATED -->",
-  "removeSource": false
+  "footer": "<!-- END -->"
 }
+```
+
+</details>
+
+<details>
+<summary>YAML Configuration</summary>
+
+```yaml
+# .mermaid-markdown-wraprc.yaml
+# yaml-language-server: $schema=https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json
+outDir: docs
+header: "<!-- AUTO-GENERATED -->"
+footer: "<!-- END -->"
+```
+
+</details>
+
+<details>
+<summary>JavaScript Configuration</summary>
+
+#### CommonJS (.js/.cjs)
+```js
+// .mermaid-markdown-wraprc.js or .mermaid-markdown-wraprc.cjs
+module.exports = {
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->'
+};
+```
+
+#### ES Modules (.mjs)
+```js
+// mermaid-markdown-wrap.config.mjs
+export default {
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->'
+};
+```
+
+#### With defineConfig helper
+```js
+// mermaid-markdown-wrap.config.js
+const { defineConfig } = require('mermaid-markdown-wrap/config');
+
+module.exports = defineConfig({
+  outDir: 'docs',
+  header: '<!-- AUTO-GENERATED -->',
+  footer: '<!-- END -->'
+});
 ```
 
 </details>
@@ -151,53 +187,53 @@ import { defineConfig } from 'mermaid-markdown-wrap/config';
 export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
-  removeSource: false
+  footer: '<!-- END -->'
 });
 ```
 
 </details>
 
-### IntelliSense Support
-
-For YAML files with VS Code:
-```jsonc
-// .vscode/settings.json
-{
-  "yaml.schemas": {
-    "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json": [
-      ".mermaid-markdown-wraprc",
-      ".mermaid-markdown-wraprc.yaml",
-      ".mermaid-markdown-wraprc.yml"
-    ]
-  }
-}
-```
-
 ## CLI Reference
 
 ### Commands
 
-| Command                                        | Description                             |
-| ---------------------------------------------- | --------------------------------------- |
-| `mermaid-markdown-wrap <input>`                | Convert files (default command)         |
-| `mermaid-markdown-wrap init`                   | Create configuration file interactively |
-| `mermaid-markdown-wrap config-show [file]`     | Display current configuration           |
-| `mermaid-markdown-wrap config-validate [file]` | Validate configuration file             |
+#### `mermaid-markdown-wrap <input>` (default)
+Convert Mermaid files to Markdown.
 
-### Options
+| Option                  | Description                             | Default       |
+| ----------------------- | --------------------------------------- | ------------- |
+| `-o, --out-dir <dir>`   | Output directory                        | Same as input |
+| `--header <text>`       | Text to prepend                         | -             |
+| `--footer <text>`       | Text to append                          | -             |
+| `--remove-source`       | Remove source files after conversion    | `false`       |
+| `--hide-command`        | Hide generation command in output files | `false`       |
+| `--log-format <format>` | Output format: `text` or `json`         | `text`        |
+| `--quiet`               | Suppress non-error output               | `false`       |
+| `-c, --config <file>`   | Config file path                        | Auto-search   |
+| `-h, --help`            | Show help                               | -             |
+| `-v, --version`         | Show version                            | -             |
 
-| Option                  | Description                          | Default       |
-| ----------------------- | ------------------------------------ | ------------- |
-| `-o, --out-dir <dir>`   | Output directory                     | Same as input |
-| `--header <text>`       | Text to prepend                      | -             |
-| `--footer <text>`       | Text to append                       | -             |
-| `--remove-source`       | Remove source files after conversion | `false`       |
-| `--hide-command`        | Hide command in output               | `false`       |
-| `--log-format <format>` | Output format: `text` or `json`      | `text`        |
-| `--quiet`               | Suppress non-error output            | `false`       |
-| `-c, --config <file>`   | Config file path                     | Auto-search   |
-| `-h, --help`            | Show help                            | -             |
-| `-v, --version`         | Show version                         | -             |
+#### `mermaid-markdown-wrap init`
+Create configuration file interactively.
+
+| Option       | Description                           | Default |
+| ------------ | ------------------------------------- | ------- |
+| `-y, --yes`  | Skip prompts and use default settings | `false` |
+| `-h, --help` | Show help                             | -       |
+
+#### `mermaid-markdown-wrap config-show [configFile]`
+Display current configuration. Takes an optional config file path argument.
+
+| Option       | Description | Default |
+| ------------ | ----------- | ------- |
+| `-h, --help` | Show help   | -       |
+
+#### `mermaid-markdown-wrap config-validate [configFile]`
+Validate configuration file. Takes an optional config file path argument.
+
+| Option       | Description | Default |
+| ------------ | ----------- | ------- |
+| `-h, --help` | Show help   | -       |
 
 ## GitHub Actions
 
@@ -228,22 +264,21 @@ jobs:
 
 All CLI options are available, plus GitHub Actions-specific options:
 
-| Input                    | Description                                           | Default               |
-| ------------------------ | ----------------------------------------------------- | --------------------- |
-| `input`                  | File path or glob pattern (required)                  | -                     |
-| `out-dir`                | Output directory                                      | Same as input         |
-| `header`                 | Header text to prepend                                | -                     |
-| `footer`                 | Footer text to append                                 | -                     |
-| `config`                 | Config file path                                      | Auto-search           |
-| `remove-source`          | Remove source files after conversion                  | `false`               |
-| `hide-command`           | Hide command in output                                | `false`               |
-| **`pr-comment-mode`**    | Post diagrams as PR comments: `off`, `changed`, `all` | `off`                 |
-| **`pr-comment-header`**  | Show header in PR comments                            | `true`                |
-| **`pr-comment-details`** | Use collapsible details for PR comments               | `false`               |
-| **`github-token`**       | GitHub token for PR comments                          | `${{ github.token }}` |
+| Input                    | Description                                                                                            | Default               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | --------------------- |
+| `input`                  | File path or glob pattern (required)                                                                   | -                     |
+| `out-dir`                | Output directory                                                                                       | Same as input         |
+| `header`                 | Header text to prepend                                                                                 | -                     |
+| `footer`                 | Footer text to append                                                                                  | -                     |
+| `config`                 | Config file path                                                                                       | Auto-search           |
+| `remove-source`          | Remove source files after conversion                                                                   | `false`               |
+| `hide-command`           | Hide command in output                                                                                 | `false`               |
+| **`pr-comment-mode`**    | Post diagrams as PR comments: `off`, `changed`, `all`                                                  | `off`                 |
+| **`pr-comment-header`**  | Show header in PR comments                                                                             | `true`                |
+| **`pr-comment-details`** | Use collapsible details for PR comments                                                                | `false`               |
+| **`github-token`**       | GitHub token for PR comments (usually default is fine; override only if you need specific permissions) | `${{ github.token }}` |
 
-<details>
-<summary>PR Comment Feature</summary>
+**Note:** When using GitHub Actions, the output format is automatically set to JSON (`--log-format json`) for better integration with the action's features.
 
 ### Automatic PR Comments
 
@@ -260,8 +295,8 @@ jobs:
   convert:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write
+      contents: read # Required for PR comments
+      pull-requests: write # Required for PR comments
     steps:
       - uses: actions/checkout@v4
       
@@ -278,6 +313,22 @@ jobs:
 - `off`: No comments (default)
 - `changed`: Only files changed in the PR
 - `all`: All converted files
+
+**Example PR Comment:**
+
+<details>
+<summary>View example comment</summary>
+
+> ### 📄 [mermaid-markdown-wrap](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap) generated: `diagram.md`
+> 
+```bash
+mermaid-markdown-wrap diagram.mmd
+```
+
+```mermaid
+graph LR
+    A[Start] --> B[End]
+```
 
 </details>
 

@@ -18,6 +18,7 @@ import {
   createDirectory,
   deleteFile,
   readTextFile,
+  readTextFileIfExists,
   writeTextFile,
 } from "../adapters/file-system.adapter.js";
 import { findFilesByPattern } from "../adapters/glob-search.adapter.js";
@@ -72,6 +73,11 @@ export async function processFiles(
           commandInfo,
         );
 
+        // Check if the output file exists and compare content
+        const existingContent = await readTextFileIfExists(outputPath);
+        const isChanged =
+          !existingContent || existingContent !== formattedContent;
+
         // Write formatted content
         await writeTextFile(outputPath, formattedContent);
 
@@ -84,6 +90,7 @@ export async function processFiles(
           mermaidFile: filePath,
           converted: true,
           markdownFile: outputPath,
+          changed: isChanged,
         };
       } catch (error) {
         return {

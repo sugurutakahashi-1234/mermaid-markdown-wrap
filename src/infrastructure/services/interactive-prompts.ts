@@ -48,7 +48,7 @@ export async function runInteractivePrompts(): Promise<PromptResult> {
             label: fmt.label,
             value: fmt.value,
           })),
-          initialValue: "ts" as ConfigFormat,
+          initialValue: "json" as ConfigFormat,
         }),
       outDir: () =>
         text({

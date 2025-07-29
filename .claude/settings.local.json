@@ -146,7 +146,8 @@
       "WebFetch(domain:api.github.com)",
       "Bash(tar:*)",
       "Bash(git cherry-pick:*)",
-      "Bash(act:*)"
+      "Bash(act:*)",
+      "Bash(../dist/presentation/cli.js init --yes)"
     ],
     "deny": []
   },
