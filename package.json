@@ -98,14 +98,6 @@
     "valibot": "^1.1.0",
     "yaml": "^2.8.0"
   },
-  "peerDependencies": {
-    "typescript": ">=5"
-  },
-  "peerDependenciesMeta": {
-    "typescript": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@biomejs/biome": "^2.1.2",
     "@commitlint/cli": "^19.8.1",
