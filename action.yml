@@ -123,11 +123,10 @@ runs:
         
         # Run with JSON output and exit on failure
         if [[ "${{ inputs.local-test }}" == "true" ]]; then
-          # Local test mode: build and use current source code
+          # Local test mode: run TypeScript directly with bun
           echo "Running in local test mode - using current source code"
           bun install
-          bun run build
-          if ! node dist/index.js "${args[@]}" --log-format json > conversion-results.json; then
+          if ! bun run src/index.ts "${args[@]}" --log-format json > conversion-results.json; then
             echo "Error: mermaid-markdown-wrap command failed"
             exit 1
           fi
