@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.1.1...v1.2.0) (2025-07-29)
+
+
+### ✨ Features
+
+* trigger test workflows after npm release via workflow_run event ([#17](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/17)) ([763bfcc](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/763bfcc06787f0c3dd34e8ddc31192d9bbd1affe))
+
 ## [1.1.1](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.1.0...v1.1.1) (2025-07-29)
 
 
