@@ -373,4 +373,260 @@ describe("CLI", () => {
       expect(stderr).toContain("ENOENT: no such file or directory");
     });
   });
+
+  describe("init subcommand", () => {
+    test("init -y creates JSON config with empty object", async () => {
+      const proc = spawn(["bun", cliPath, "init", "-y"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+      expect(output).toContain("✔ Created .mermaid-markdown-wraprc.json");
+      expect(output).toContain("Next steps:");
+
+      // Check that the config file was created
+      const configPath = join(testDir, ".mermaid-markdown-wraprc.json");
+      const exists = await Bun.file(configPath).exists();
+      expect(exists).toBe(true);
+
+      // Check that the content is an object with $schema
+      const content = await readFile(configPath, "utf-8");
+      const parsed = JSON.parse(content);
+      expect(parsed).toHaveProperty("$schema");
+      expect(parsed.$schema).toBe(
+        "https://unpkg.com/mermaid-markdown-wrap/schema/config.schema.json",
+      );
+    });
+
+    test("integration: init -y, config-show, config-validate, and convert", async () => {
+      // Step 1: Create a mermaid file
+      const mermaidFile = join(testDir, "test.mmd");
+      await writeFile(mermaidFile, "graph TD\n  A[Start] --> B[End]");
+
+      // Step 2: Run init -y to create config
+      const initProc = spawn(["bun", cliPath, "init", "-y"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const initOutput = await new Response(initProc.stdout).text();
+      await initProc.exited;
+
+      expect(initProc.exitCode).toBe(0);
+      expect(initOutput).toContain("✔ Created .mermaid-markdown-wraprc.json");
+
+      // Verify the config file was actually created
+      const configPath = join(testDir, ".mermaid-markdown-wraprc.json");
+      const configExists = await Bun.file(configPath).exists();
+      expect(configExists).toBe(true);
+
+      // Step 3: Run config-show (no arguments)
+      const showProc = spawn(["bun", cliPath, "config-show"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const showOutput = await new Response(showProc.stdout).text();
+      await showProc.exited;
+
+      expect(showProc.exitCode).toBe(0);
+      expect(showOutput).toContain("✅ Current configuration:");
+
+      // Extract and verify config
+      const jsonPart = showOutput.split("\n").slice(1).join("\n");
+      const shownConfig = JSON.parse(jsonPart);
+      expect(shownConfig).toHaveProperty("removeSource", false);
+      expect(shownConfig).toHaveProperty("hideCommand", false);
+
+      // Step 4: Run config-validate (no arguments)
+      const validateProc = spawn(["bun", cliPath, "config-validate"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const validateOutput = await new Response(validateProc.stdout).text();
+      await validateProc.exited;
+
+      expect(validateProc.exitCode).toBe(0);
+      expect(validateOutput).toContain("✅ Config looks good!");
+
+      // Step 5: Convert using the config (just specify the file)
+      const convertProc = spawn(["bun", cliPath, "test.mmd"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const convertOutput = await new Response(convertProc.stdout).text();
+      await convertProc.exited;
+
+      expect(convertProc.exitCode).toBe(0);
+      expect(convertOutput).toContain("test.mmd -> test.md");
+
+      // Verify the output file was created
+      const outputFile = join(testDir, "test.md");
+      const outputExists = await Bun.file(outputFile).exists();
+      expect(outputExists).toBe(true);
+
+      // Check the content
+      const outputContent = await readFile(outputFile, "utf-8");
+      expect(outputContent).toContain("```bash");
+      expect(outputContent).toContain("mermaid-markdown-wrap test.mmd");
+      expect(outputContent).toContain("```mermaid");
+      expect(outputContent).toContain("graph TD");
+      expect(outputContent).toContain("A[Start] --> B[End]");
+    });
+  });
+
+  describe("changed flag detection", () => {
+    test("sets changed=true when creating new file", async () => {
+      const inputFile = join(testDir, "new-diagram.mmd");
+
+      await writeFile(inputFile, "graph TD\n  A --> B");
+
+      const proc = spawn(["bun", cliPath, inputFile, "--log-format", "json"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      // Parse JSON output
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(true);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("sets changed=true when content differs", async () => {
+      const inputFile = join(testDir, "changed-diagram.mmd");
+      const outputFile = join(testDir, "changed-diagram.md");
+
+      // Create existing .md file with different content
+      await writeFile(
+        outputFile,
+        "```mermaid\ngraph TD\n  OLD --> CONTENT\n```",
+      );
+
+      // Create .mmd file with new content
+      await writeFile(inputFile, "graph TD\n  NEW --> CONTENT");
+
+      const proc = spawn(["bun", cliPath, inputFile, "--log-format", "json"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(true);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("sets changed=false when content is identical", async () => {
+      const inputFile = join(testDir, "unchanged-diagram.mmd");
+      const outputFile = join(testDir, "unchanged-diagram.md");
+
+      // Create .mmd file
+      await writeFile(inputFile, "graph TD\n  A --> B");
+
+      // Create .md file with identical content (what would be generated)
+      // Use --hide-command to simplify the test
+      const expectedContent = `\`\`\`mermaid
+graph TD
+  A --> B
+\`\`\``;
+      await writeFile(outputFile, expectedContent);
+
+      const proc = spawn(
+        ["bun", cliPath, inputFile, "--log-format", "json", "--hide-command"],
+        {
+          cwd: testDir,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(false);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("handles multiple files with mixed changed states", async () => {
+      // File 1: New file (changed=true)
+      await writeFile(join(testDir, "file1.mmd"), "graph TD\n  A --> B");
+
+      // File 2: Unchanged (changed=false)
+      await writeFile(join(testDir, "file2.mmd"), "graph TD\n  C --> D");
+      await writeFile(
+        join(testDir, "file2.md"),
+        `\`\`\`mermaid
+graph TD
+  C --> D
+\`\`\``,
+      );
+
+      // File 3: Changed content (changed=true)
+      await writeFile(join(testDir, "file3.mmd"), "graph TD\n  E --> F");
+      await writeFile(
+        join(testDir, "file3.md"),
+        "```mermaid\ngraph TD\n  OLD --> CONTENT\n```",
+      );
+
+      const proc = spawn(
+        ["bun", cliPath, "*.mmd", "--log-format", "json", "--hide-command"],
+        {
+          cwd: testDir,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(3);
+
+      // Find results by filename
+      const file1Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file1.mmd"),
+      );
+      const file2Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file2.mmd"),
+      );
+      const file3Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file3.mmd"),
+      );
+
+      expect(file1Result.changed).toBe(true); // New file
+      expect(file2Result.changed).toBe(false); // Unchanged
+      expect(file3Result.changed).toBe(true); // Changed content
+    });
+  });
 });

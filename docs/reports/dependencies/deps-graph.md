@@ -88,6 +88,7 @@ flowchart LR
     src/infrastructure/services/interactive//prompts.ts-->src/domain/models/options.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/services/config//file//generator.ts
     src/application/use//cases/init//config.ts-->src/domain/constants/package//info.ts
+    src/application/use//cases/init//config.ts-->src/domain/models/options.ts
     src/application/use//cases/init//config.ts-->src/domain/services/config//file//generator.ts
     src/application/use//cases/init//config.ts-->src/infrastructure/adapters/file//system.adapter.ts
     src/application/use//cases/init//config.ts-->src/infrastructure/services/interactive//prompts.ts

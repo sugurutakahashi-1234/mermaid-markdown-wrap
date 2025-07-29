@@ -38,7 +38,7 @@ program
     "remove source .mmd/.mermaid files after conversion",
     false,
   )
-  .option("--hide-command", "hide the command used in output", false)
+  .option("--hide-command", "hide generation command in output files", false)
   .option("--log-format <format>", "log output format: text or json", "text")
   .option("--quiet", "suppress non-error output", false)
   // Configuration file settings
@@ -70,19 +70,21 @@ program
           result.conversions.forEach((conversion) => {
             if (conversion.converted) {
               console.log(
-                `${conversion.mermaidFile} -> ${conversion.markdownFile}`,
+                `✅ ${conversion.mermaidFile} -> ${conversion.markdownFile}`,
               );
             } else {
               console.error(
-                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+                `❌ ${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
               );
             }
           });
 
           // Display summary for multiple files
           if (result.summary.totalMermaidFiles > 1) {
+            const summaryIcon =
+              result.summary.failedConversions > 0 ? "⚠️" : "✅";
             console.log(
-              `\n${result.summary.totalMermaidFiles} files converted (${result.summary.successfulConversions} success, ${result.summary.failedConversions} failed)`,
+              `\n${summaryIcon} ${result.summary.totalMermaidFiles} files converted (${result.summary.successfulConversions} success, ${result.summary.failedConversions} failed)`,
             );
           }
         } else {
@@ -90,7 +92,7 @@ program
           result.conversions.forEach((conversion) => {
             if (!conversion.converted) {
               console.error(
-                `${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
+                `❌ ${conversion.mermaidFile}: ${conversion.failureReason || "Unknown error"}`,
               );
             }
           });
@@ -104,7 +106,7 @@ program
         process.exit(0);
       }
       const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error: ${message}`);
+      console.error(`❌ Error: ${message}`);
       process.exit(1);
     }
   })
@@ -123,6 +125,7 @@ Examples:
 
   # Configuration
   $ ${getPackageName()} init                         # Create a configuration file interactively
+  $ ${getPackageName()} init -y                       # Create config with default settings
   $ ${getPackageName()} -c myconfig.yaml "*.mermaid" # Use specific config file
   $ ${getPackageName()} "*.mmd" --remove-source      # Convert and remove source files
   $ ${getPackageName()} config-show                  # Show current configuration
@@ -145,6 +148,42 @@ For more options and detailed documentation:
   https://www.npmjs.com/package/${getPackageName()}
 `,
   );
+
+// Add init subcommand
+program
+  .command("init")
+  .description("Interactive wizard to create a configuration file")
+  .option("-y, --yes", "skip prompts and use default settings", false)
+  .addHelpText(
+    "after",
+    `
+Examples:
+  $ ${getPackageName()} init                              # Start interactive configuration
+  $ ${getPackageName()} init --yes                        # Create config with default settings
+  $ ${getPackageName()} init -y                           # Create config with default settings (shorthand)
+
+The init command will guide you through creating a configuration file by asking about:
+  - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
+  - Output directory
+  - Header/footer text
+  - Whether to remove source files
+  - Whether to include generation command in output
+
+With --yes option, it will create a TypeScript config file with all default values.
+`,
+  )
+  .action(async (options: { yes: boolean }) => {
+    try {
+      await initConfigUseCase(options.yes);
+    } catch (error) {
+      if (error instanceof UserCancelledError) {
+        process.exit(0);
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`❌ Error: ${message}`);
+      process.exit(1);
+    }
+  });
 
 // Add config-show subcommand
 program
@@ -179,7 +218,7 @@ The config-show command will:
       console.log(JSON.stringify(mergedOptions, null, 2));
     } catch (error) {
       console.error(
-        "Error loading config:",
+        "❌ Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
       process.exit(1);
@@ -227,40 +266,9 @@ The config-validate command will:
     } catch (error) {
       // Handle file reading or other errors
       console.error(
-        "Error loading config:",
+        "❌ Error loading config:",
         error instanceof Error ? error.message : String(error),
       );
-      process.exit(1);
-    }
-  });
-
-// Add init subcommand
-program
-  .command("init")
-  .description("Interactive wizard to create a configuration file")
-  .addHelpText(
-    "after",
-    `
-Examples:
-  $ ${getPackageName()} init                              # Start interactive configuration
-
-The init command will guide you through creating a configuration file by asking about:
-  - Config file format (TypeScript, JavaScript, JSON, YAML, etc.)
-  - Output directory
-  - Header/footer text
-  - Whether to remove source files
-  - Whether to include generation command in output
-`,
-  )
-  .action(async () => {
-    try {
-      await initConfigUseCase();
-    } catch (error) {
-      if (error instanceof UserCancelledError) {
-        process.exit(0);
-      }
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error: ${message}`);
       process.exit(1);
     }
   });

@@ -14,6 +14,7 @@ export interface MermaidConversion {
   markdownFile: string;
   converted: boolean;
   failureReason?: string;
+  changed?: boolean;
 }
 
 /**

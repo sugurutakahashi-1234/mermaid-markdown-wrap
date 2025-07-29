@@ -4,7 +4,7 @@ const config: KnipConfig = {
   entry: [],
   project: ["src/**/*.ts"],
   ignoreDependencies: ["tslib", "@commitlint/cli"], // tslib is a runtime dependency, @commitlint/cli is used in CI only
-  ignoreBinaries: ["du", "awk", "sed", "act"], // du,awk,sed: deps:size script, act: test:act script
+  ignoreBinaries: ["du", "awk", "sed", "act", "jq"], // du,awk,sed: deps:size script, act: test:act script, jq: GitHub Actions workflows
   ignoreExportsUsedInFile: false,
   includeEntryExports: true,
   typescript: {
