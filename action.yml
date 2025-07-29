@@ -122,9 +122,16 @@ runs:
         [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
         # Run with JSON output and exit on failure
-        if [[ "${{ inputs.local-test }}" == "true" ]]; then
-          # Local test mode: run TypeScript directly with bun
-          echo "Running in local test mode - using current source code"
+        if [[ "${{ inputs.local-test }}" == "true" ]] || \
+           [[ "${{ github.event_name }}" == "pull_request" && \
+              "${{ github.repository }}" == "sugurutakahashi-1234/mermaid-markdown-wrap" && \
+              "${{ github.base_ref }}" == "main" ]]; then
+          # Use current source code
+          if [[ "${{ inputs.local-test }}" == "true" ]]; then
+            echo "Running in local test mode - using current source code"
+          else
+            echo "Running PR test for main branch - using current source code"
+          fi
           bun install
           if ! bun run src/index.ts "${args[@]}" --log-format json > conversion-results.json; then
             echo "Error: mermaid-markdown-wrap command failed"
