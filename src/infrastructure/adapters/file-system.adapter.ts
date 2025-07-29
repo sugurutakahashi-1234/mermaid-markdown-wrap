@@ -16,6 +16,24 @@ export async function readTextFile(filePath: string): Promise<string> {
 }
 
 /**
+ * Read file content as UTF-8 if it exists, otherwise return null
+ */
+export async function readTextFileIfExists(
+  filePath: string,
+): Promise<string | null> {
+  try {
+    return await readFile(filePath, "utf-8");
+  } catch (error) {
+    // If file doesn't exist, return null
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return null;
+    }
+    // Re-throw other errors
+    throw error;
+  }
+}
+
+/**
  * Write text content to file as UTF-8
  */
 export async function writeTextFile(
@@ -44,6 +62,7 @@ export async function createDirectory(path: string): Promise<void> {
  */
 export const fileSystemAdapter = {
   readFile: readTextFile,
+  readFileIfExists: readTextFileIfExists,
   writeFile: writeTextFile,
   deleteFile,
   createDirectory,

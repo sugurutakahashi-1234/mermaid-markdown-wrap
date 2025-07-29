@@ -73,6 +73,13 @@ inputs:
     required: false
     default: "false"
   
+  # Local test flag for development
+  # This is useful for testing during development with act CLI
+  local-test:
+    description: "Local test mode - use current source code instead of published npm package (true/false)"
+    required: false
+    default: "false"
+  
   # GitHub token input
   github-token:
     description: "GitHub token for PR comments (defaults to github.token)"
@@ -115,9 +122,21 @@ runs:
         [[ "${{ inputs.hide-command }}" == "true" ]] && args+=(--hide-command)
         
         # Run with JSON output and exit on failure
-        if ! bunx mermaid-markdown-wrap@latest "${args[@]}" --log-format json > conversion-results.json; then
-          echo "Error: mermaid-markdown-wrap command failed"
-          exit 1
+        if [[ "${{ inputs.local-test }}" == "true" ]]; then
+          # Local test mode: build and use current source code
+          echo "Running in local test mode - using current source code"
+          bun install
+          bun run build
+          if ! node dist/index.js "${args[@]}" --log-format json > conversion-results.json; then
+            echo "Error: mermaid-markdown-wrap command failed"
+            exit 1
+          fi
+        else
+          # Production mode: use published npm package
+          if ! bunx mermaid-markdown-wrap@latest "${args[@]}" --log-format json > conversion-results.json; then
+            echo "Error: mermaid-markdown-wrap command failed"
+            exit 1
+          fi
         fi
         
         # Display results
@@ -162,9 +181,17 @@ runs:
         echo "PR comment mode: ${{ inputs.pr-comment-mode }}"
         
         # Process conversions and prepare comment data
-        if [[ "${{ inputs.pr-comment-mode }}" == "all" ]]; then
-          # All successfully converted files
-          jq -r '.conversions[] | select(.converted == true) | @json' conversion-results.json | while read -r conversion; do
+        if [[ "${{ inputs.pr-comment-mode }}" == "all" || "${{ inputs.pr-comment-mode }}" == "changed" ]]; then
+          # Set filter based on mode
+          if [[ "${{ inputs.pr-comment-mode }}" == "all" ]]; then
+            FILTER=".converted == true"
+          else
+            # changed mode: only process files that have changed
+            FILTER=".converted == true and .changed == true"
+          fi
+          
+          # Process conversions with the appropriate filter
+          jq -r ".conversions[] | select($FILTER) | @json" conversion-results.json | while read -r conversion; do
             MARKDOWN_FILE=$(echo "$conversion" | jq -r '.markdownFile')
             FILENAME=$(basename "$MARKDOWN_FILE")
             
@@ -190,15 +217,6 @@ runs:
                 pr-comments-data.json > pr-comments-data.tmp && mv pr-comments-data.tmp pr-comments-data.json
             fi
           done
-        elif [[ "${{ inputs.pr-comment-mode }}" == "changed" ]]; then
-          # TODO: 'changed' mode is not yet implemented
-          # This mode will only process markdown files that have changed from their previous version
-          # Implementation requires CLI tool to provide a 'changed' flag in conversion-results.json
-          echo "Warning: 'changed' mode is not yet implemented, no comments will be generated"
-          # Future implementation will be similar to 'all' mode but with additional filtering:
-          # jq -r '.conversions[] | select(.converted == true and .changed == true) | @json' conversion-results.json | while read -r conversion; do
-          #   # ... (same comment generation logic as 'all' mode)
-          # done
         fi
         
         # Check if we have comments to post

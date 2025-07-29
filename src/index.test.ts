@@ -485,4 +485,148 @@ describe("CLI", () => {
       expect(outputContent).toContain("A[Start] --> B[End]");
     });
   });
+
+  describe("changed flag detection", () => {
+    test("sets changed=true when creating new file", async () => {
+      const inputFile = join(testDir, "new-diagram.mmd");
+
+      await writeFile(inputFile, "graph TD\n  A --> B");
+
+      const proc = spawn(["bun", cliPath, inputFile, "--log-format", "json"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      // Parse JSON output
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(true);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("sets changed=true when content differs", async () => {
+      const inputFile = join(testDir, "changed-diagram.mmd");
+      const outputFile = join(testDir, "changed-diagram.md");
+
+      // Create existing .md file with different content
+      await writeFile(
+        outputFile,
+        "```mermaid\ngraph TD\n  OLD --> CONTENT\n```",
+      );
+
+      // Create .mmd file with new content
+      await writeFile(inputFile, "graph TD\n  NEW --> CONTENT");
+
+      const proc = spawn(["bun", cliPath, inputFile, "--log-format", "json"], {
+        cwd: testDir,
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(true);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("sets changed=false when content is identical", async () => {
+      const inputFile = join(testDir, "unchanged-diagram.mmd");
+      const outputFile = join(testDir, "unchanged-diagram.md");
+
+      // Create .mmd file
+      await writeFile(inputFile, "graph TD\n  A --> B");
+
+      // Create .md file with identical content (what would be generated)
+      // Use --hide-command to simplify the test
+      const expectedContent = `\`\`\`mermaid
+graph TD
+  A --> B
+\`\`\``;
+      await writeFile(outputFile, expectedContent);
+
+      const proc = spawn(
+        ["bun", cliPath, inputFile, "--log-format", "json", "--hide-command"],
+        {
+          cwd: testDir,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(1);
+      expect(result.conversions[0].changed).toBe(false);
+      expect(result.conversions[0].converted).toBe(true);
+    });
+
+    test("handles multiple files with mixed changed states", async () => {
+      // File 1: New file (changed=true)
+      await writeFile(join(testDir, "file1.mmd"), "graph TD\n  A --> B");
+
+      // File 2: Unchanged (changed=false)
+      await writeFile(join(testDir, "file2.mmd"), "graph TD\n  C --> D");
+      await writeFile(
+        join(testDir, "file2.md"),
+        `\`\`\`mermaid
+graph TD
+  C --> D
+\`\`\``,
+      );
+
+      // File 3: Changed content (changed=true)
+      await writeFile(join(testDir, "file3.mmd"), "graph TD\n  E --> F");
+      await writeFile(
+        join(testDir, "file3.md"),
+        "```mermaid\ngraph TD\n  OLD --> CONTENT\n```",
+      );
+
+      const proc = spawn(
+        ["bun", cliPath, "*.mmd", "--log-format", "json", "--hide-command"],
+        {
+          cwd: testDir,
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
+
+      const output = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      expect(proc.exitCode).toBe(0);
+
+      const result = JSON.parse(output);
+      expect(result.conversions).toHaveLength(3);
+
+      // Find results by filename
+      const file1Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file1.mmd"),
+      );
+      const file2Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file2.mmd"),
+      );
+      const file3Result = result.conversions.find((c: any) =>
+        c.mermaidFile.includes("file3.mmd"),
+      );
+
+      expect(file1Result.changed).toBe(true); // New file
+      expect(file2Result.changed).toBe(false); // Unchanged
+      expect(file3Result.changed).toBe(true); // Changed content
+    });
+  });
 });
