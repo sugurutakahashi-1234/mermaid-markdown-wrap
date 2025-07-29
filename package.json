@@ -1,6 +1,6 @@
 {
   "name": "mermaid-markdown-wrap",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CLI tool to wrap .mmd/.mermaid files in Markdown with mermaid code blocks",
   "publishConfig": {
     "access": "public"

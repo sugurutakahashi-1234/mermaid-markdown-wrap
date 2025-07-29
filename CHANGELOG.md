@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.1](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.1.0...v1.1.1) (2025-07-29)
+
+
+### 🐛 Bug Fixes
+
+* use source code for PRs to main branch in CI tests ([#16](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/16)) ([98e3ed0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/98e3ed01c310d9dead802820ad27adcd8edaca13))
+
+
+### 📚 Documentation
+
+* add --log-format json to README examples ([#15](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/15)) ([7a1fc6b](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/7a1fc6b153d4081f2a999ad2ea62fc9ffaca9594))
+* update README badge and remove unused peerDependencies ([#13](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/13)) ([9bccce5](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/9bccce58657e9ceb39a874a5e8f5de436eb89ba0))
+
 ## [1.1.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.0.0...v1.1.0) (2025-07-28)
 
 
