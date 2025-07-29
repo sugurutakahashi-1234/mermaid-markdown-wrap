@@ -239,31 +239,24 @@ runs:
         inputs.pr-comment-dry-run != 'true' &&
         (github.event_name == 'pull_request' || 
          github.event_name == 'pull_request_target')
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          const fs = require('fs');
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      shell: bash
+      run: |
+        echo "Posting comments to PR..."
+        
+        # Process each comment from JSON file
+        jq -c '.[]' pr-comments-data.json | while read -r comment; do
+          PR_NUMBER=$(echo "$comment" | jq -r '.prNumber')
+          BODY=$(echo "$comment" | jq -r '.body')
+          FILENAME=$(echo "$comment" | jq -r '.filename')
           
-          // Read prepared comment data
-          const commentsData = JSON.parse(fs.readFileSync('pr-comments-data.json', 'utf8'));
-          
-          console.log(`Posting ${commentsData.length} comments to PR...`);
-          
-          // Post each comment
-          for (const comment of commentsData) {
-            try {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: comment.prNumber,
-                body: comment.body
-              });
-              
-              console.log(`✓ Posted comment for: ${comment.filename}`);
-            } catch (e) {
-              console.error(`Failed to post comment for ${comment.filename}:`, e.message);
-            }
-          }
-          
-          console.log('All comments posted successfully');
+          echo "Posting comment for: $FILENAME"
+          if gh pr comment "$PR_NUMBER" --body "$BODY"; then
+            echo "✓ Posted comment for: $FILENAME"
+          else
+            echo "✗ Failed to post comment for $FILENAME"
+          fi
+        done
+        
+        echo "All comments processed"
