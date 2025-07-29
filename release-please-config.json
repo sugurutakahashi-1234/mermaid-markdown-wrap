@@ -38,7 +38,7 @@
         },
         {
           "type": "generic",
-          "path": ".github/workflows/test-e2e.yml"
+          "path": ".github/workflows/ci-test-published-package.yml"
         }
       ]
     }
