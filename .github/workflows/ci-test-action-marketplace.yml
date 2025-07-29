@@ -476,14 +476,16 @@ jobs:
             exit 1
           fi
           
-          # Verify comment contains expected content
-          if ! jq -r '.[0].body' pr-comments-data.json | grep -q "pr-test1.md"; then
-            echo "❌ Error: First comment doesn't contain expected filename"
+          # Verify comment contains expected content (check both files exist somewhere in the comments)
+          COMMENT_BODIES=$(jq -r '.[].body' pr-comments-data.json)
+          
+          if ! echo "$COMMENT_BODIES" | grep -q "\`pr-test1.md\`"; then
+            echo "❌ Error: pr-test1.md not found in any comment"
             exit 1
           fi
           
-          if ! jq -r '.[1].body' pr-comments-data.json | grep -q "pr-test2.md"; then
-            echo "❌ Error: Second comment doesn't contain expected filename"
+          if ! echo "$COMMENT_BODIES" | grep -q "\`pr-test2.md\`"; then
+            echo "❌ Error: pr-test2.md not found in any comment"
             exit 1
           fi
           

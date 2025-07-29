@@ -98,6 +98,7 @@ export async function processFiles(
           converted: false,
           markdownFile: "",
           failureReason: error instanceof Error ? error.message : String(error),
+          changed: false,
         };
       }
     }),
@@ -116,6 +117,7 @@ export async function processFiles(
         result.reason instanceof Error
           ? result.reason.message
           : String(result.reason),
+      changed: false,
     };
   });
 }

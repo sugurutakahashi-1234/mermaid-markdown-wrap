@@ -30,7 +30,7 @@ graph TD
 
 **Run:**
 ```bash
-mermaid-markdown-wrap diagram.mmd
+mermaid-markdown-wrap diagram.mmd --log-format json
 ```
 
 **After** (`diagram.md`):
