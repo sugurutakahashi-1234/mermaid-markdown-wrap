@@ -278,6 +278,8 @@ All CLI options are available, plus GitHub Actions-specific options:
 | **`pr-comment-details`** | Use collapsible details for PR comments                                                                | `false`               |
 | **`github-token`**       | GitHub token for PR comments (usually default is fine; override only if you need specific permissions) | `${{ github.token }}` |
 
+**Note:** When using GitHub Actions, the output format is automatically set to JSON (`--log-format json`) for better integration with the action's features.
+
 ### Automatic PR Comments
 
 Post converted diagrams as comments on pull requests:

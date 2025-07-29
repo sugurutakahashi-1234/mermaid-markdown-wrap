@@ -278,6 +278,8 @@ jobs:
 | **`pr-comment-details`** | PRコメントを折りたたみ可能にする                                                             | `false`               |
 | **`github-token`**       | PRコメント用のGitHubトークン（通常はデフォルトで問題なし；特別な権限が必要な場合のみ上書き） | `${{ github.token }}` |
 
+**注意:** GitHub Actions使用時は、アクション機能との統合を向上させるため、出力形式が自動的にJSONに設定されます（`--log-format json`）。
+
 ### 自動PRコメント
 
 変換されたダイアグラムをプルリクエストのコメントとして投稿：

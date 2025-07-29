@@ -22,7 +22,7 @@ if git diff --cached --name-only | grep -q "^renovate.json5$"; then
 fi
 
 # Validate action.yml if changed
-if git diff --cached --name-only | grep -q "^action.yml$"; then
+if git diff --cached --name-only | grep -qE "^action\.yml$|^\.github/workflows/local-test-action-marketplace\.yml$"; then
   echo "🧪 Testing GitHub Action with Act CLI..."
   bun run test:action-marketplace
 fi

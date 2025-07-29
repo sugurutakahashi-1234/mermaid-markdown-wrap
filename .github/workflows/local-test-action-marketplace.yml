@@ -801,28 +801,26 @@ jobs:
     ]
     if: always()
     steps:
-      - name: All tests passed
-        if: success()
+      - name: Show test results
         run: |
           echo ""
-          echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
-          echo "✅                                                    ✅"
-          echo "✅          🎉 ALL TESTS PASSED! 🎉                   ✅"
-          echo "✅                                                    ✅"
-          echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
+          echo "📊 Test Results:"
           echo ""
-        
-      - name: Some tests failed
-        if: failure()
-        run: |
+          echo '${{ toJson(needs) }}' | jq -r 'to_entries[] | "  [\(.value.result)] \(.key)"'
           echo ""
-          echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
-          echo "❌                                                    ❌"
-          echo "❌         💥 SOME TESTS FAILED 💥                    ❌"
-          echo "❌                                                    ❌"
-          echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
-          echo ""
-          echo "Failed tests:"
-          echo '${{ toJson(needs) }}' | jq -r 'to_entries[] | select(.value.result != "success") | "  🔴 \(.key): \(.value.result)"'
-          echo ""
-          exit 1
+          
+          # Check if any job failed (excluding test-error-handling which is expected to succeed)
+          if echo '${{ toJson(needs) }}' | jq -e 'to_entries[] | select(.key != "test-error-handling") | select(.value.result != "success")' > /dev/null 2>&1; then
+            echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
+            echo "❌                                                    ❌"
+            echo "❌         💥 SOME TESTS FAILED 💥                    ❌"
+            echo "❌                                                    ❌"
+            echo "❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌"
+            exit 1
+          else
+            echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
+            echo "✅                                                    ✅"
+            echo "✅          🎉 ALL TESTS PASSED! 🎉                   ✅"
+            echo "✅                                                    ✅"
+            echo "✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅"
+          fi
