@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.0...v1.2.1) (2025-07-29)
+
+
+### ♻️ Code Refactoring
+
+* replace GitHub Script with gh CLI for PR comments ([#19](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/19)) ([f8ee7cd](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/f8ee7cdcd44e81b4bc393f34cd25591b24c21a73))
+
 ## [1.2.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.1.1...v1.2.0) (2025-07-29)
 
 
