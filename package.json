@@ -87,6 +87,8 @@
     "clean:install": "bun run clean && bun install",
     "clean:build": "bun run clean:install && bun run ci",
     "release:please:dry-run": "bunx release-please release-pr --token=$(gh auth token) --repo-url=sugurutakahashi-1234/mermaid-markdown-wrap --debug --dry-run",
+    "release:please:cleanup": "git push origin --delete release-please--branches--main--components--mermaid-markdown-wrap || true",
+    "release:please:list": "git ls-remote --heads origin | grep release-please",
     "deps:check": "bunx ncu --deep",
     "deps:update": "bunx ncu -u --deep && bun install"
   },
