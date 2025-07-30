@@ -27,7 +27,7 @@ import {
 /**
  * Result of the interactive prompts
  */
-export interface PromptResult {
+interface PromptResult {
   config: ConfigOptions;
   format: ConfigFormat;
 }
@@ -168,11 +168,6 @@ export async function confirmOverwrite(fileName: string): Promise<boolean> {
 
   return result;
 }
-
-/**
- * Export utilities for use in other modules
- */
-export { isCancel };
 
 /**
  * Show outro message

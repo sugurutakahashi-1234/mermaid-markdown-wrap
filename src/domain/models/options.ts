@@ -1,7 +1,7 @@
 import * as v from "valibot";
 
 // Output format constants
-export const OUTPUT_FORMATS = ["text", "json"] as const;
+const OUTPUT_FORMATS = ["text", "json"] as const;
 
 /**
  * Configuration file options schema
@@ -80,6 +80,3 @@ export const ProcessingOptionsSchema = v.object({
 export type ConfigOptions = v.InferOutput<typeof ConfigOptionsSchema>;
 export type RawCLIOptions = v.InferOutput<typeof RawCLIOptionsSchema>;
 export type ProcessingOptions = v.InferOutput<typeof ProcessingOptionsSchema>;
-
-// For backward compatibility during migration
-export type CLIOptions = ProcessingOptions;

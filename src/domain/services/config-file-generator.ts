@@ -17,7 +17,7 @@ export type ConfigFormat = "ts" | "js" | "cjs" | "mjs" | "json" | "yaml";
 /**
  * Configuration file format information
  */
-export interface ConfigFormatInfo {
+interface ConfigFormatInfo {
   format: ConfigFormat;
   label: string;
   value: ConfigFormat;
