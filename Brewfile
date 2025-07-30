@@ -1,5 +1,7 @@
 # Install with: brew bundle
 
+brew "gh"
+
 # act: Run your GitHub Actions locally
 # See: https://github.com/nektos/act
 #
