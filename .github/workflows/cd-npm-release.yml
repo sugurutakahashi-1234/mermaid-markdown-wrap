@@ -10,10 +10,11 @@ on:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
-  packages: write
+  contents: write       # Required for creating release tags and GitHub releases
+  pull-requests: write  # Required for creating and updating release PRs
+  issues: write         # Required for commenting on PRs
+  packages: write       # Required for publishing npm packages
+  id-token: write       # Required for updating workflow files (extra-files feature)
 
 jobs:
   cd-npm-release:
