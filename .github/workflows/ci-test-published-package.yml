@@ -52,12 +52,10 @@ jobs:
           echo "graph TD" > test.mmd
           echo "A-->B" >> test.mmd
       
-      # x-release-please-start-version
       - name: Use published action
-        uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.2.0
+        uses: sugurutakahashi-1234/mermaid-markdown-wrap@main
         with:
           input: 'test.mmd'
-      # x-release-please-end
       
       - name: Verify action output
         run: |

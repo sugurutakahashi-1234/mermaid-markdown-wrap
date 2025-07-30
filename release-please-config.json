@@ -35,10 +35,6 @@
         {
           "type": "generic",
           "path": "README.ja.md"
-        },
-        {
-          "type": "generic",
-          "path": ".github/workflows/ci-test-published-package.yml"
         }
       ]
     }
