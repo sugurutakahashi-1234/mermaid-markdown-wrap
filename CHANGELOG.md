@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.1](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.0...v1.2.1) (2025-07-30)
+
+
+### 🐛 Bug Fixes
+
+* add id-token permission for release-please workflow ([#27](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/27)) ([0f3fca9](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/0f3fca9f6314178ae456be874229eac8b71df8f6))
+* remove workflow files from release-please extra-files ([#28](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/28)) ([74a19f9](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/74a19f902753b0107887559a6bb7c93ac64815bb))
+* update release-please extra-files configuration ([#21](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/21)) ([61731f8](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/61731f85b4db39109ee5fafa94ae367ac4d65f7a))
+* update release-please extra-files configuration ([#26](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/26)) ([0955a3f](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/0955a3faf4021a7440fe451159303f211d2ef7a1))
+
+
+### ♻️ Code Refactoring
+
+* replace GitHub Script with gh CLI for PR comments ([#19](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/19)) ([f8ee7cd](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/f8ee7cdcd44e81b4bc393f34cd25591b24c21a73))
+
+
+### 👷 CI/CD
+
+* update action version to v1.2.0 in test workflow ([#22](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/22)) ([4e51400](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/4e514006688adbab22b1e42bb89cd59433f9a386))
+
 ## [1.2.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.1.1...v1.2.0) (2025-07-29)
 
 
