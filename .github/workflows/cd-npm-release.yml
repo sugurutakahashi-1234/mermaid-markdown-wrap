@@ -14,7 +14,6 @@ permissions:
   pull-requests: write  # Required for creating and updating release PRs
   issues: write         # Required for commenting on PRs
   packages: write       # Required for publishing npm packages
-  id-token: write       # Required for updating workflow files (extra-files feature)
 
 jobs:
   cd-npm-release:

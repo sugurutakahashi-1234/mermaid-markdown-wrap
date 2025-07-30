@@ -84,7 +84,7 @@
     "clean": "rm -rf bun.lock node_modules dist coverage .*.bun-build tsconfig.tsbuildinfo tsconfig.build.tsbuildinfo",
     "clean:install": "bun run clean && bun install",
     "clean:build": "bun run clean:install && bun run ci",
-    "release-please:dry-run": "bunx release-please release-pr --token=$(gh auth token) --repo-url=sugurutakahashi-1234/mermaid-markdown-wrap --debug --dry-run",
+    "release-please:dry-run": "bunx release-please release-pr --token=$(gh auth token) --repo-url=$(gh repo view --json nameWithOwner --jq '.nameWithOwner') --debug --dry-run",
     "deps:check": "bunx ncu --deep",
     "deps:update": "bunx ncu -u --deep && bun install && bun run ci"
   },
