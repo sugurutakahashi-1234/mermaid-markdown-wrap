@@ -38,7 +38,6 @@
     "bin/",
     "dist/",
     "schema/",
-    "scripts/npm-lifecycle/postinstall.js",
     "action.yml"
   ],
   "type": "module",
@@ -47,7 +46,6 @@
   },
   "packageManager": "bun@1.2.19",
   "scripts": {
-    "postinstall": "node scripts/npm-lifecycle/postinstall.js || true",
     "prepare": "husky",
     "help": "bun src/index.ts --help",
     "help:init": "bun src/index.ts init --help",
