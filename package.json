@@ -34,10 +34,6 @@
     "url": "https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues"
   },
   "homepage": "https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap#readme",
-  "type": "module",
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "files": [
     "bin/",
     "dist/",
@@ -45,6 +41,10 @@
     "scripts/npm-lifecycle/postinstall.js",
     "action.yml"
   ],
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "packageManager": "bun@1.2.19",
   "scripts": {
     "postinstall": "node scripts/npm-lifecycle/postinstall.js || true",
