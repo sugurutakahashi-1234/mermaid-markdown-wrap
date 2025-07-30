@@ -4,7 +4,7 @@ import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig
 /**
  * Validation result for configuration
  */
-export interface ConfigValidationResult {
+interface ConfigValidationResult {
   success: boolean;
   config?: ConfigOptions;
   errors?: Array<{ path: string; message: string }>;

@@ -1,17 +1,28 @@
 import type { KnipConfig } from "knip";
 
 const config: KnipConfig = {
-  entry: [],
+  // Let knip auto-detect entry points from package.json
   project: ["src/**/*.ts"],
   ignoreDependencies: ["tslib", "@commitlint/cli"], // tslib is a runtime dependency, @commitlint/cli is used in CI only
   ignoreBinaries: ["du", "awk", "sed", "act", "jq"], // du,awk,sed: deps:size script, act: test:act script, jq: GitHub Actions workflows
   ignoreExportsUsedInFile: false,
+
+  // IMPORTANT: Keep this as true to detect real unused exports
+  // DO NOT set to false - it would hide real issues
   includeEntryExports: true,
+
+  // Workaround: knip doesn't recognize package.json "exports" field
+  // Files listed here contain public APIs exported via package.json
+  ignore: [
+    "src/config.ts", // exports: defineConfig() and ConfigOptions type
+  ],
+
   typescript: {
     config: ["tsconfig.json"],
   },
-  // Include @public tagged exports for external users
-  tags: ["+public"],
+
+  // DO NOT add tags: ["+public"] - requires maintaining @public JSDoc tags
+  // Instead, use the ignore array above for public API files
 };
 
 export default config;

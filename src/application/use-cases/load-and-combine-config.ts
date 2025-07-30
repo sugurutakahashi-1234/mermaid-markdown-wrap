@@ -9,7 +9,7 @@ import { loadConfigurationFile } from "../../infrastructure/adapters/cosmiconfig
 /**
  * Result of loading and combining configuration
  */
-export interface LoadAndCombineConfigResult {
+interface LoadAndCombineConfigResult {
   rawCliOptions: RawCLIOptions;
   processingOptions: ProcessingOptions;
 }

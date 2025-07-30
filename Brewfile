@@ -1,5 +1,8 @@
 # Install with: brew bundle
 
+# GitHub CLI: Used for release-please execution and local development
+brew "gh"
+
 # act: Run your GitHub Actions locally
 # See: https://github.com/nektos/act
 #

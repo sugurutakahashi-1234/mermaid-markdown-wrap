@@ -30,6 +30,10 @@ cd mermaid-markdown-wrap
 # 2. Install dependencies
 bun install
 
+# For macOS users with Homebrew: Install additional tools
+# (Required for building binaries and managing releases)
+brew bundle
+
 # 3. Run tests to verify setup
 bun test
 
