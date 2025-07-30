@@ -11,15 +11,14 @@
 [![GitHub Release Date](https://img.shields.io/github/release-date/sugurutakahashi-1234/mermaid-markdown-wrap)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/pulls)
 [![GitHub Marketplace](https://img.shields.io/badge/marketplace-mermaid--markdown--wrap-blue?style=flat&logo=github)](https://github.com/marketplace/actions/mermaid-markdown-wrap)
-[![Used by](https://img.shields.io/static/v1?label=Used%20by&message=0%20repositories&color=informational&logo=github)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/network/dependents)
 
 [English](README.md) | [日本語](README.ja.md)
 
-Mermaidダイアグラムファイル（.mmd/.mermaid）を適切なコードブロックを含むMarkdownに変換します。ダイアグラムをバージョン管理し、読みやすく保ちます。
+Mermaidダイアグラムファイル（.mmd/.mermaid）をMarkdownコードブロックでラップ - CLIツール、npmパッケージ、GitHub ActionでGitHub/GitLabでの表示を実現。
 
 ## What it does
 
-スタンドアロンのMermaidファイルを、適切にフォーマットされたコードブロックを含むMarkdownファイルに変換：
+MermaidファイルをMarkdownコードブロックでラップして、GitHub/GitLab上でダイアグラムとして表示されるようにします。ダイアグラムを個別ファイルで管理しつつ、リポジトリで直接確認できます。
 
 **変換前** (`diagram.mmd`):
 ```
@@ -61,17 +60,16 @@ npm install --save-dev mermaid-markdown-wrap
 npx mermaid-markdown-wrap diagram.mmd
 ```
 
-**他のパッケージマネージャー:** yarn、bun、pnpmでも利用可能です
 
 ## Quick Start
 
 ```bash
-# 設定ファイルを生成（任意だが推奨、-y または --yes でプロンプトをスキップ）
-mermaid-markdown-wrap init
-
-# ファイルを変換（単一ファイルまたはグロブパターン）
+# すぐにファイルを変換（設定不要）
 mermaid-markdown-wrap diagram.mmd
 mermaid-markdown-wrap "**/*.{mmd,mermaid}"
+
+# 設定ファイルを生成（任意、-y または --yes でプロンプトをスキップ）
+mermaid-markdown-wrap init
 ```
 
 ## Usage
@@ -145,30 +143,22 @@ footer: "<!-- END -->"
 
 #### CommonJS (.js/.cjs)
 ```js
-// .mermaid-markdown-wraprc.js または .mermaid-markdown-wraprc.cjs
-module.exports = {
+// mermaid-markdown-wrap.config.js または .mermaid-markdown-wraprc.cjs
+const { defineConfig } = require('mermaid-markdown-wrap/config');
+
+module.exports = defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->'
-};
+});
 ```
 
 #### ES Modules (.mjs)
 ```js
 // mermaid-markdown-wrap.config.mjs
-export default {
-  outDir: 'docs',
-  header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->'
-};
-```
+import { defineConfig } from 'mermaid-markdown-wrap/config';
 
-#### defineConfigヘルパーを使用
-```js
-// mermaid-markdown-wrap.config.js
-const { defineConfig } = require('mermaid-markdown-wrap/config');
-
-module.exports = defineConfig({
+export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->'
@@ -207,8 +197,8 @@ Mermaidファイルをマークダウンに変換します。
 | `--footer <text>`       | 末尾に追加するテキスト                 | -          |
 | `--remove-source`       | 変換後にソースファイルを削除           | `false`    |
 | `--hide-command`        | 出力ファイルに生成コマンドを表示しない | `false`    |
-| `--log-format <format>` | 出力形式: `text` または `json`         | `text`     |
-| `--quiet`               | エラー以外の出力を抑制                 | `false`    |
+| `--log-format <format>` | 出力形式（text: 人間が読みやすい、json: CI/CD用の構造化形式） | `text`     |
+| `--quiet`               | エラー以外のすべての出力を抑制         | `false`    |
 | `-c, --config <file>`   | 設定ファイルのパス                     | 自動検索   |
 | `-h, --help`            | ヘルプを表示                           | -          |
 | `-v, --version`         | バージョンを表示                       | -          |
@@ -295,8 +285,8 @@ jobs:
   convert:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write
+      contents: read       # リポジトリコンテンツの読み取り
+      pull-requests: write # PRへのコメント投稿
     steps:
       - uses: actions/checkout@v4
       
@@ -304,8 +294,8 @@ jobs:
         with:
           input: "**/*.{mmd,mermaid}"
           pr-comment-mode: changed  # 'off', 'changed', または 'all'
-          pr-comment-header: true
-          pr-comment-details: false
+          pr-comment-header: true   # ファイル名付きヘッダーを表示
+          pr-comment-details: false # 折りたたみ可能なセクションを使用
 ```
 <!-- x-release-please-end -->
 

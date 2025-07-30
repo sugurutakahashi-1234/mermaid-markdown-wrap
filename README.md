@@ -11,15 +11,14 @@
 [![GitHub Release Date](https://img.shields.io/github/release-date/sugurutakahashi-1234/mermaid-markdown-wrap)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/pulls)
 [![GitHub Marketplace](https://img.shields.io/badge/marketplace-mermaid--markdown--wrap-blue?style=flat&logo=github)](https://github.com/marketplace/actions/mermaid-markdown-wrap)
-[![Used by](https://img.shields.io/static/v1?label=Used%20by&message=0%20repositories&color=informational&logo=github)](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/network/dependents)
 
 [English](README.md) | [日本語](README.ja.md)
 
-Convert Mermaid diagram files (.mmd/.mermaid) to Markdown with proper code blocks. Keep your diagrams version-controlled and readable.
+Wrap Mermaid diagram files (.mmd/.mermaid) in Markdown code blocks - CLI tool, npm package, and GitHub Action for rendering diagrams on GitHub/GitLab.
 
 ## What it does
 
-Transforms standalone Mermaid files into Markdown files with properly formatted code blocks:
+Wraps your Mermaid files in Markdown code blocks so they display as diagrams on GitHub/GitLab. Perfect for keeping diagrams in separate files while making them viewable in your repository.
 
 **Before** (`diagram.mmd`):
 ```
@@ -61,17 +60,16 @@ npm install --save-dev mermaid-markdown-wrap
 npx mermaid-markdown-wrap diagram.mmd
 ```
 
-**Alternative package managers:** Also compatible with yarn, bun, and pnpm
 
 ## Quick Start
 
 ```bash
-# Generate a configuration file (optional but recommended, use -y or --yes to skip prompts)
-mermaid-markdown-wrap init
-
-# Convert files (single file or glob pattern)
+# Convert files immediately (no config needed)
 mermaid-markdown-wrap diagram.mmd
 mermaid-markdown-wrap "**/*.{mmd,mermaid}"
+
+# Generate a configuration file (optional, use -y or --yes to skip prompts)
+mermaid-markdown-wrap init
 ```
 
 ## Usage
@@ -145,30 +143,22 @@ footer: "<!-- END -->"
 
 #### CommonJS (.js/.cjs)
 ```js
-// .mermaid-markdown-wraprc.js or .mermaid-markdown-wraprc.cjs
-module.exports = {
+// mermaid-markdown-wrap.config.js or .mermaid-markdown-wraprc.cjs
+const { defineConfig } = require('mermaid-markdown-wrap/config');
+
+module.exports = defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->'
-};
+});
 ```
 
 #### ES Modules (.mjs)
 ```js
 // mermaid-markdown-wrap.config.mjs
-export default {
-  outDir: 'docs',
-  header: '<!-- AUTO-GENERATED -->',
-  footer: '<!-- END -->'
-};
-```
+import { defineConfig } from 'mermaid-markdown-wrap/config';
 
-#### With defineConfig helper
-```js
-// mermaid-markdown-wrap.config.js
-const { defineConfig } = require('mermaid-markdown-wrap/config');
-
-module.exports = defineConfig({
+export default defineConfig({
   outDir: 'docs',
   header: '<!-- AUTO-GENERATED -->',
   footer: '<!-- END -->'
@@ -207,8 +197,8 @@ Convert Mermaid files to Markdown.
 | `--footer <text>`       | Text to append                          | -             |
 | `--remove-source`       | Remove source files after conversion    | `false`       |
 | `--hide-command`        | Hide generation command in output files | `false`       |
-| `--log-format <format>` | Output format: `text` or `json`         | `text`        |
-| `--quiet`               | Suppress non-error output               | `false`       |
+| `--log-format <format>` | Output format (text: human-readable, json: structured for CI/CD) | `text`        |
+| `--quiet`               | Suppress all output except errors       | `false`       |
 | `-c, --config <file>`   | Config file path                        | Auto-search   |
 | `-h, --help`            | Show help                               | -             |
 | `-v, --version`         | Show version                            | -             |
@@ -295,8 +285,8 @@ jobs:
   convert:
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Required for PR comments
-      pull-requests: write # Required for PR comments
+      contents: read       # To read repository contents
+      pull-requests: write # To post comments on PRs
     steps:
       - uses: actions/checkout@v4
       
@@ -304,8 +294,8 @@ jobs:
         with:
           input: "**/*.{mmd,mermaid}"
           pr-comment-mode: changed  # 'off', 'changed', or 'all'
-          pr-comment-header: true
-          pr-comment-details: false
+          pr-comment-header: true   # Show header with file name
+          pr-comment-details: false # Use collapsible sections
 ```
 <!-- x-release-please-end -->
 
