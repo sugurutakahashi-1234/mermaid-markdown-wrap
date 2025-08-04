@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.1...v1.2.2) (2025-08-04)
+
+
+### 🐛 Bug Fixes
+
+* update TypeScript to v5.9.2 and fix knip config ([#30](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/30)) ([ff2248a](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/ff2248a23fed38453b24e7a9127be64b0506a296))
+
 ## [1.2.1](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.0...v1.2.1) (2025-07-30)
 
 
