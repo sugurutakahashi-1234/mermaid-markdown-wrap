@@ -71,9 +71,6 @@
     "validate:codecov": "cat codecov.yml | curl --data-binary @- https://codecov.io/validate",
     "validate:renovate": "$(which npx) --yes --package renovate -- renovate-config-validator renovate.json5 --strict",
     "validate:branch": "git-branch-lint",
-    "deps:size:prod": "echo 'Package                                        Size    Visual' && echo '(Production dependencies only)' && echo && npm ls --omit=dev --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u | while read pkg; do [ -d \"node_modules/$pkg\" ] && du -sk \"node_modules/$pkg\" 2>/dev/null | awk -v pkg=\"$pkg\" '{kb=$1; if(kb>1024) {mb=kb/1024; size=sprintf(\"%.1fM\", mb)} else {size=sprintf(\"%dK\", kb)} printf \"%-45s %7s  \", pkg, size; bar_len=int(kb/1000); if(bar_len<1) bar_len=1; if(bar_len>40) bar_len=40; for(i=0; i<bar_len; i++) printf \"█\"; print \"\"}'; done | sort -k2 -hr | head -30 && echo && echo \"Total prod deps: $(npm ls --omit=dev --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u | wc -l | xargs) packages\"",
-    "deps:size:dev": "echo 'Package                                        Size    Visual' && echo '(Dev dependencies only - excluding production)' && echo && comm -13 <(npm ls --omit=dev --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u) <(npm ls --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u) | while read pkg; do [ -d \"node_modules/$pkg\" ] && du -sk \"node_modules/$pkg\" 2>/dev/null | awk -v pkg=\"$pkg\" '{kb=$1; if(kb>1024) {mb=kb/1024; size=sprintf(\"%.1fM\", mb)} else {size=sprintf(\"%dK\", kb)} printf \"%-45s %7s  \", pkg, size; bar_len=int(kb/1000); if(bar_len<1) bar_len=1; if(bar_len>40) bar_len=40; for(i=0; i<bar_len; i++) printf \"█\"; print \"\"}'; done | sort -k2 -hr | head -30 && echo && echo \"Total dev-only deps: $(comm -13 <(npm ls --omit=dev --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u) <(npm ls --all --depth=Infinity 2>/dev/null | grep -E '^[│├└─┬ ]+' | sed 's/[│├└─┬ ]//g' | sed 's/@[0-9].*//' | grep -v '^$' | sort -u) | wc -l | xargs) packages\"",
-    "deps:size:all": "du -sk node_modules/* node_modules/@*/* 2>/dev/null | sort -nr | head -80 | awk 'BEGIN{print \"Package                                        Size    Visual\"} {kb=$1; path=$2; gsub(/node_modules\\//, \"\", path); if(kb>1024) {mb=kb/1024; size=sprintf(\"%.1fM\", mb)} else {size=sprintf(\"%dK\", kb)} printf \"%-45s %7s  \", path, size; bar_len=int(kb/1000); if(bar_len<1) bar_len=1; if(bar_len>40) bar_len=40; for(i=0; i<bar_len; i++) printf \"█\"; print \"\"}' && echo && echo \"Total: $(du -sh node_modules 2>/dev/null | awk '{print $1}')\"",
     "knip": "knip -c knip.config.ts",
     "knip:fix": "knip -c knip.config.ts --fix",
     "update:docs:knip": "knip -c knip.config.ts --reporter markdown > docs/reports/code-quality/unused-code.md",
@@ -85,6 +82,7 @@
     "clean:install": "bun run clean && bun install",
     "clean:build": "bun run clean:install && bun run ci",
     "release-please:dry-run": "bunx release-please release-pr --token=$(gh auth token) --repo-url=$(gh repo view --json nameWithOwner --jq '.nameWithOwner') --debug --dry-run",
+    "deps:size": "node-size",
     "deps:check": "bunx ncu --deep",
     "deps:update": "bunx ncu -u --deep && bun install && bun run ci"
   },
@@ -109,6 +107,6 @@
     "@ysk8hori/typescript-graph": "^0.26.4",
     "husky": "^9.1.7",
     "knip": "^5.62.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
