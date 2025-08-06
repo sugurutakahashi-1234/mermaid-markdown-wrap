@@ -93,7 +93,7 @@
     "cosmiconfig-typescript-loader": "^6.1.0",
     "globby": "^14.1.0",
     "valibot": "^1.1.0",
-    "yaml": "^2.8.0"
+    "yaml": "^2.8.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
