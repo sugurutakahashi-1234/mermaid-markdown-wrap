@@ -46,7 +46,7 @@ jobs:
         run: bun run test:coverage
 
       - name: Generate TypeScript dependency graph
-        uses: ysk8hori/delta-typescript-graph-action@v1.2.3
+        uses: ysk8hori/delta-typescript-graph-action@v1.2.4
         env:
           HUSKY: 0
         with:
