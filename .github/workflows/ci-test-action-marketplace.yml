@@ -32,7 +32,7 @@ jobs:
     name: Test Basic Usage
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test file
         run: |
@@ -82,7 +82,7 @@ jobs:
     name: Test Glob Pattern
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files in different directories
         run: |
@@ -154,7 +154,7 @@ jobs:
     name: Test Output Directory
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test file
         run: |
@@ -210,7 +210,7 @@ jobs:
     name: Test Header and Footer
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test file
         run: |
@@ -280,7 +280,7 @@ jobs:
     name: Test Remove Source Option
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -340,7 +340,7 @@ jobs:
     name: Test Hide Command Option
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -384,7 +384,7 @@ jobs:
     name: Test Config File Option
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test config file
         run: |
@@ -441,7 +441,7 @@ jobs:
     name: Test PR Comment Dry-Run Mode (Default)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -506,7 +506,7 @@ jobs:
     name: Test PR Comment Dry-Run Mode (No Header)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -569,7 +569,7 @@ jobs:
     name: Test PR Comment Dry-Run Mode (With Details)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -637,7 +637,7 @@ jobs:
     name: Test PR Comment Dry-Run Mode (Changed)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files (simulating pre-existing state)
         run: |
@@ -717,7 +717,7 @@ jobs:
     name: Test PR Comment Dry-Run Mode (Mode Off)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Create test files
         run: |
@@ -758,7 +758,7 @@ jobs:
     name: Test Error Handling (Expected Failure)
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - name: Test with non-existent file
         id: error-test
