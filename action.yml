@@ -94,7 +94,7 @@ runs:
   steps:
     # Setup Node.js (required for github-script action)
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 'latest'
     
