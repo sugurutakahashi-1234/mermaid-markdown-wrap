@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.2...v1.2.3) (2026-11-19)
+
+
+### 📚 Documentation
+
+* update the maintainer X contact ([acfb720](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/acfb7204636e38fc0b0e482ab6cacb7ec7d014ca))
+
 ## [1.2.2](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.1...v1.2.2) (2025-08-04)
 
 
