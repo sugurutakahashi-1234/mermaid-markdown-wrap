@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.4...v2.0.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* npm パッケージの実行には Node.js 26 以上が必要です。
+
+### ✨ Features
+
+* 最低対応を Node.js 26 に引き上げる ([67da35d](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/67da35d536ed95de9b9721362830c1be8eca54b8))
+
 ## [1.2.4](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.3...v1.2.4) (2026-11-19)
 
 

@@ -242,7 +242,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.2.4
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v2.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           out-dir: docs
@@ -290,7 +290,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v1.2.4
+      - uses: sugurutakahashi-1234/mermaid-markdown-wrap@v2.0.0
         with:
           input: "**/*.{mmd,mermaid}"
           pr-comment-mode: changed  # 'off', 'changed', または 'all'
