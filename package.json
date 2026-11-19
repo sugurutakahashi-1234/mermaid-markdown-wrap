@@ -88,12 +88,12 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "commander": "^14.0.0",
-    "cosmiconfig": "^9.0.0",
-    "cosmiconfig-typescript-loader": "^6.1.0",
-    "globby": "^14.1.0",
-    "valibot": "^1.1.0",
-    "yaml": "^2.8.0"
+    "commander": "^14.0.3",
+    "cosmiconfig": "^9.0.2",
+    "cosmiconfig-typescript-loader": "^6.3.0",
+    "globby": "^16.2.4",
+    "valibot": "^1.5.0",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
