@@ -92,5 +92,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **未使用コード検出**: CIで未使用の関数やクラスが検出されるため、実際に使用されるコードのみを実装すること
 
 ### Requirements
-- **Node.js**: v20 以上
+- **Node.js**: v26 以上
 - **bun**: 最新版

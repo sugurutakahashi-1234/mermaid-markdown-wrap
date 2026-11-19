@@ -19,7 +19,7 @@ flowchart LR
         node//modules/valibot/dist/index.d.cts["valibot"]
         node//modules/globby/index.d.ts["globby"]
         node//modules/yaml/dist/index.d.ts["yaml"]
-        node//modules///clack/prompts/dist/index.d.ts["@clack/prompts"]
+        node//modules///clack/prompts/dist/index.d.mts["@clack/prompts"]
         node//modules/cosmiconfig/dist/index.d.ts["cosmiconfig"]
         node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts["cosmiconfig-typescript-loader"]
         node//modules/commander/typings/index.d.ts["commander"]
@@ -32,7 +32,7 @@ flowchart LR
     src/application-->src/domain
     src/application-->src/infrastructure
     src/domain-->node//modules/yaml/dist/index.d.ts
-    src/infrastructure-->node//modules///clack/prompts/dist/index.d.ts
+    src/infrastructure-->node//modules///clack/prompts/dist/index.d.mts
     src/infrastructure-->node//modules/cosmiconfig/dist/index.d.ts
     src/infrastructure-->node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts
     src/infrastructure-->node//modules/valibot/dist/index.d.cts

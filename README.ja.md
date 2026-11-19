@@ -47,7 +47,7 @@ graph TD
 
 ## Installation
 
-**必要要件:** Node.js v20以上
+**必要要件:** Node.js v26以上
 
 ```bash
 # グローバルインストール（推奨）

@@ -47,7 +47,7 @@ graph TD
 
 ## Installation
 
-**Requirements:** Node.js v20 or higher
+**Requirements:** Node.js v26 or higher
 
 ```bash
 # Global installation (recommended)

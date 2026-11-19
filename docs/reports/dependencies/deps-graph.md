@@ -54,7 +54,7 @@ flowchart LR
         node//modules/valibot/dist/index.d.cts["valibot"]
         node//modules/globby/index.d.ts["globby"]
         node//modules/yaml/dist/index.d.ts["yaml"]
-        node//modules///clack/prompts/dist/index.d.ts["@clack/prompts"]
+        node//modules///clack/prompts/dist/index.d.mts["@clack/prompts"]
         node//modules/cosmiconfig/dist/index.d.ts["cosmiconfig"]
         node//modules/cosmiconfig//typescript//loader/dist/types/index.d.ts["cosmiconfig-typescript-loader"]
         node//modules/commander/typings/index.d.ts["commander"]
@@ -82,7 +82,7 @@ flowchart LR
     src/domain/services/config//file//generator.ts-->node//modules/yaml/dist/index.d.ts
     src/domain/services/config//file//generator.ts-->src/domain/constants/package//info.ts
     src/domain/services/config//file//generator.ts-->src/domain/models/options.ts
-    src/infrastructure/services/interactive//prompts.ts-->node//modules///clack/prompts/dist/index.d.ts
+    src/infrastructure/services/interactive//prompts.ts-->node//modules///clack/prompts/dist/index.d.mts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/constants/package//info.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/models/errors.ts
     src/infrastructure/services/interactive//prompts.ts-->src/domain/models/options.ts
