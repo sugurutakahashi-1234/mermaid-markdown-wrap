@@ -84,7 +84,7 @@ docs: update installation instructions
 ## Need Help?
 
 - 💬 Open a [GitHub Issue](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues)
-- 📧 Contact the maintainer: [@ikuraikuraaaaaa](https://twitter.com/ikuraikuraaaaaa) on X/Twitter
+- 📧 Contact the maintainer: [@suguru_takaha4](https://x.com/suguru_takaha4) on X/Twitter
 
 ## Community Guidelines
 

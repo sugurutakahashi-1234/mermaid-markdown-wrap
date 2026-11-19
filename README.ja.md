@@ -328,7 +328,7 @@ graph LR
 
 ## Contact
 
-ご質問やフィードバックがある場合は、X/Twitterでご連絡ください: [@ikuraikuraaaaaa](https://twitter.com/ikuraikuraaaaaa)
+ご質問やフィードバックがある場合は、X/Twitterでご連絡ください: [@suguru_takaha4](https://x.com/suguru_takaha4)
 
 ## License
 
