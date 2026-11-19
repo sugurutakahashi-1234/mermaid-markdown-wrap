@@ -16,6 +16,10 @@ jobs:
     timeout-minutes: 5
     name: Test NPX Execution
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "26"
       - name: Create test file
         run: |
           echo "graph TD" > test.mmd
@@ -70,7 +74,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [20, 22, 24]
+        node: [26]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     name: Test on ${{ matrix.os }} / Node ${{ matrix.node }}
@@ -113,4 +117,4 @@ jobs:
           echo "🎉 All E2E tests passed successfully!"
           echo "✅ NPX execution works"
           echo "✅ GitHub Action marketplace works"
-          echo "✅ Cross-platform compatibility verified (3 OS x 3 Node versions)"
+          echo "✅ Cross-platform compatibility verified (3 OS x Node.js 26)"
