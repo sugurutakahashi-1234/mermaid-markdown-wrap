@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.3...v1.2.4) (2026-11-19)
+
+
+### 🐛 Bug Fixes
+
+* npm の自動公開を OIDC に移行し依存ライブラリを更新 ([#48](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/issues/48)) ([52e82be](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/commit/52e82be4c787db9af44f72b76c85e04eb073c0df))
+
 ## [1.2.3](https://github.com/sugurutakahashi-1234/mermaid-markdown-wrap/compare/v1.2.2...v1.2.3) (2026-11-19)
 
 
