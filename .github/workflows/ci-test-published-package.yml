@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "26"
+          node-version: "26.13.1"
       - name: Create test file
         run: |
           echo "graph TD" > test.mmd
